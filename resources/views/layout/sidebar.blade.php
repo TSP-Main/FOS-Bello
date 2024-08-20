@@ -1,45 +1,39 @@
 <aside class="main-sidebar">
 	<style>
 		.main-sidebar {
-    display: flex;
-    flex-direction: column;
-    height: 75vh; 
-}
-
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.multinav {
-    flex-grow: 1; 
-}
-
-.sidebar-footer {
-    margin-top: auto; 
-    padding: 15px; 
-    background-color: #f8f9fa;
-    border-top: 1px solid #e9ecef; 
-}
-
-.treeview-menu {
-    display: none; 
-}
-
-.treeview.active .treeview-menu {
-    display: block; 
-}
-
-.sidebar-menu .active > a {
-    background-color: #f4f4f4; 
-}
-
-.treeview-menu {
-    transition: max-height 0.3s ease-out;
-}
+			display: flex;
+			flex-direction: column;
+			height: 75vh; 
+		}
+		.sidebar {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+		.multinav {
+			flex-grow: 1; 
+		}
+		.sidebar-footer {
+			margin-top: auto; 
+			padding: 15px; 
+			background-color: #f8f9fa;
+			border-top: 1px solid #e9ecef; 
+		}
+		.treeview-menu {
+			display: none; 
+		}
+		.treeview.active .treeview-menu {
+			display: block; 
+		}
+		.sidebar-menu .active > a {
+			background-color: #f4f4f4; 
+		}
+		.treeview-menu {
+			transition: max-height 0.3s ease-out;
+		}
 
 	</style>
+	
     <!-- sidebar-->
     <section class="sidebar position-relative">	
 	  	<div class="multinav">
@@ -74,7 +68,7 @@
 					<li class="treeview">
 						<a href="#">
 							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-						  <span>Companies</span>
+						  <span>Restaurants Connected</span>
 						  <span class="pull-right-container">
 							<i class="fa fa-angle-right pull-right"></i>
 						  </span>
@@ -90,7 +84,7 @@
 					<li class="treeview">
 						<a href="#">
 							<i class="icon-User"><span class="path1"></span><span class="path2"></span></i>
-							<span>Managers</span>
+							<span>Restaurants Admins</span>
 							<span class="pull-right-container">
 								<i class="fa fa-angle-right pull-right"></i>
 							</span>

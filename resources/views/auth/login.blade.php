@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="{{ asset('assets/theme/images/favicon.ico') }}">
+    <link rel="icon" href="{{ asset('assets/theme/images/bello_logo.png') }}">
 
     <title>Food Ordering System | TSP</title>
   
@@ -29,6 +29,7 @@
 					<div class="col-lg-5 col-md-5 col-12">
 						<div class="bg-white rounded10 shadow-lg">
 							<div class="content-top-agile p-20 pb-0">
+								<img src="{{ asset('assets/theme/images/bello_logo.png') }}" alt="" width="100px" height="100px">
 								<h2 class="text-primary">Let's Get Started</h2>
 								<p class="mb-0">Sign in to continue to Food Ordering System.</p>							
 							</div>
@@ -79,9 +80,9 @@
 										<!-- /.col -->
 									  </div>
 								</form>	
-								{{-- <div class="text-center">
-									<p class="mt-15 mb-0">Don't have an account? <a href="auth_register.html" class="text-warning ms-5">Sign Up</a></p>
-								</div>	 --}}
+								<div class="text-center">
+									<p class="mt-15 mb-0">© 2024 <a href="https://techsolutionspro.co.uk/" target="_blank" class="ms-5 text-bold" style="color: #1eabae">Tech Solutions Pro</a>. All Rights Reserved.</p>
+								</div>	
 							</div>						
 						</div>
 					</div>
