@@ -29,7 +29,7 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col">
-                        <form action="{{ route('products.update') }}" method="post" id="product_form" class="form-horizontal needs-validation" role="form" novalidate>
+                        <form action="{{ route('products.update') }}" method="post" id="product_form" class="form-horizontal needs-validation" role="form" novalidate enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="id" value="{{ $product->id }}">
                             <div class="row">
@@ -88,11 +88,24 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label class="form-label">Select File</label>
-                                        <label class="file">
-                                          <input type="file" id="file">
-                                        </label>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <h5>Select Product Images</h5>
+                                            <div class="controls">
+                                                <input class="form-control" name="images" type="file" id="images" multiple accept="image/*">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{-- <h5>Select Product Images</h5> --}}
+                                            <div class="controls">
+                                                <div class="mt-5" style="border-radius: 50%">
+                                                    <img style="border-radius: 50%; width:100px; height:100px"  src="{{ asset('storage/product_images/'. $productImage->path)}}" alt="">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                             
                                 <div class="text-xs-right">

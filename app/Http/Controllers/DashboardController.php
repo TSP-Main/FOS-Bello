@@ -30,7 +30,7 @@ class DashboardController extends Controller
             $data['latestSubscriptions'] = $totalActive->sortByDesc('created_at')->take(5);
         }
         else{
-            $orders = Order::get();
+            // $orders = Order::get();
         }
         
         return view ('dashboard', $data);

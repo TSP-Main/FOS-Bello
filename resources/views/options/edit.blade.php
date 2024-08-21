@@ -25,8 +25,9 @@
     <!-- Main content -->
     <section class="content">
         <!-- Basic Forms -->
-        <form action="{{ route('options.store') }}" method="post" id="options_form" class="form-horizontal needs-validation" role="form" novalidate>
+        <form action="{{ route('options.update') }}" method="post" id="options_form" class="form-horizontal needs-validation" role="form" novalidate>
             @csrf
+            <input type="hidden" name="id" value="{{ base64_encode($option->id) }}">
             <div class="box">
                 <div class="box-header with-border">
                     <h4 class="box-title">Option/Sides</h4>
@@ -120,7 +121,7 @@
                                         <div class="form-group">
                                             <h5>Name <span class="text-danger">*</span></h5>
                                             <div class="controls">
-                                                <input type="text" name="value_name[]" class="form-control" required data-validation-required-message="This field is required"> 
+                                                <input type="text" name="value_name[]" class="form-control" > 
                                             </div>
                                         </div>
                                     </div>

@@ -88,7 +88,7 @@
 
                                     <div class="form-group">
                                         <label for="images" class="form-label">Selecr Product Images</label>
-                                        <input class="form-control" name="images[]" type="file" id="images" multiple accept="image/*">
+                                        <input class="form-control" name="images[]" type="file" id="images" accept="image/*">
                                     </div>
                             
                                 <div class="text-xs-right">
