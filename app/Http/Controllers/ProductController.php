@@ -174,4 +174,12 @@ class ProductController extends Controller
 
         return response()->json(['products' => $products]);
     }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->delete(); // Soft delete
+
+        return redirect()->route('products.list')->with('success', 'Record deleted successfully.');
+    }
 }

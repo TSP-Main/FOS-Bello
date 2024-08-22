@@ -44,6 +44,11 @@
                                             <td>{{ $product->price }}</td>
                                             <td>
                                                 <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Edit</a>
+                                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger " onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach

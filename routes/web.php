@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('products/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('products/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
     Route::post('products/update/', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('products/destroy/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
     
     // Product Options/Sides Routes
     Route::get('options', [OptionController::class, 'index'])->name('options.list');
