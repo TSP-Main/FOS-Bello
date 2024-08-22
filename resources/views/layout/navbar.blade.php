@@ -39,8 +39,8 @@
 		<a href="{{ route('dashboad')}}" class="logo">
 		  <!-- logo-->
 		  <div class="logo-lg">
-			  <span class="light-logo"><img src="{{ asset('assets/theme/images/logo-dark-text.png') }}" alt="logo"></span>
-			  <span class="dark-logo"><img src="{{ asset('assets/theme/images/logo-light-text.png') }}" alt="logo"></span>
+			  <span class="light-logo"><img src="{{ asset('assets/theme/images/bello_logo_160x55.png') }}" alt="logo"></span>
+			  <span class="dark-logo"><img src="{{ asset('assets/theme/images/bello_logo_160x55.png') }}" alt="logo"></span>
 		  </div>
 		</a>	
 	</div>  
@@ -227,7 +227,7 @@
 	      <!-- User Account-->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle p-0 text-dark hover-primary ms-md-30 ms-10" data-bs-toggle="dropdown" title="User">
-				<span class="ps-30 d-md-inline-block d-none">Hello,</span> <strong class="d-md-inline-block d-none">Alia</strong><img src="{{ asset('assets/theme/images/avatar/avatar-11.png')}}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+				<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('assets/theme/images/avatar/avatar-11.png')}}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
             </a>
             <ul class="dropdown-menu animated flipInX">
               <li class="user-body">

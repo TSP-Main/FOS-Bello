@@ -12,13 +12,15 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
 
 
 Auth::routes();
 
+Route::get('/', [HomeController::class, 'index']);
 Route::group(['middleware' => ['auth']], function(){
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboad');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboad');
 
     // Users Routes
     Route::get('users', [UserController::class, 'index'])->name('users.list');
