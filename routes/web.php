@@ -21,6 +21,7 @@ Auth::routes();
 Route::get('/', [HomeController::class, 'index']);
 Route::group(['middleware' => ['auth']], function(){
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboad');
+    Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
     // Users Routes
     Route::get('users', [UserController::class, 'index'])->name('users.list');

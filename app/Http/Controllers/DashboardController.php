@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Order;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +31,60 @@ class DashboardController extends Controller
             $data['latestSubscriptions'] = $totalActive->sortByDesc('created_at')->take(5);
         }
         else{
-            // $orders = Order::get();
+            $companyId = Auth::user()->company_id; 
+            $todayStart = Carbon::today()->startOfDay();
+            $todayEnd = Carbon::today()->endOfDay();
+
+            $orders = Order::where('company_id', $companyId)
+                ->whereBetween('created_at', [$todayStart, $todayEnd])
+                ->get();
+                
+            $data['dashboard_data'] = $this->make_dashboard_data($orders);
+
         }
-        
+        // return $data;
         return view ('dashboard', $data);
+    }
+
+    public function make_dashboard_data($orders)
+    {
+        $totalOrders = count($orders);
+        $totalRevenue = $orders->sum('total');
+
+        $totalDelivered  = $orders->filter(function ($value) {
+            return $value->is_delivered == 1;
+        });
+
+        $totalCancelled  = $orders->filter(function ($value) {
+            return $value->is_cancelled == 1;
+        });
+        // $data['totalCancelled'] = count($totalCancelled);
+
+        return [
+            'totalOrders' => $totalOrders,
+            'totalRevenue' => $totalRevenue,
+            'totalDelivered' => count($totalDelivered),
+            'totalCancelled' => count($totalCancelled),
+        ];
+    }
+
+    public function filter(Request $request)
+    {
+        $companyId = Auth::user()->company_id; 
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Order::where('company_id', $companyId);
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        $orders = $query->get();
+
+        $response = $this->make_dashboard_data($orders);
+        
+        return response()->json(['stats' => $response]);
     }
 }
