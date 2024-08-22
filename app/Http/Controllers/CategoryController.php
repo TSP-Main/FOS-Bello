@@ -35,8 +35,8 @@ class CategoryController extends Controller
             'desc' => 'nullable|string',
             'type' => 'required|in:1,2',
             'status' => 'required|in:1,2,3', 
-            'icon_file' => 'nullable|file|image|max:2048', 
-            'background_image' => 'nullable|file|image|max:2048', 
+            'icon_file' => 'nullable|max:2048', 
+            'background_image' => 'nullable|max:2048', 
             'parent_id' => 'nullable|exists:categories,id',
         ]);
     
