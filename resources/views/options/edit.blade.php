@@ -94,6 +94,7 @@
                             {{-- Previous --}}
                             @foreach ($option->option_values as $option_value)
                                 <div class="row option_value_div" >
+                                    <input type="hidden" name="value_id[]" value="{{ $option_value->id }}">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <h5>Name <span class="text-danger">*</span></h5>
@@ -103,13 +104,17 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <h5>Price <span class="text-danger">*</span></h5>
                                             <div class="controls">
                                                 <input type="text" name="value_price[]" value="{{ $option_value->price }}" class="form-control"> 
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger remove-option-value" style="margin-top: 28px;">Remove</button>
                                     </div>
                                 </div>
                             @endforeach
@@ -126,13 +131,17 @@
                                         </div>
                                     </div>
     
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <h5>Price <span class="text-danger">*</span></h5>
                                             <div class="controls">
                                                 <input type="text" name="value_price[]" class="form-control"> 
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger remove-option-value" style="margin-top: 28px;">Remove</button>
                                     </div>
                                 </div>
                             </div>
@@ -172,6 +181,10 @@
                 $clone.find('input').val('');
 
                 $container.append($clone);
+            });
+
+            $(document).on('click', '.remove-option-value', function() {
+                $(this).closest('.option_value_div').remove();
             });
         });
     </script>
