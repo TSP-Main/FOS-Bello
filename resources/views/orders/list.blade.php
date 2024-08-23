@@ -17,85 +17,226 @@
                     </nav>
                 </div>
             </div>
-            
         </div>
     </div>
 
+    <!-- Order Approval Modal -->
+    <div class="modal fade" id="orderApprovalModal" tabindex="-1" aria-labelledby="orderApprovalModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderApprovalModalLabel">Select Delivery Time</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="approveOrderForm" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="delivery_time">Delivery Time</label>
+                            <select name="delivery_time" id="delivery_time" class="form-control" required>
+                                <option value="15">15 min</option>
+                                <option value="30">30 min</option>
+                                <option value="45">45 min</option>
+                                <option value="60">60 min</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Approve Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- Main content -->
     <section class="content">
-        <div class="row">
-            <div class="col-12">
-                <div class="box">
-                    <div class="box-body">
-                        <div class="table-responsive rounded card-table">
-                            <table class="table border-no" id="example1">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Date</th>
-                                        <th>Customer Name</th>
-                                        <th>Location</th>
-                                        <th>Amount</th>
-                                        {{-- <th>Status Order</th> --}}
-                                        {{-- <th></th> --}}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($orders as $order)
-                                        <tr class="hover-primary">
-                                            <td><a href="{{ route('orders.detail', ["id" => base64_encode($order->id) ]) }}" target="_blank"> #{{ $order->id }} </a></td>
-                                            {{-- <td>14 April 2021,<span class="fs-12"> 03:13 AM</span></td> --}}
-                                            <td>{{ $order->created_at }}</td>
-                                            <td>{{ $order->name }}</td>
-                                            <td>{{ $order->address ?? NULL}}</td>
-                                            <td>£{{ $order->total}}</td>
-                                            {{-- <td>												
-                                                <span class="badge badge-pill badge-primary-light">Delivery</span>
-                                            </td> --}}
-                                            {{-- <td>												
-                                                <div class="btn-group">
-                                                <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="#">Accept Order</a>
-                                                    <a class="dropdown-item" href="#">Reject Order</a>
-                                                </div>
-                                                </div>
-                                            </td> --}}
+
+        <div class="col-12">
+            <div class="box">
+              <div class="box-header with-border">
+                <h4 class="box-title">Orders Tab</h4>
+              </div>
+              <!-- /.box-header -->
+              <div class="box-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs customtab2" role="tablist">
+                    <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#incomingOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Incoming</span></a> </li>
+                    <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#acceptedOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Accepted</span></a> </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <!-- incoming orders tab -->
+                    <div class="tab-pane active" id="incomingOrdersTab" role="tabpanel">
+                        <div class="p-15">
+                            <div class="table-responsive rounded card-table">
+                                <table class="table border-no" id="incomingOrders">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Phone</th>
+                                            <th>Address</th>
+                                            <th>Total</th>
+                                            <th>Order Type</th>
+                                            <th>Payment Option</th>
+                                            <th>Actions</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($incomingOrders as $incomingOrder)
+                                            <tr>
+                                                <td>{{ $incomingOrder->id }}</td>
+                                                <td>{{ $incomingOrder->name }}</td>
+                                                <td>{{ $incomingOrder->phone }}</td>
+                                                <td>{{ $incomingOrder ->address}}</td>
+                                                <td>£{{ $incomingOrder->total }}</td>
+                                                <td>{{ $incomingOrder->order_type }}</td>
+                                                <td>{{ $incomingOrder->payment_option }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ $incomingOrder->id }}">
+                                                        Approve
+                                                    </button>
+                                                    <a href="{{ route('orders.reject', $incomingOrder->id) }}" class="btn btn-danger btn-sm">Reject</a>
+                                
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accepted Orders Tab -->
+                    <div class="tab-pane" id="acceptedOrdersTab" role="tabpanel">
+                        <div class="p-15">
+                            <div class="table-responsive rounded card-table">
+                                <table class="table border-no" id="acceptedOrders">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Customer Name</th>
+                                            <th>Location</th>
+                                            <th>Amount</th>
+                                            {{-- <th>Status Order</th> --}}
+                                            {{-- <th></th> --}}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($orders as $order)
+                                            <tr class="hover-primary">
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($order->id) ]) }}" target="_blank"> #{{ $order->id }} </a></td>
+                                                {{-- <td>14 April 2021,<span class="fs-12"> 03:13 AM</span></td> --}}
+                                                <td>{{ $order->created_at }}</td>
+                                                <td>{{ $order->name }}</td>
+                                                <td>{{ $order->address ?? NULL}}</td>
+                                                <td>£{{ $order->total}}</td>
+                                                {{-- <td>												
+                                                    <span class="badge badge-pill badge-primary-light">Delivery</span>
+                                                </td> --}}
+                                                {{-- <td>												
+                                                    <div class="btn-group">
+                                                    <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="#">Accept Order</a>
+                                                        <a class="dropdown-item" href="#">Reject Order</a>
+                                                    </div>
+                                                    </div>
+                                                </td> --}}
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+              </div>
             </div>
         </div>
+
     </section>
     <!-- /.content -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-    // Polling interval in milliseconds (e.g., every 30 seconds)
-    const POLLING_INTERVAL = 30000;
 
-    function checkForNewOrders() {
-        fetch('/admin/new-orders')
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    data.forEach(order => {
-                        toastr.info(`New temporary order #${order.id} placed.`);
-                    });
-                }
-            })
-            .catch(error => console.error('Error fetching new orders:', error));
-    }
+    // // Polling interval in milliseconds (e.g., every 30 seconds)
+    // const POLLING_INTERVAL = 30000;
 
-    // Set up polling
-    setInterval(checkForNewOrders, POLLING_INTERVAL);
+    // function checkForNewOrders() {
+    //     fetch('/admin/new-orders')
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.length > 0) {
+    //                 data.forEach(order => {
+    //                     toastr.info(`New temporary order #${order.id} placed.`);
+    //                 });
+    //             }
+    //         })
+    //         .catch(error => console.error('Error fetching new orders:', error));
+    // }
 
-    // Optionally, check for new orders immediately on page load
-    document.addEventListener('DOMContentLoaded', checkForNewOrders);
+    // // Set up polling
+    // setInterval(checkForNewOrders, POLLING_INTERVAL);
+
+    // // Optionally, check for new orders immediately on page load
+    // document.addEventListener('DOMContentLoaded', checkForNewOrders);
 </script>
 
 
+@endsection
+
+@section('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var orderApprovalModal = document.getElementById('orderApprovalModal');
+            orderApprovalModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var orderId = button.getAttribute('data-order-id');
+        
+                var form = document.getElementById('approveOrderForm');
+                form.action = '/orders/approve/' + orderId;
+            });
+        });
+        
+        function checkIncomingOrders() {
+            $.ajax({
+                url: "{{ route('orders.incoming') }}",
+                method: 'GET',
+                success: function(response) {
+                    console.log(response.incomingOrders)
+                    $('#incomingOrders tbody').html('');
+                    response.incomingOrders.forEach(order => {
+                        $('#incomingOrders tbody').append(`
+                            <tr>
+                                <td>${order.id}</td>
+                                <td>${order.name}</td>
+                                <td>${order.phone}</td>
+                                <td>${order.address}</td>
+                                <td>£${order.total}</td>
+                                <td>${order.order_type}</td>
+                                <td>${order.payment_option}</td>
+                                <td>
+                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${order.id}">
+                                        Approve
+                                    </button>
+                                    <a href="/orders/reject/${order.id}" class="btn btn-danger btn-sm">Reject</a>
+                                </td>
+                            </tr>
+                        `);
+                    });
+                },
+                error: function() {
+                    console.log('Error fetching orders');
+                }
+            });
+        }
+        // Check for new incoming orders every 5 seconds
+        setInterval(checkIncomingOrders, 5000);
+    </script>
 @endsection

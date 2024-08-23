@@ -112,7 +112,8 @@ class AdminOrderController extends Controller
             });
         }
 
-        return redirect()->route('orders.noti')->with('status', 'Order rejected successfully');
+        // return redirect()->route('orders.noti')->with('status', 'Order rejected successfully');
+        return redirect()->route('orders.list')->with('status', 'Order rejected successfully');
     }
 }
 

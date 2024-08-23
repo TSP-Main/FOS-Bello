@@ -78,9 +78,9 @@
                                             <h4>{{ $item->product_title }}</h4>
                                             <span>{{ $item->options }}</span>
                                         </td>
-                                        <td>${{ $item->sub_total / $item->quantity }}</td>
+                                        <td>£{{ $item->sub_total / $item->quantity }}</td>
                                         <td width="70">{{ $item->quantity }}</td>
-                                        <td width="100" align="center" class="fw-900">${{ $item->sub_total }}</td>
+                                        <td width="100" align="center" class="fw-900">£{{ $item->sub_total }}</td>
                                         <td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-primary btn-xs" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash"></i></a></td>
                                     </tr>	
                                 @endforeach															

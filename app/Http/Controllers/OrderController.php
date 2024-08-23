@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Models\TemporaryOrder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -14,6 +15,7 @@ class OrderController extends Controller
     {
         $companyId = Auth::user()->company_id;
         $data['orders'] = Order::where('company_id', $companyId)->orderBy('id', 'desc')->get();
+        $data['incomingOrders'] = TemporaryOrder::where('company_id', $companyId)->where('status', 'pending')->orderBy('id', 'desc')->get();
 
         return view('orders.list', $data);
     }
@@ -25,7 +27,8 @@ class OrderController extends Controller
         return view('orders.detail', $data);
     }
 
-    public function send_mail() {
+    public function send_mail()
+    {
         $data = ['name' => "Lana Desert"];
  
         Mail::send([], $data, function($message) {
@@ -36,5 +39,12 @@ class OrderController extends Controller
         });
 
         echo "Basic Email Sent. Check your inbox.";
-     }
+    }
+
+    public function check_incoming_orders(Request $request)
+    {
+        $companyId = Auth::user()->company_id;
+        $incomingOrders = TemporaryOrder::where('company_id', $companyId)->where('status', 'pending')->orderBy('id', 'desc')->get();
+        return response()->json(['incomingOrders' => $incomingOrders]);
+    }
 }

@@ -79,6 +79,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/list', [OrderController::class, 'index'])->name('orders.list');
     Route::get('orders/detail/{id}', [OrderController::class, 'detail'])->name('orders.detail');
     Route::get('send', [OrderController::class, 'send_mail']);
+    Route::get('orders/incoming', [OrderController::class, 'check_incoming_orders'])->name('orders.incoming');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 
