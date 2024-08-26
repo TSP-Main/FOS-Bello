@@ -102,7 +102,7 @@ class APIController extends Controller
 
         if($responseData->status == 'success'){
             $companyId = $responseData->company->id;
-            $products = Product::with('category')
+            $products = Product::with('category', 'images', 'options.option.option_values')
                 ->where('company_id', $companyId)
                 ->where('is_enable', 1)
                 ->when($id, function($query, $id){
