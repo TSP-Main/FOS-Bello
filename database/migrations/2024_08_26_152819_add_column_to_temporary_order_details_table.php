@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->tinyInteger('ask_instruction')->after('company_id')->default(2)->comment('column use for ask special instruction for product or not');
+        Schema::table('temporary_order_details', function (Blueprint $table) {
+            $table->text('item_instruction')->after('options')->nullable();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('is_ask_instruction');
+        Schema::table('temporary_order_details', function (Blueprint $table) {
+            $table->dropColumn('item_instruction');
         });
     }
 };

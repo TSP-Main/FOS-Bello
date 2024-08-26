@@ -50,6 +50,7 @@ class AdminOrderController extends Controller
             $orderDetail->quantity = $detail->quantity;
             $orderDetail->sub_total = $detail->sub_total;
             $orderDetail->options = $detail->options;
+            $orderDetail->item_instruction = $detail->item_instruction;
             $orderDetail->save();
         }
     

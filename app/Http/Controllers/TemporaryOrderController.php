@@ -129,6 +129,7 @@ class TemporaryOrderController extends Controller
                 'quantity' => $item['quantity'],
                 'sub_total' => $item['rowTotal'],
                 'options' => implode(',', $item['optionNames']),
+                'item_instruction' => $item['productInstruction'],
             ]);
         }
 
