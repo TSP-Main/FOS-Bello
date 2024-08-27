@@ -91,6 +91,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');
     Route::post('/notifications/{id}/delete', [NotificationController::class, 'delete']);
 
+    // Delivery Radius
+    Route::get('radius', [RestaurantScheduleController::class, 'create_radius'])->name('radius.create');
+    Route::post('radius/store', [RestaurantScheduleController::class, 'store_radius'])->name('radius.store');
 
 });
 

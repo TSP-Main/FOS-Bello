@@ -155,19 +155,34 @@
 				@endif
 
 				@if (view_permission('schedules'))
-				<li class="treeview">
-					<a href="#">
-						<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-						<span>Restaurant Schedule</span>
-						<span class="pull-right-container">
-							<i class="fa fa-angle-right pull-right"></i>
-						</span>
-					</a>
-					<ul class="treeview-menu">
-					<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
-					</ul>
-				</li>
-			@endif
+					<li class="treeview">
+						<a href="#">
+							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+							<span>Restaurant Schedule</span>
+							<span class="pull-right-container">
+								<i class="fa fa-angle-right pull-right"></i>
+							</span>
+						</a>
+						<ul class="treeview-menu">
+						<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
+						</ul>
+					</li>
+				@endif
+
+				@if (view_permission('radius'))
+					<li class="treeview">
+						<a href="#">
+							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+							<span>Delivery Radius</span>
+							<span class="pull-right-container">
+								<i class="fa fa-angle-right pull-right"></i>
+							</span>
+						</a>
+						<ul class="treeview-menu">
+						<li><a href="{{ route('radius.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Radius</a></li>
+						</ul>
+					</li>
+				@endif
 			</ul>
 
 			<div class="sidebar-widgets">
