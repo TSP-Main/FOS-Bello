@@ -23,3 +23,7 @@
 <script src="{{ asset('assets/theme/js/pages/form-validation.js')}}"></script>
 
 <script src="{{ asset('assets/theme/assets/vendor_components/select2/dist/js/select2.full.js')}}"></script>
+
+<!-- daterange -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>

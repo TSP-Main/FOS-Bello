@@ -62,7 +62,8 @@
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th style="min-width: 300px;">Product info</th>
+                                    <th style="min-width: 200px;">Product info</th>
+                                    <th>Special Inctruction</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th style="text-align:center">Total</th>
@@ -78,9 +79,10 @@
                                             <h4>{{ $item->product_title }}</h4>
                                             <span>{{ $item->options }}</span>
                                         </td>
-                                        <td>${{ $item->sub_total / $item->quantity }}</td>
+                                        <td>{{ $item->item_instruction }}</td>
+                                        <td>£{{ $item->sub_total / $item->quantity }}</td>
                                         <td width="70">{{ $item->quantity }}</td>
-                                        <td width="100" align="center" class="fw-900">${{ $item->sub_total }}</td>
+                                        <td width="100" align="center" class="fw-900">£{{ $item->sub_total }}</td>
                                         <td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-primary btn-xs" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash"></i></a></td>
                                     </tr>	
                                 @endforeach															
