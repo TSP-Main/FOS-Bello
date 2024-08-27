@@ -48,13 +48,17 @@ class OptionController extends Controller
             $valueName = $request->value_name;
             $valuePrice = $request->value_price;
 
-            foreach($valueName as $key => $value){
-                $postData = new OptionValue();
-                $postData->option_id = $option->id;
-                $postData->name = $value;
-                $postData->price = $valuePrice[$key];
-
-                $postData->save();
+            if($valueName){
+                foreach($valueName as $key => $value){
+                    if($value){
+                        $postData = new OptionValue();
+                        $postData->option_id = $option->id;
+                        $postData->name = $value;
+                        $postData->price = $valuePrice[$key];
+        
+                        $postData->save();
+                    }
+                }
             }
         }
         else{
@@ -85,51 +89,54 @@ class OptionController extends Controller
             'is_required' => ['required', Rule::in($yesNoValues)],
             'option_type' => ['required', Rule::in($optionType)],
         ]);
-    
-        $option = Option::find($id);
-        
-        if (!$option) {
-            return redirect()->route('options.list')->with('failed', 'Option not found');
-        }
 
-        $option->name = $request->name;
-        $option->is_required = $request->is_required;
-        $option->option_type = $request->option_type;
-        $option->updated_by = Auth::user()->id;
+        $post_data['name']         = $request->name;
+        $post_data['is_required']  = $request->is_required;
+        $post_data['option_type']  = $request->option_type;
+        $post_data['updated_by']   = Auth::user()->id;
+
+        $option = Option::find($id);
+        $response = $option->update($post_data);
     
-        $response = $option->save();
-    
-        // if($response){
-        //     $valueName = $request->value_name;
-        //     $valuePrice = $request->value_price;
-        //     $valueIds = $request->value_id;
-    
-        //     // Update or create option values
-        //     foreach ($valueName as $key => $value) {
-        //         if (isset($valueIds[$key])) {
-        //             // Update existing OptionValue
-        //             $optionValue = OptionValue::find($valueIds[$key]);
-        //             if ($optionValue) {
-        //                 $optionValue->name = $value;
-        //                 $optionValue->price = $valuePrice[$key];
-        //                 $optionValue->save();
-        //             }
-        //         } else {
-        //             // Create new OptionValue
-        //             $optionValue = new OptionValue();
-        //             $optionValue->option_id = $option->id;
-        //             $optionValue->name = $value;
-        //             $optionValue->price = $valuePrice[$key];
-        //             $optionValue->save();
-        //         }
-        //     }
-    
-        //     OptionValue::where('option_id', $option->id)
-        //         ->whereNotIn('id', $valueIds)
-        //         ->delete();
-        // } else {
-        //     return redirect()->route('options.edit', $id)->with('failed', 'Something went wrong');
-        // }
+        if($response){
+            $valueName = $request->value_name;
+            $valuePrice = $request->value_price;
+            $valueIds = $request->value_id;
+
+            // Update or create option values
+            if($valueName){
+                $processedIds = [];
+
+                foreach ($valueName as $key => $value) {
+                    if($value){
+                        if (isset($valueIds[$key])) {
+                            // Update existing OptionValue
+                            $optionValue = OptionValue::find($valueIds[$key]);
+                            if ($optionValue) {
+                                $optionValue->name = $value;
+                                $optionValue->price = $valuePrice[$key];
+                                $optionValue->save();
+                                $processedIds[] = $optionValue->id;
+                            }
+                        } else {
+                            // Create new OptionValue
+                            $optionValue = new OptionValue();
+                            $optionValue->option_id = $option->id;
+                            $optionValue->name = $value;
+                            $optionValue->price = $valuePrice[$key];
+                            $optionValue->save();
+                            $processedIds[] = $optionValue->id;
+                        }
+                    }
+                }
+        
+                OptionValue::where('option_id', $option->id)
+                    ->whereNotIn('id', $processedIds)
+                    ->delete();
+            }
+        } else {
+            return redirect()->route('options.edit', $id)->with('failed', 'Something went wrong');
+        }
     
         return redirect()->route('options.list')->with('success', 'Option updated successfully');
     }

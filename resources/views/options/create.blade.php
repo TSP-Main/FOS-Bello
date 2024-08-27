@@ -90,6 +90,30 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col">
+                            <div class="row option_value_div template" style="display: none;">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <h5>Name <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="value_name[]" class="form-control"> 
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <h5>Price <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="value_price[]" class="form-control"> 
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-danger remove-option-value" style="margin-top: 28px;">Remove</button>
+                                </div>
+                            </div>
+
                             <div class="option_value_container">
                                 <div class="row option_value_div" >
                                     <div class="col-md-6">
@@ -101,13 +125,17 @@
                                         </div>
                                     </div>
     
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <h5>Price <span class="text-danger">*</span></h5>
                                             <div class="controls">
                                                 <input type="text" name="value_price[]" class="form-control"> 
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger remove-option-value" style="margin-top: 28px;">Remove</button>
                                     </div>
                                 </div>
                             </div>
@@ -139,14 +167,24 @@
     <script>
         $(document).ready(function() {
             $('.add-value').click(function(){
+                // var $container = $('.option_value_container');
+                // var $originalDiv = $container.find('.option_value_div').first();
+                // var $clone = $originalDiv.clone();
+
+                // // Clear input values in the cloned div
+                // $clone.find('input').val('');
+
+                // $container.append($clone);
+
                 var $container = $('.option_value_container');
-                var $originalDiv = $container.find('.option_value_div').first();
-                var $clone = $originalDiv.clone();
+                var $clone = $('.template').clone().removeClass('template').show();
 
-                // Clear input values in the cloned div
-                $clone.find('input').val('');
-
+                // Clear input values in the cloned div (already empty in the template)
                 $container.append($clone);
+            });
+
+            $(document).on('click', '.remove-option-value', function() {
+                $(this).closest('.option_value_div').remove();
             });
         });
     </script>

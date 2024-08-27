@@ -189,6 +189,14 @@
         </div>
     @else
         <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group fill">
+                    <label for="dateRangeFilter">Date Range Filter:</label>
+                    <input type="text" id="dateRangeFilter" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xxxl-3 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
@@ -197,7 +205,7 @@
                                 <img src="{{ asset('assets/theme/images/food/online-order-1.png')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700">89</h2>
+                                <h2 class="my-0 fw-700" id="totalOrders">{{ $dashboard_data['totalOrders'] }}</h2>
                                 <p class="text-fade mb-0">Total Order</p>
                                 <p class="fs-12 mb-0 text-success"><span class="badge badge-pill badge-success-light me-5"><i class="fa fa-arrow-up"></i></span>3% (15 Days)</p>
                             </div>
@@ -213,7 +221,7 @@
                                 <img src="{{ asset('assets/theme/images/food/online-order-2.png')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700">899</h2>
+                                <h2 class="my-0 fw-700" id="totalDelivered">{{ $dashboard_data['totalDelivered'] }}</h2>
                                 <p class="text-fade mb-0">Total Delivered</p>
                                 <p class="fs-12 mb-0 text-success"><span class="badge badge-pill badge-success-light me-5"><i class="fa fa-arrow-up"></i></span>8% (15 Days)</p>
                             </div>
@@ -229,7 +237,7 @@
                                 <img src="{{ asset('assets/theme/images/food/online-order-3.png')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700">59</h2>
+                                <h2 class="my-0 fw-700" id="totalCancelled">{{ $dashboard_data['totalCancelled'] }}</h2>
                                 <p class="text-fade mb-0">Total Canceled</p>
                                 <p class="fs-12 mb-0 text-primary"><span class="badge badge-pill badge-primary-light me-5"><i class="fa fa-arrow-down"></i></span>2% (15 Days)</p>
                             </div>
@@ -245,7 +253,7 @@
                                 <img src="{{ asset('assets/theme/images/food/online-order-4.png')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700">$789k</h2>
+                                <h2 class="my-0 fw-700" id="totalRevenue">£{{ $dashboard_data['totalRevenue'] }}</h2>
                                 <p class="text-fade mb-0">Total Revenue</p>
                                 <p class="fs-12 mb-0 text-primary"><span class="badge badge-pill badge-primary-light me-5"><i class="fa fa-arrow-down"></i></span>12% (15 Days)</p>
                             </div>
@@ -567,6 +575,39 @@
 <!-- /.content -->
 @endsection
 
-{{-- @section('rightbar')
-@include('layout.rightbar')
-@endsection --}}
+@section('script')
+    <script>
+        $(document).ready(function() {
+            $('#dateRangeFilter').daterangepicker({
+                opens: 'left'
+            }, function(start, end, label) {
+                const startDate = $('#dateRangeFilter').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                const endDate = $('#dateRangeFilter').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                fetchFilteredData(startDate, endDate);
+            });
+
+            function fetchFilteredData(startDate, endDate) {
+                $.ajax({
+                    url: '{{ route("dashboard.filter") }}',
+                    type: 'GET',
+                    data: {
+                        start_date: startDate,
+                        end_date: endDate
+                    },
+                    success: function(data) {
+                        // Update your dashboard with the filtered data
+                        // console.log(data.stats.totalOrders);
+                        $('#totalOrders').text(data.stats.totalOrders);
+                        $('#totalDelivered').text(data.stats.totalDelivered);
+                        $('#totalCancelled').text(data.stats.totalCancelled);
+                        $('#totalRevenue').text('£' +data.stats.totalRevenue);
+
+                    },
+                    error: function(error) {
+                        console.error('Error fetching filtered data:', error);
+                    }
+                });
+            }
+        });
+    </script>
+@endsection

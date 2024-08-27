@@ -50,6 +50,7 @@ class AdminOrderController extends Controller
             $orderDetail->quantity = $detail->quantity;
             $orderDetail->sub_total = $detail->sub_total;
             $orderDetail->options = $detail->options;
+            $orderDetail->item_instruction = $detail->item_instruction;
             $orderDetail->save();
         }
     
@@ -112,7 +113,8 @@ class AdminOrderController extends Controller
             });
         }
 
-        return redirect()->route('orders.noti')->with('status', 'Order rejected successfully');
+        // return redirect()->route('orders.noti')->with('status', 'Order rejected successfully');
+        return redirect()->route('orders.list')->with('status', 'Order rejected successfully');
     }
 }
 

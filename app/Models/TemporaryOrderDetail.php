@@ -21,6 +21,7 @@ class TemporaryOrderDetail extends Model
         'quantity',
         'sub_total',
         'options',
+        'item_instruction'
     ];
 
     // Define the relationships

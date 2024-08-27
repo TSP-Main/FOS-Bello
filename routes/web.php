@@ -21,6 +21,7 @@ Auth::routes();
 Route::get('/', [HomeController::class, 'index']);
 Route::group(['middleware' => ['auth']], function(){
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboad');
+    Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
     // Users Routes
     Route::get('users', [UserController::class, 'index'])->name('users.list');
@@ -50,6 +51,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('products/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('products/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
     Route::post('products/update/', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('products/destroy/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
     
     // Product Options/Sides Routes
     Route::get('options', [OptionController::class, 'index'])->name('options.list');
@@ -77,6 +79,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/list', [OrderController::class, 'index'])->name('orders.list');
     Route::get('orders/detail/{id}', [OrderController::class, 'detail'])->name('orders.detail');
     Route::get('send', [OrderController::class, 'send_mail']);
+    Route::get('orders/incoming', [OrderController::class, 'check_incoming_orders'])->name('orders.incoming');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 
