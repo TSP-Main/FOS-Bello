@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\TemporaryOrder;
-use App\Models\TemporaryOrderDetail;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use Illuminate\Support\Facades\Mail;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
+use App\Models\TemporaryOrder;
 use Barryvdh\DomPDF\Facade\PDF;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Models\TemporaryOrderDetail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class AdminOrderController extends Controller
 {
@@ -54,6 +55,14 @@ class AdminOrderController extends Controller
             $orderDetail->save();
         }
     
+        //update order id in transaction table 
+        if($temporaryOrder->payment_option == 'online'){
+            $transaction_data['order_id'] = $orderId;
+            $transaction_data['order_status'] = 1; // order accepted status
+            $transaction = Transaction::where('temp_order_id', $id)->first();
+            $transaction->update($transaction_data);    
+        }
+
         // Delete temporary order and details
         $temporaryOrder->delete();
         TemporaryOrderDetail::where('temporary_order_id', $id)->delete();
@@ -96,7 +105,13 @@ class AdminOrderController extends Controller
     public function reject($id)
     {
         $temporaryOrder = TemporaryOrder::findOrFail($id);
-        // Optionally, handle related transaction cleanup here
+
+        //update transaction table 
+        if($temporaryOrder->payment_option == 'online'){
+            $transaction_data['order_status'] = 2; // order rejected status;
+            $transaction = Transaction::where('temp_order_id', $id)->first();
+            $transaction->update($transaction_data);
+        }
 
         // Delete temporary order and details
         TemporaryOrderDetail::where('temporary_order_id', $id)->delete();
