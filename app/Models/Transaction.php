@@ -14,6 +14,8 @@ class Transaction extends Model
         'amount',
         'currency',
         'order_id',
+        'temp_order_id',
+        'order_status',
     ];
 }
 

@@ -32,6 +32,7 @@ function view_permission($page_name = null)
                 case 'categories':
                 case 'menu':
                 case 'orders':
+                case 'radius':
                     return true;
                 default:
                     return false;

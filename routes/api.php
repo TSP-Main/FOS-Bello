@@ -11,6 +11,8 @@ use App\Http\Controllers\TemporaryOrderController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
+
+Route::get('restaurant_detail', [APIController::class, 'restaurant_detail']);
 Route::get('categories', [APIController::class, 'categories']);
 Route::get('menu', [APIController::class, 'menu']);
 Route::get('products/{id?}', [APIController::class, 'products']);

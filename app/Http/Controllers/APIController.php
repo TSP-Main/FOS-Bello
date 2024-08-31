@@ -17,6 +17,24 @@ use App\Models\TemporaryOrderDetail;
 
 class APIController extends Controller
 {
+    public function restaurant_detail(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+
+        $data = [
+            'radius' => $responseData->company->radius,
+            'coordinates' => $responseData->company->coordinates,
+        ];
+
+        if($responseData->status == 'success'){
+            return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $data], 200);
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
     public function categories(Request $request): JsonResponse
     {
         try {

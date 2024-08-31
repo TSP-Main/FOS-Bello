@@ -65,9 +65,9 @@ class TemporaryOrderController extends Controller
                     Transaction::create([
                         'stripe_payment_intent_id' => $paymentIntent->id,
                         'amount' => $validatedData['cartTotal'],
-                        'currency' => 'usd',
+                        'currency' => 'gbp',
                         'status' => $paymentIntent->status,
-                        'order_id' => $temporaryOrderId,
+                        'temp_order_id' => $temporaryOrderId,
                     ]);
                 }
             }

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RestaurantSchedule;
+use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Models\RestaurantSchedule;
 use Illuminate\Support\Facades\Auth;
 
 class RestaurantScheduleController extends Controller
@@ -49,5 +50,34 @@ class RestaurantScheduleController extends Controller
         return redirect()->back()->with('success', 'Schedule updated successfully.');
 
         // return redirect()->route('users.list')->with('success', 'User created successfully');
+    }
+
+    public function create_radius()
+    {
+        $company_id = Auth::user()->company_id;
+        $response = Company::find($company_id);
+
+        $data['radius'] = $response->radius;
+        $data['coordinates'] = $response->coordinates;
+        
+        return view('radius.create', $data);
+    }
+
+    public function store_radius(Request $request)
+    {
+        $request->validate([
+            'radius' => 'required'
+        ]);
+
+        $company_id = Auth::user()->company_id;
+
+        $data['radius']         = $request->radius;
+        $data['coordinates']    = $request->coordinates;
+        $data['updated_by']     = Auth::id();
+
+        $company = Company::find($company_id);
+        $response = $company->update($data);
+
+        return redirect()->route('radius.create')->with('success', 'Delivery Radius Addedd Successfully!');
     }
 }
