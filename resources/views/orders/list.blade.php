@@ -100,7 +100,7 @@
                                                     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ $incomingOrder->id }}">
                                                         Approve
                                                     </button>
-                                                    <a href="{{ route('orders.reject', $incomingOrder->id) }}" class="btn btn-danger btn-sm">Reject</a>
+                                                    <a href="{{ route('orders.reject', $incomingOrder->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this order?');">Reject</a>
                                 
                                                 </td>
                                             </tr>
@@ -225,7 +225,7 @@
                                     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${order.id}">
                                         Approve
                                     </button>
-                                    <a href="/orders/reject/${order.id}" class="btn btn-danger btn-sm">Reject</a>
+                                    <a href="/orders/reject/${order.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this order?');">Reject</a>
                                 </td>
                             </tr>
                         `);
