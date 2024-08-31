@@ -4,6 +4,7 @@
 @section('content')
 <!-- Main content -->
 <section class="content">
+    {{-- software manager role --}}
     @if (Auth::user()->role == 1)
         <div class="row">
             <div class="col-xxxl-3 col-lg-6 col-12">
@@ -11,7 +12,7 @@
                     <div class="box-body">
                         <div class="d-flex align-items-start">
                             <div>
-                                <img src="{{ asset('assets/theme/images/food/online-order-1.png')}}" class="w-80 me-20" alt="" />
+                                <img src="{{ asset('assets/theme/images/dashboad_logo/total_companies.webp')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
                                 <h2 class="my-0 fw-700">{{ $totalCompanies }}</h2>
@@ -27,7 +28,7 @@
                     <div class="box-body">
                         <div class="d-flex align-items-start">
                             <div>
-                                <img src="{{ asset('assets/theme/images/food/online-order-2.png')}}" class="w-80 me-20" alt="" />
+                                <img src="{{ asset('assets/theme/images/dashboad_logo/total_active.webp')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
                                 <h2 class="my-0 fw-700">{{ $totalActive }}</h2>
@@ -43,7 +44,7 @@
                     <div class="box-body">
                         <div class="d-flex align-items-start">
                             <div>
-                                <img src="{{ asset('assets/theme/images/food/online-order-3.png')}}" class="w-80 me-20" alt="" />
+                                <img src="{{ asset('assets/theme/images/dashboad_logo/total_inactive.webp')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
                                 <h2 class="my-0 fw-700">{{ $totalInActive }}</h2>
@@ -59,7 +60,7 @@
                     <div class="box-body">
                         <div class="d-flex align-items-start">
                             <div>
-                                <img src="{{ asset('assets/theme/images/food/online-order-4.png')}}" class="w-80 me-20" alt="" />
+                                <img src="{{ asset('assets/theme/images/dashboad_logo/total_revenue.webp')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
                                 <h2 class="my-0 fw-700">$789k</h2>

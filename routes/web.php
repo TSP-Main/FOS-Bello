@@ -80,12 +80,13 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/detail/{id}', [OrderController::class, 'detail'])->name('orders.detail');
     Route::get('send', [OrderController::class, 'send_mail']);
     Route::get('orders/incoming', [OrderController::class, 'check_incoming_orders'])->name('orders.incoming');
+    Route::match(['get', 'post'], 'orders/update/{id}', [OrderController::class, 'update'])->name('orders.update');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 
-    Route::post('/orders/approve/{id}', [AdminOrderController::class, 'approve'])->name('orders.approve');
-    Route::get('/orders/reject/{id}', [AdminOrderController::class, 'reject'])->name('orders.reject');
-    Route::get('/admin/new-orders', [AdminOrderController::class, 'index'])->name('orders.noti');
+    // Route::post('/orders/approve/{id}', [AdminOrderController::class, 'approve'])->name('orders.approve');
+    // Route::get('/orders/reject/{id}', [AdminOrderController::class, 'reject'])->name('orders.reject');
+    // Route::get('/admin/new-orders', [AdminOrderController::class, 'index'])->name('orders.noti');
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');

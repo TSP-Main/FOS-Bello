@@ -58,8 +58,6 @@
 						</a>
 						<ul class="treeview-menu">
 						<li><a href="{{ route('orders.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
-						{{-- <li><a href="{{ route('orders.noti') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pending Orders</a></li> --}}
-						{{-- <li><a href="order_details.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order Details</a></li> --}}
 						</ul>
 					</li>
 				@endif
