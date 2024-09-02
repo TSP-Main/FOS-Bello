@@ -152,32 +152,19 @@
 					</li>
 				@endif
 
-				@if (view_permission('schedules'))
+				@if (view_permission('setup'))
 					<li class="treeview">
 						<a href="#">
 							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-							<span>Restaurant Schedule</span>
+							<span>Restaurant Setup</span>
 							<span class="pull-right-container">
 								<i class="fa fa-angle-right pull-right"></i>
 							</span>
 						</a>
 						<ul class="treeview-menu">
-						<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
-						</ul>
-					</li>
-				@endif
-
-				@if (view_permission('radius'))
-					<li class="treeview">
-						<a href="#">
-							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-							<span>Delivery Radius</span>
-							<span class="pull-right-container">
-								<i class="fa fa-angle-right pull-right"></i>
-							</span>
-						</a>
-						<ul class="treeview-menu">
-						<li><a href="{{ route('radius.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Radius</a></li>
+							<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
+							<li><a href="{{ route('radius.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Radius</a></li>
+							<li><a href="{{ route('timezone.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Set Timezone</a></li>
 						</ul>
 					</li>
 				@endif

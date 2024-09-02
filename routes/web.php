@@ -96,6 +96,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('radius', [RestaurantScheduleController::class, 'create_radius'])->name('radius.create');
     Route::post('radius/store', [RestaurantScheduleController::class, 'store_radius'])->name('radius.store');
 
+    // TimeZone
+    Route::get('timezone', [RestaurantScheduleController::class, 'create_timezone'])->name('timezone.create');
+    Route::post('timezone/store', [RestaurantScheduleController::class, 'store_timezone'])->name('timezone.store');
 });
 
    

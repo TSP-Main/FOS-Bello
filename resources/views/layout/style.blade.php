@@ -2,6 +2,8 @@
     
 <!-- Vendors Style-->
 <link rel="stylesheet" href="{{ asset('assets/theme/css/vendors_css.css')}}">
+
+<script src="{{ asset('assets/theme/assets/vendor_components/select2/dist/css/select2.css')}}"></script>
     
 <!-- Style-->  
 <link rel="stylesheet" href="{{ asset('assets/theme/css/style.css')}}">

@@ -169,9 +169,10 @@ class APIController extends Controller
 
         if($responseData->status == 'success'){
             $companyId = $responseData->company->id;
-            $schedule = RestaurantSchedule::where('company_id', $companyId)->get();
+            $data['schedule'] = RestaurantSchedule::where('company_id', $companyId)->get();
+            $data['timezone'] = Company::where('id', $companyId)->pluck('timezone');
 
-            return response()->json(['status' => 'success', 'message' => 'Schedule Found', 'data' => $schedule], 200);
+            return response()->json(['status' => 'success', 'message' => 'Schedule Found', 'data' => $data], 200);
         }
         else{
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
