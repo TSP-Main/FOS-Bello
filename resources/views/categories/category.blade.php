@@ -66,43 +66,12 @@
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<label class="fw-700 fs-16 form-label">Type</label>
-										<select class="form-select" id="type" name="type" data-placeholder="Choose a Category">
-											<option value="" disabled selected>Select Type</option> 
-											<option value="1">Category</option>
-											<option value="2">Sub Category</option>
-										</select>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-group">
-										<span>
-											<label class="fw-700 fs-16 form-label">Parent Category</label>
-											<select class="form-select" name="parent_id" id="parent_id" data-placeholder="Choose a Parent Category">
-												<option value="" disabled selected>Select Options</option> 
-												@foreach($categories as $category)
-													@if($category->type == 1)
-														<option value="{{ $category->id }}">{{ $category->name }}</option>
-													@endif
-												@endforeach
-											</select>
-										</span>
-									</div>
-								</div>    
-								<div class="col-md-6">
-									<div class="form-group">
 										<label class="fw-700 fs-16 form-label">Status</label>
 										<div class="radio-list">
 											<label class="radio-inline p-0 me-10">
 												<div class="radio radio-info">
 													<input type="radio" name="status" id="radio1" value="1">
 													<label for="radio1">Active</label>
-												</div>
-											</label>
-											<label class="radio-inline">
-												<div class="radio radio-info">
-													<input type="radio" name="status" id="radio2" value="2">
-													<label for="radio2">Unactive</label>
 												</div>
 											</label>
 											<label class="radio-inline">
@@ -161,23 +130,6 @@
 								previewImage(this, '#preview-image');
 							});
 
-							var typeSelect = document.getElementById('type');
-							var parentSelect = document.getElementById('parent_id');
-
-							// Initially disable the parent select if type is Category
-							if (typeSelect.value === '1') {
-								parentSelect.disabled = true;
-							}
-							// Add change event listener to the type select
-							typeSelect.addEventListener('change', function() {
-								if (this.value === '1') {
-									parentSelect.disabled = true;
-									parentSelect.value = ''; 
-								} else {
-									parentSelect.disabled = false;
-								}
-							}); 
-
 							// Function to preview selected image
 							function previewImage(input, previewId) {
 								var reader = new FileReader();
@@ -194,17 +146,6 @@
 								var inputId = $(this).siblings('.btn-info').children('input').attr('id');
 								$('#' + inputId).val(''); // Clear the file input
 								$(this).siblings('.preview-image').attr('src', '{{ asset('images/product-placeholder.png') }}'); // Reset preview image
-							});
-
-							// Form submission validation
-							$('#category-form').on('submit', function(event) {
-								var type = $('#type').val();
-								var parentId = $('#parent_id').val();
-								if (type === '2' && (!parentId || parentId === '')) {
-									event.preventDefault(); // Prevent form submission
-									var myModal = new bootstrap.Modal(document.getElementById('parentCategoryModal'));
-									myModal.show();
-								}
 							});
 						});
                    </script>

@@ -29,7 +29,7 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive rounded card-table">
-                            <table class="table border-no" id="example1">
+                            <table class="table border-no" id="options_table">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -59,4 +59,10 @@
     </section>
     <!-- /.content -->
 
+@endsection
+
+@section('script')
+    <script>
+        $('#options_table').dataTable();
+    </script>
 @endsection
