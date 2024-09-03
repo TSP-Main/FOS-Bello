@@ -14,6 +14,8 @@
 
 <script src="{{ asset('assets/theme/assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js')}}"></script>
 
+<script src="{{ asset('assets/theme/assets/vendor_components/datatable/datatables.min.js') }}"></script>
+
 <!-- Riday Admin App -->
 <script src="{{ asset('assets/theme/js/template.js') }}"></script>
 <script src="{{ asset('assets/theme/js/pages/dashboard.js') }}"></script>

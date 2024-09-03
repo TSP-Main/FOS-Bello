@@ -144,11 +144,14 @@ class APIController extends Controller
         if($responseData->status == 'success'){
             if($category){
                 $categoryDetail = Category::where('slug', $category)->where('status', 1)->first();
-                $companyId = $responseData->company->id;
-
-                $products = Product::with('category', 'images', 'options.option.option_values')->where('company_id', $companyId)->where('category_id', $categoryDetail->id)->where('is_enable', 1)->get();
-
-                return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products], 200);
+                if($categoryDetail){
+                    $companyId = $responseData->company->id;
+                    $products = Product::with('category', 'images', 'options.option.option_values')->where('company_id', $companyId)->where('category_id', $categoryDetail->id)->where('is_enable', 1)->get();
+                    return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products], 200);
+                }
+                else{
+                    return response()->json(['status' => 'error', 'message' => 'Category is disable', 'data' => ''], 404);
+                }
             }
             else{
                 return response()->json(['status' => 'error', 'message' => 'Kindly provide category', 'data' => ''], 404);
@@ -166,9 +169,10 @@ class APIController extends Controller
 
         if($responseData->status == 'success'){
             $companyId = $responseData->company->id;
-            $schedule = RestaurantSchedule::where('company_id', $companyId)->get();
+            $data['schedule'] = RestaurantSchedule::where('company_id', $companyId)->get();
+            $data['timezone'] = Company::where('id', $companyId)->pluck('timezone');
 
-            return response()->json(['status' => 'success', 'message' => 'Schedule Found', 'data' => $schedule], 200);
+            return response()->json(['status' => 'success', 'message' => 'Schedule Found', 'data' => $data], 200);
         }
         else{
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);

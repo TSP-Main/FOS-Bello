@@ -51,42 +51,12 @@
                                 <!--/span-->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Type</label>
-                                        <select class="form-select" id="type" name="type" data-placeholder="Choose a Category">
-                                            <option value="1" {{ old('type', $category->type) == 1 ? 'selected' : '' }}>Category</option>
-                                            <option value="2" {{ old('type', $category->type) == 2 ? 'selected' : '' }}>Sub Category</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <span>
-                                            <label class="fw-700 fs-16 form-label">Parent Category</label>
-                                            <select class="form-select" name="parent_id" id="parent_id" data-placeholder="Choose a Parent Category">
-                                                <option value="" disabled selected>Select Options</option>
-                                                @foreach($categories as $cat)
-                                                    @if($cat->type == 1)
-                                                        <option value="{{ $cat->id }}" {{ old('parent_id', $category->parent_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
                                         <label class="fw-700 fs-16 form-label">Status</label>
                                         <div class="radio-list">
                                             <label class="radio-inline p-0 me-10">
                                                 <div class="radio radio-info">
                                                     <input type="radio" name="status" id="radio1" value="1" {{ old('status', $category->status) == 1 ? 'checked' : '' }}>
                                                     <label for="radio1">Active</label>
-                                                </div>
-                                            </label>
-                                            <label class="radio-inline">
-                                                <div class="radio radio-info">
-                                                    <input type="radio" name="status" id="radio2" value="2" {{ old('status', $category->status) == 2 ? 'checked' : '' }}>
-                                                    <label for="radio2">Inactive</label>
                                                 </div>
                                             </label>
                                             <label class="radio-inline">
@@ -153,23 +123,6 @@
                             $('#background_image').on('change', function() {
                                 previewImage(this, '#preview-image');
                             });
-                        
-                            var typeSelect = document.getElementById('type');
-                            var parentSelect = document.getElementById('parent_id');
-    
-                            // Initially disable the parent select if type is Category
-                            if (typeSelect.value === '1') {
-                                parentSelect.disabled = true;
-                            }
-                            // Add change event listener to the type select
-                            typeSelect.addEventListener('change', function() {
-                                if (this.value === '1') {
-                                    parentSelect.disabled = true;
-                                    parentSelect.value = ''; 
-                                } else {
-                                    parentSelect.disabled = false;
-                                }
-                            }); 
     
                             // Function to preview selected image
                             function previewImage(input, previewId) {

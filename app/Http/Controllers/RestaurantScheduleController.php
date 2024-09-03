@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTimeZone;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\RestaurantSchedule;
@@ -79,5 +80,33 @@ class RestaurantScheduleController extends Controller
         $response = $company->update($data);
 
         return redirect()->route('radius.create')->with('success', 'Delivery Radius Addedd Successfully!');
+    }
+
+    public function create_timezone()
+    {
+        $company_id = Auth::user()->company_id;
+        $response = Company::find($company_id);
+
+        $data['timezone'] = $response->timezone;
+        $data['timezonesList'] = DateTimeZone::listIdentifiers();
+        
+        return view('companies.timezone', $data);
+    }
+
+    public function store_timezone(Request $request)
+    {
+        $request->validate([
+            'timezone' => 'required'
+        ]);
+
+        $company_id = Auth::user()->company_id;
+
+        $data['timezone'] = $request->timezone;
+        $data['updated_by'] = Auth::id();
+
+        $company = Company::find($company_id);
+        $response = $company->update($data);
+
+        return redirect()->route('timezone.create')->with('success', 'Set Timezone Successfully!');
     }
 }

@@ -50,8 +50,6 @@
         </div>
     </div>
 
-
-
     <!-- Main content -->
     <section class="content">
 
@@ -66,6 +64,9 @@
                 <ul class="nav nav-tabs customtab2" role="tablist">
                     <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#incomingOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Incoming</span></a> </li>
                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#acceptedOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Accepted</span></a> </li>
+                    <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#deliveredOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Delivered</span></a> </li>
+                    <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#rejectedOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Rejected</span></a> </li>
+                    <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#canceledOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Canceled</span></a> </li>
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content">
@@ -97,11 +98,18 @@
                                                 <td>{{ $incomingOrder->order_type }}</td>
                                                 <td>{{ $incomingOrder->payment_option }}</td>
                                                 <td>
-                                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ $incomingOrder->id }}">
-                                                        Approve
-                                                    </button>
-                                                    <a href="{{ route('orders.reject', $incomingOrder->id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this order?');">Reject</a>
-                                
+                                                    <div class="btn-group">
+                                                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                                        <div class="dropdown-menu">
+                                                          <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($incomingOrder->id) }}">Accept Order</a>
+                                                          {{-- <a class="dropdown-item" href="{{ route('orders.update', base64_encode($incomingOrder->id)) }}" onclick="return confirm('Are you sure you want to reject this order?');">Reject Order</a> --}}
+                                                          <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('reject-order-form-{{ $incomingOrder->id }}').submit();">Reject Order</a>
+                                                            <form id="reject-order-form-{{ $incomingOrder->id }}" action="{{ route('orders.update', base64_encode($incomingOrder->id)) }}" method="POST" style="display: none;">
+                                                                @csrf
+                                                                <input type="hidden" name="reject" value="1">
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -123,31 +131,127 @@
                                             <th>Customer Name</th>
                                             <th>Location</th>
                                             <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($acceptedOrders as $acceptedOrder)
+                                            <tr class="hover-primary">
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($acceptedOrder->id) ]) }}" target="_blank"> #{{ $acceptedOrder->id }} </a></td>
+                                                <td>{{ $acceptedOrder->created_at }}</td>
+                                                <td>{{ $acceptedOrder->name }}</td>
+                                                <td>{{ $acceptedOrder->address ?? NULL}}</td>
+                                                <td>£{{ $acceptedOrder->total}}</td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();">Delivered</a>
+                                                            <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
+                                                                @csrf
+                                                                <input type="hidden" name="deliver" value="1">
+                                                            </form>
+                                                            
+                                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('cancel-order-form-{{ $acceptedOrder->id }}').submit();">Cancel</a>
+                                                            <form id="cancel-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
+                                                                @csrf
+                                                                <input type="hidden" name="cancel" value="1">
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivered Orderes Tab -->
+                    <div class="tab-pane" id="deliveredOrdersTab" role="tabpanel">
+                        <div class="p-15">
+                            <div class="table-responsive rounded card-table">
+                                <table class="table border-no" id="deliveredOrdersTab">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Customer Name</th>
+                                            <th>Location</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($deliveredOrders as $deliveredOrder)
+                                            <tr class="hover-primary">
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($deliveredOrder->id) ]) }}" target="_blank"> #{{ $deliveredOrder->id }} </a></td>
+                                                <td>{{ $deliveredOrder->created_at }}</td>
+                                                <td>{{ $deliveredOrder->name }}</td>
+                                                <td>{{ $deliveredOrder->address ?? NULL}}</td>
+                                                <td>£{{ $deliveredOrder->total}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rejected Orders Tab -->
+                    <div class="tab-pane" id="rejectedOrdersTab" role="tabpanel">
+                        <div class="p-15">
+                            <div class="table-responsive rounded card-table">
+                                <table class="table border-no" id="rejectedOrdersTab">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Customer Name</th>
+                                            <th>Location</th>
+                                            <th>Amount</th>
                                             {{-- <th>Status Order</th> --}}
                                             {{-- <th></th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($orders as $order)
+                                        @foreach ($rejectedOrders as $rejectedOrder)
                                             <tr class="hover-primary">
-                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($order->id) ]) }}" target="_blank"> #{{ $order->id }} </a></td>
-                                                {{-- <td>14 April 2021,<span class="fs-12"> 03:13 AM</span></td> --}}
-                                                <td>{{ $order->created_at }}</td>
-                                                <td>{{ $order->name }}</td>
-                                                <td>{{ $order->address ?? NULL}}</td>
-                                                <td>£{{ $order->total}}</td>
-                                                {{-- <td>												
-                                                    <span class="badge badge-pill badge-primary-light">Delivery</span>
-                                                </td> --}}
-                                                {{-- <td>												
-                                                    <div class="btn-group">
-                                                    <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">Accept Order</a>
-                                                        <a class="dropdown-item" href="#">Reject Order</a>
-                                                    </div>
-                                                    </div>
-                                                </td> --}}
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($rejectedOrder->id) ]) }}" target="_blank"> #{{ $rejectedOrder->id }} </a></td>
+                                                <td>{{ $rejectedOrder->created_at }}</td>
+                                                <td>{{ $rejectedOrder->name }}</td>
+                                                <td>{{ $rejectedOrder->address ?? NULL}}</td>
+                                                <td>£{{ $rejectedOrder->total}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canceled Orders Tab -->
+                    <div class="tab-pane" id="canceledOrdersTab" role="tabpanel">
+                        <div class="p-15">
+                            <div class="table-responsive rounded card-table">
+                                <table class="table border-no" id="canceledOrdersTab">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Customer Name</th>
+                                            <th>Location</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($canceledOrders as $canceledOrder)
+                                            <tr class="hover-primary">
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($canceledOrder->id) ]) }}" target="_blank"> #{{ $canceledOrder->id }} </a></td>
+                                                <td>{{ $canceledOrder->created_at }}</td>
+                                                <td>{{ $canceledOrder->name }}</td>
+                                                <td>{{ $canceledOrder->address ?? NULL}}</td>
+                                                <td>£{{ $canceledOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -162,36 +266,11 @@
 
     </section>
     <!-- /.content -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-<script>
-
-    // // Polling interval in milliseconds (e.g., every 30 seconds)
-    // const POLLING_INTERVAL = 30000;
-
-    // function checkForNewOrders() {
-    //     fetch('/admin/new-orders')
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             if (data.length > 0) {
-    //                 data.forEach(order => {
-    //                     toastr.info(`New temporary order #${order.id} placed.`);
-    //                 });
-    //             }
-    //         })
-    //         .catch(error => console.error('Error fetching new orders:', error));
-    // }
-
-    // // Set up polling
-    // setInterval(checkForNewOrders, POLLING_INTERVAL);
-
-    // // Optionally, check for new orders immediately on page load
-    // document.addEventListener('DOMContentLoaded', checkForNewOrders);
-</script>
-
-
+    
 @endsection
 
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var orderApprovalModal = document.getElementById('orderApprovalModal');
@@ -200,7 +279,7 @@
                 var orderId = button.getAttribute('data-order-id');
         
                 var form = document.getElementById('approveOrderForm');
-                form.action = '/orders/approve/' + orderId;
+                form.action = '/orders/update/' + orderId;
             });
         });
         
@@ -209,7 +288,6 @@
                 url: "{{ route('orders.incoming') }}",
                 method: 'GET',
                 success: function(response) {
-                    console.log(response.incomingOrders)
                     $('#incomingOrders tbody').html('');
                     response.incomingOrders.forEach(order => {
                         $('#incomingOrders tbody').append(`
@@ -217,15 +295,18 @@
                                 <td>${order.id}</td>
                                 <td>${order.name}</td>
                                 <td>${order.phone}</td>
-                                <td>${order.address}</td>
+                                <td>${order.address ? order.address : ''}</td>
                                 <td>£${order.total}</td>
                                 <td>${order.order_type}</td>
                                 <td>${order.payment_option}</td>
                                 <td>
-                                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${order.id}">
-                                        Approve
-                                    </button>
-                                    <a href="/orders/reject/${order.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this order?');">Reject</a>
+                                    <div class="btn-group">
+                                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="btoa(${order.id})">Accept Order</a>
+                                            <a class="dropdown-item" href="/orders/update/${btoa(order.id)}" onclick="return confirm('Are you sure you want to reject this order?');">Reject Order</a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         `);

@@ -1,4 +1,9 @@
 <?php
+define('ACCEPTED', 1);
+define('REJECTED', 2);
+define('DELIVERED', 3);
+define('CANCELED', 4);
+
 
 return [
     'SOFTWARE_MANAGER' => 1,
@@ -30,5 +35,17 @@ return [
     'PRODUCT_OPTIONS_TYPE' => [
         1 => 'Radio',
         2 => 'Checkbox',
+    ],
+
+    'ACCEPTED' => ACCEPTED,
+    'REJECTED' => REJECTED,
+    'DELIVERED' => DELIVERED,
+    'CANCELED' => CANCELED,
+
+    'ORDER_STATUS' => [
+        ACCEPTED => 'Accepted',
+        REJECTED => 'Rejected',
+        DELIVERED => 'Delivered',
+        CANCELED => 'Canceled',
     ],
 ];
