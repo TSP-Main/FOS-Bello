@@ -7,6 +7,7 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 use App\Models\RestaurantSchedule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class RestaurantScheduleController extends Controller
 {
@@ -58,25 +59,38 @@ class RestaurantScheduleController extends Controller
         $company_id = Auth::user()->company_id;
         $response = Company::find($company_id);
 
+        $data['address'] = $response->address;
+        $data['city'] = $response->city;
+        $data['postcode'] = $response->postcode;
         $data['radius'] = $response->radius;
-        $data['coordinates'] = $response->coordinates;
+        $data['latitude'] = $response->latitude;
+        $data['longitude'] = $response->longitude;
         
-        return view('radius.create', $data);
+        return view('radius.create2', $data);
     }
 
     public function store_radius(Request $request)
     {
         $request->validate([
-            'radius' => 'required'
+            'address'   => 'required|string',
+            'city'      => 'required|string',
+            'postcode'  => 'required|string',
+            'radius'    => 'required|numeric',
+            'latitude'  => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $company_id = Auth::user()->company_id;
 
-        $data['radius']         = $request->radius;
-        $data['coordinates']    = $request->coordinates;
-        $data['updated_by']     = Auth::id();
+        $data['address'] = $request->address;
+        $data['city'] = $request->city;
+        $data['postcode'] = $request->postcode;
+        $data['radius'] = $request->radius;
+        $data['latitude'] = $request->latitude;
+        $data['longitude'] = $request->longitude;
+        $data['updated_by'] = Auth::id();
 
-        $company = Company::find($company_id);
+        $company = Company::find($company_id);DB::enableQueryLog();
         $response = $company->update($data);
 
         return redirect()->route('radius.create')->with('success', 'Delivery Radius Addedd Successfully!');
