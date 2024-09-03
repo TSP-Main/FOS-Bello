@@ -26,13 +26,13 @@ function view_permission($page_name = null)
             switch ($page_name) {
                 case 'dashboard':
                 case 'users':
-                case 'schedules':
+                case 'setup':
                 case 'products':
                 case 'options':
                 case 'categories':
                 case 'menu':
                 case 'orders':
-                case 'radius':
+                // case 'radius':
                     return true;
                 default:
                     return false;
@@ -41,7 +41,7 @@ function view_permission($page_name = null)
         case 3: // Company Shop Admin
             switch ($page_name) {
                 case 'dashboard':
-                case 'schedules':
+                case 'setup':
                     return true;
                 default:
                     return false;

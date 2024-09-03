@@ -49,16 +49,17 @@ class DashboardController extends Controller
     public function make_dashboard_data($orders)
     {
         $totalOrders = count($orders);
-        $totalRevenue = $orders->sum('total');
 
         $totalDelivered  = $orders->filter(function ($value) {
-            return $value->is_delivered == 1;
+            return $value->order_status == config('constants.DELIVERED');
         });
 
         $totalCancelled  = $orders->filter(function ($value) {
-            return $value->is_cancelled == 1;
+            return $value->order_status == config('constants.CANCELED');
         });
         // $data['totalCancelled'] = count($totalCancelled);
+
+        $totalRevenue = $totalDelivered->sum('total');
 
         return [
             'totalOrders' => $totalOrders,

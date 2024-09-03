@@ -38,7 +38,7 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive rounded card-table">
-                            <table class="table border-no" id="example1">
+                            <table class="table border-no" id="users_table">
                                 <thead>
                                     <tr>
                                         <th>Full Name</th>
@@ -70,4 +70,10 @@
     </section>
     <!-- /.content -->
 
+@endsection
+
+@section('script')
+    <script>
+        $('#users_table').dataTable();
+    </script>
 @endsection
