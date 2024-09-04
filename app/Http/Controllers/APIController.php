@@ -23,8 +23,13 @@ class APIController extends Controller
         $responseData = $response->getData();
 
         $data = [
+            'address' => $responseData->company->address,
+            'apartment' => $responseData->company->apartment,
+            'city' => $responseData->company->city,
+            'postcode' => $responseData->company->postcode,
             'radius' => $responseData->company->radius,
-            'coordinates' => $responseData->company->coordinates,
+            'latitude' => $responseData->company->latitude,
+            'longitude' => $responseData->company->longitude,
         ];
 
         if($responseData->status == 'success'){
