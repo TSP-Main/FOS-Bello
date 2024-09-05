@@ -11,6 +11,17 @@ class Company extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name', 'email', 'address' , 'status', 'subscription_date', 'radius', 'coordinates', 'updated_by', 'timezone'
+        'name', 
+        'email', 
+        'status', 
+        'subscription_date', 
+        'updated_by', 
+        'timezone',
+        'address',
+        'city',
+        'postcode',
+        'radius',
+        'latitude',
+        'longitude',
     ];
 }
