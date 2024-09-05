@@ -61,19 +61,17 @@
                         <table class="table product-overview">
                             <thead>
                                 <tr>
-                                    <th>Item</th>
-                                    <th style="min-width: 200px;">Product info</th>
+                                    <th style="min-width: 200px;">Product Title</th>
                                     <th>Special Inctruction</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th style="text-align:center">Total</th>
-                                    <th style="text-align:center">Action</th>
+                                    {{-- <th style="text-align:center">Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($orderDetails->details as $item)
                                     <tr>
-                                        <td><img src="../images/product/product-1.png" alt="" width="80"></td>
                                         <td>
                                             {{-- <h6>MAIN COURSE</h6> --}}
                                             <h4>{{ $item->product_title }}</h4>
@@ -83,7 +81,7 @@
                                         <td>£{{ $item->sub_total / $item->quantity }}</td>
                                         <td width="70">{{ $item->quantity }}</td>
                                         <td width="100" align="center" class="fw-900">£{{ $item->sub_total }}</td>
-                                        <td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-primary btn-xs" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash"></i></a></td>
+                                        {{-- <td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-primary btn-xs" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash"></i></a></td> --}}
                                     </tr>	
                                 @endforeach															
                             </tbody>
