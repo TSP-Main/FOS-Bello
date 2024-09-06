@@ -303,7 +303,7 @@
                                     <div class="btn-group">
                                         <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="btoa(${order.id})">Accept Order</a>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${btoa(order.id)}">Accept Order</a>
                                             <a class="dropdown-item" href="/orders/update/${btoa(order.id)}" onclick="return confirm('Are you sure you want to reject this order?');">Reject Order</a>
                                         </div>
                                     </div>

@@ -189,7 +189,7 @@ class OrderController extends Controller
                 $orderDetail->product_price = $orderItem['productPrice'];
                 $orderDetail->quantity      = $orderItem['quantity'];
                 $orderDetail->sub_total     = $orderItem['rowTotal'];
-                $orderDetail->options       = implode(',', $orderItem['optionNames']);
+                $orderDetail->options       = $orderItem['optionNames'] ? implode(',', $orderItem['optionNames']) : NULL;
                 $orderDetail->item_instruction = $orderItem['productInstruction'];
 
                 $orderDetail->save();
