@@ -111,6 +111,17 @@
 										<button class="btn btn-danger delete-file mb-20">Delete</button>
 									</div>
 								</div>
+								<div class="col-md-6">
+									<h4 class="box-title mt-20">Uploaded Banner</h4>
+									<div class="product-img text-start">
+										<img id="preview-banner" src="{{ asset('images/product-placeholder.png') }}" alt="" class="mb-15 preview-image">
+										<p>Upload Banner</p>
+										<div class="btn btn-info mb-20">
+											<input type="file" class="upload" id="banner_image" name="banner_image">
+										</div>
+										<button class="btn btn-danger delete-file mb-20">Delete</button>
+									</div>
+								</div>
 								<div class="form-actions mt-10">
 									<button type="submit" class="btn btn-primary"> <i class="fa fa-check"></i> Save / Add</button>
 								</div>
@@ -128,6 +139,11 @@
 							// Handle background_image input change
 							$('#background_image').on('change', function() {
 								previewImage(this, '#preview-image');
+							});
+
+							// Handle banner_image input change
+							$('#banner_image').on('change', function() {
+								previewImage(this, '#preview-banner');
 							});
 
 							// Function to preview selected image

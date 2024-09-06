@@ -152,7 +152,7 @@ class APIController extends Controller
                 if($categoryDetail){
                     $companyId = $responseData->company->id;
                     $products = Product::with('category', 'images', 'options.option.option_values')->where('company_id', $companyId)->where('category_id', $categoryDetail->id)->where('is_enable', 1)->get();
-                    return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products], 200);
+                    return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products, 'categoryDetail' => $categoryDetail], 200);
                 }
                 else{
                     return response()->json(['status' => 'error', 'message' => 'Category is disable', 'data' => ''], 404);
