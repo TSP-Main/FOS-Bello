@@ -19,6 +19,8 @@ use App\Http\Controllers\NotificationController;
 Auth::routes();
 
 Route::get('/', [HomeController::class, 'index']);
+Route::post('signup', [HomeController::class, 'register'])->name('register.self');
+
 Route::group(['middleware' => ['auth']], function(){
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboad');
     Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
