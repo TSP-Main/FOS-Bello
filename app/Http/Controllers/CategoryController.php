@@ -38,6 +38,7 @@ class CategoryController extends Controller
             'status' => 'required|in:1,3', 
             'icon_file' => 'nullable|max:2048', 
             'background_image' => 'nullable|max:2048', 
+            'banner_image' => 'nullable|max:2048', 
         ]);
     
         $category = new Category();
@@ -53,6 +54,12 @@ class CategoryController extends Controller
         if ($request->hasFile('background_image')) {
             $path = $request->file('background_image')->store('public/backgrounds');
             $category->background_image = str_replace('public/', '', $path);
+        }
+
+        // Handle banner_image upload
+        if ($request->hasFile('banner_image')) {
+            $path = $request->file('banner_image')->store('public/banners');
+            $category->banner_image = str_replace('public/', '', $path);
         }
     
         $category->created_by = Auth::id(); 
@@ -89,6 +96,7 @@ class CategoryController extends Controller
             'status' => 'required|in:1,3',
             'icon_file' => 'nullable|file|image|max:2048',
             'background_image' => 'nullable|file|image|max:2048',
+            'banner_image' => 'nullable|file|image|max:2048',
         ]);
     
         $category = Category::findOrFail($id);
@@ -104,6 +112,12 @@ class CategoryController extends Controller
         if ($request->hasFile('background_image')) {
             $path = $request->file('background_image')->store('public/backgrounds');
             $category->background_image = str_replace('public/', '', $path);
+        }
+
+        // Handle banner_image upload
+        if ($request->hasFile('banner_image')) {
+            $path = $request->file('banner_image')->store('public/banners');
+            $category->banner_image = str_replace('public/', '', $path);
         }
     
         $category->updated_by = Auth::id();
