@@ -81,6 +81,9 @@
 									  </div>
 								</form>	
 								<div class="text-center">
+									<p class="mt-15 mb-0">Don't have an account? <a href="/register" class="text-warning ms-5">Sign Up</a></p>
+								</div>
+								<div class="text-center">
 									<p class="mt-15 mb-0">© 2024 <a href="https://techsolutionspro.co.uk/" target="_blank" class="ms-5 text-bold" style="color: #1eabae">Tech Solutions Pro</a>. All Rights Reserved.</p>
 								</div>	
 							</div>						
