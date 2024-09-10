@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         $data = [];
         if(Auth::user()->role == 1){
-            $companies = Company::where('is_enable', 1)->get();
+            $companies = Company::where('status', 1)->get();
 
             $data['totalCompanies'] = count($companies);
             

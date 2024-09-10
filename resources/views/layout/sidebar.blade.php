@@ -74,6 +74,7 @@
 						<ul class="treeview-menu">
 						  <li><a href="{{ route('companies.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add New</a></li>
 						  <li><a href="{{ route('companies.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>List</a></li>
+						  <li><a href="{{ route('companies.incoming.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Incoming Request</a></li>
 						</ul>
 					</li>
 				@endif

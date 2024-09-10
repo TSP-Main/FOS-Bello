@@ -33,11 +33,12 @@
 								<a href="/"><img src="{{ asset('assets/theme/images/bello_logo.png') }}" alt="" width="100px" height="100px"></a>
 								<h2 class="text-primary">Let's Get Started</h2>
 								<p class="mb-0">Sign in to continue to Food Ordering System.</p>
-                                @if (session('success'))
-                                    <div class="alert alert-success">
-                                        {{ session('success') }}
-                                    </div>
-                                @endif							
+								@if (session('success'))
+									<div class="alert alert-success alert-dismissible fade show" role="alert">
+										{{ session('success') }}
+										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>
+								@endif						
 							</div>
 							<div class="p-40">
 								<form action="{{ route('register.self') }}" method="post">
@@ -100,6 +101,9 @@
                                         </div>
                                     </div>
 								</form>	
+								<div class="text-center">
+									<p class="mt-15 mb-0">Already have an account?<a href="/login" class="text-danger ms-5"> Sign In</a></p>
+								</div>
 								<div class="text-center">
 									<p class="mt-15 mb-0">© 2024 <a href="https://techsolutionspro.co.uk/" target="_blank" class="ms-5 text-bold" style="color: #1eabae">Tech Solutions Pro</a>. All Rights Reserved.</p>
 								</div>	

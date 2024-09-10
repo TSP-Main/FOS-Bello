@@ -11,7 +11,7 @@ class CompanyController extends Controller
 {
     public function index()
     {
-        $data['companies'] = Company::where('is_enable', 1)->get();
+        $data['companies'] = Company::where('status', 1)->get();
         return view('companies.list', $data);
     }
 
@@ -98,5 +98,23 @@ class CompanyController extends Controller
         $company->save();
 
         return response()->json(['success' => true, 'newToken' => $newToken]);
+    }
+
+    public function incoming_request()
+    {
+        $data['requests'] = Company::where('status', 2)->get();
+        return view('companies.incoming_request', $data);
+    }
+
+    public function incoming_request_action($id)
+    {
+        $id = base64_decode($id);
+
+        $company = Company::find($id);
+        $company['status'] = 1;
+        $company['updated_by'] = Auth::user()->id;
+        $response = $company->update();
+        
+        return redirect()->route('companies.list')->with('success', 'New Restaurant Added');
     }
 }
