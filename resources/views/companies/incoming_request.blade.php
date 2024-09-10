@@ -35,38 +35,77 @@
             <strong>Error!</strong> {{ session()->get('error')}}
         </div>
     @endif
-    <div class="row">
-        <div class="col-12">
-            <div class="box">
-                <div class="box-body">
-                    <div class="table-responsive rounded card-table">
-                        <table class="table border-no" id="example1">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Owner Name</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($requests as $request)
+
+    <div class="col-12">
+        <div class="box">
+          <div class="box-header with-border">
+            <h4 class="box-title">Requests Tab</h4>
+          </div>
+          <!-- /.box-header -->
+          <div class="box-body">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs customtab2" role="tablist">
+                <li class="nav-item"> <a class="nav-link active" data-bs-toggle="tab" href="#incomingRequestTab" role="tab"><span class="hidden-sm-up"><i class="ion-home"></i></span> <span class="hidden-xs-down">Incoming Request</span></a> </li>
+                <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#rejectedRequestTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Rejected Request</span></a> </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!-- incoming orders tab -->
+                <div class="tab-pane active" id="incomingOrdersTab" role="tabpanel">
+                    <div class="p-15">
+                        <div class="table-responsive rounded card-table">
+                            <table class="table border-no" id="incomingOrders">
+                                <thead>
                                     <tr>
-                                        <td>{{ $request->name}}</td>
-                                        <td>{{ $request->email }}</td>
-                                        <td>{{ $request->phone}}</td>
-                                        <td>{{ $request->owner_name}}</td>
-                                        <td> 
-                                            <a class="btn btn-primary" href="{{ route('companies.incoming.action', base64_encode($request->id)) }}" onclick="return confirmAction()">Accept</a>
-                                        </td>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Owner Name</th>
+                                        <th>Actions</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($requests as $request)
+                                        <tr>
+                                            <td>{{ $request->name}}</td>
+                                            <td>{{ $request->email }}</td>
+                                            <td>{{ $request->phone}}</td>
+                                            <td>{{ $request->owner_name}}</td>
+                                            <td> 
+                                                <a class="btn btn-primary" href="{{ route('companies.incoming.action', base64_encode($request->id)) }}" onclick="return confirmAction()">Accept</a>
+                                                <a class="btn btn-danger" href="" onclick="return confirmAction()">Reject</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accepted Orders Tab -->
+                <div class="tab-pane" id="acceptedOrdersTab" role="tabpanel">
+                    <div class="p-15">
+                        <div class="table-responsive rounded card-table">
+                            <table class="table border-no" id="acceptedOrders">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Owner Name</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+          </div>
         </div>
     </div>
 </section>
