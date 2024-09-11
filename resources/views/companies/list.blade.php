@@ -76,7 +76,7 @@
                                     </form>
                                     <div id="message" style="display:none; color: green;">Token refreshed</div>
                                 </td>
-                                <td>{{ $company->subscription_date}}</td>
+                                <td>{{ $company->expiry_date}}</td>
                                 <td>{{ $company->accepted_date}}</td>
                                 <td> <a class="btn btn-primary" href="{{ route('companies.edit', base64_encode($company->id)) }}">Edit</a>
                                 </td>

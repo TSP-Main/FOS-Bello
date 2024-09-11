@@ -172,7 +172,7 @@
                                         {{-- <img src="{{ asset('assets/theme/images/avatar/4.jpg')}}" class="w-40 h-40 me-10 rounded100" alt=""> --}}
                                         <div>
                                             <p class="mb-0">{{ $latestSubscription->name }} </p>
-                                            <p class="mb-0"><small class="text-mute">Subscription End Date {{ $latestSubscription->subscription_date }}</small></p>
+                                            <p class="mb-0"><small class="text-mute">Subscription End Date {{ $latestSubscription->expiry_date }}</small></p>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center">

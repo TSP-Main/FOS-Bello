@@ -14,7 +14,7 @@ class Company extends Model
         'name', 
         'email', 
         'status', 
-        'subscription_date', 
+        'expiry_date', 
         'updated_by', 
         'timezone',
         'address',

@@ -27,7 +27,7 @@ class CompanyController extends Controller
             'name'      => 'required',
             'email'     => 'required|email',
             'address'   => 'required',
-            'subscription_date' => 'required',
+            'expiry_date' => 'required',
             'status' => 'required|in:1,2',
         ]);
 
@@ -37,7 +37,7 @@ class CompanyController extends Controller
         $company->name       = $request->name;
         $company->email      = $request->email;
         $company->address    = $request->address;
-        $company->subscription_date = $request->subscription_date;
+        $company->expiry_date = $request->expiry_date;
         $company->status     = $request->status;
         $company->token      = $token;
         $company->created_by = Auth::user()->id;
@@ -60,7 +60,7 @@ class CompanyController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             // 'address' => 'required',
-            'subscription_date' => 'required',
+            'expiry_date' => 'required',
             'status' => 'required'
         ]);
 
@@ -68,7 +68,7 @@ class CompanyController extends Controller
             $data['name'] = $request->name;
             $data['email'] = $request->email;
             // $data['address'] = $request->address;
-            $data['subscription_date'] = $request->subscription_date;
+            $data['expiry_date'] = $request->expiry_date;
             $data['status'] = $request->status;
             $data['updated_by'] = Auth::id();
 
