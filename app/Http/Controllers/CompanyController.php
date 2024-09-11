@@ -7,12 +7,14 @@ use App\Models\Company;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
     public function index()
     {
-        $data['companies'] = Company::where('status', 1)->get();
+        $data['companies'] = Company::whereIn('status', [1,2])->get();
+
         return view('companies.list', $data);
     }
 
@@ -167,5 +169,16 @@ class CompanyController extends Controller
         }
         
         return redirect()->route('companies.incoming.list')->with('error', 'Data not correct');
+    }
+
+    public function check_expiry()
+    {
+        // update company status to in active when expriy date end
+        $today = Carbon::today();
+        Company::where('expiry_date', '<=', $today->toDateString())
+            ->where('status', config('constants.ACTIVE_RESTAURANT'))
+            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT')]);
+
+        return response()->json(['message' => 'Expired restaurants updated to inactive.']);
     }
 }

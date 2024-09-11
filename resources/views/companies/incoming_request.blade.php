@@ -55,7 +55,7 @@
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <!-- incoming orders tab -->
+                <!-- incoming requests tab -->
                 <div class="tab-pane active" id="incomingRequestTab" role="tabpanel">
                     <div class="p-15">
                         <div class="table-responsive rounded card-table">
@@ -97,7 +97,7 @@
                     </div>
                 </div>
 
-                <!-- Accepted Orders Tab -->
+                <!-- rejected requests Tab -->
                 <div class="tab-pane" id="rejectedRequestTab" role="tabpanel">
                     <div class="p-15">
                         <div class="table-responsive rounded card-table">

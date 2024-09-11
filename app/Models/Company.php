@@ -24,4 +24,14 @@ class Company extends Model
         'latitude',
         'longitude',
     ];
+
+    public function getFormattedExpiryDateAttribute()
+    {
+        return \Carbon\Carbon::parse($this->attributes['expiry_date'])->format('d-m-Y');
+    }
+
+    public function getFormattedAcceptedDateAttribute()
+    {
+        return \Carbon\Carbon::parse($this->attributes['accepted_date'])->format('d-m-Y');
+    }
 }

@@ -105,6 +105,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('timezone/store', [RestaurantScheduleController::class, 'store_timezone'])->name('timezone.store');
 });
 
+Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
+
    
 
 
