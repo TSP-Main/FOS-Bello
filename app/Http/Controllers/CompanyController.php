@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Models\Company;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -40,6 +41,7 @@ class CompanyController extends Controller
         $company->status     = $request->status;
         $company->token      = $token;
         $company->created_by = Auth::user()->id;
+        $company->accepted_date = Carbon::now();
         $response = $company->save();
 
         return redirect()->route('companies.list')->with('success', 'Company created successfully');
@@ -100,21 +102,70 @@ class CompanyController extends Controller
         return response()->json(['success' => true, 'newToken' => $newToken]);
     }
 
+    public function register(Request $request)
+    {
+        // Register restaurant by self on landing page
+        $this->validate($request, [
+            'owner_name' => 'required',
+            'restaurant_name' => 'required',
+            'email'   => 'required|email',
+            'phone' => 'required',
+        ]);
+
+        $company = new Company();
+        $company->owner_name = $request->owner_name;
+        $company->name = $request->restaurant_name;
+        $company->email = $request->email;
+        $company->phone = $request->phone;
+        $company->status = config('constants.INCOMING_RESTAURANT');
+        $response = $company->save();
+
+        return redirect()->route('register')->with('success', 'Signup successfully! We will contact you soon');
+    }
+
     public function incoming_request()
     {
-        $data['requests'] = Company::where('status', 2)->get();
+        $requests = Company::get();
+        
+        $data['incomingRequests'] = $requests->filter(function ($value){
+            return $value->status == config('constants.INCOMING_RESTAURANT');
+        });
+
+        $data['rejectedRequests'] = $requests->filter(function ($value){
+            return $value->status == config('constants.REJECTED_RESTAURANT');
+        });
+
         return view('companies.incoming_request', $data);
     }
 
-    public function incoming_request_action($id)
+    public function incoming_request_action(Request $request, $id)
     {
         $id = base64_decode($id);
-
         $company = Company::find($id);
-        $company['status'] = 1;
-        $company['updated_by'] = Auth::user()->id;
-        $response = $company->update();
+
+        if(in_array($request['action'], ['accept', 'reject'])){
+            if ($request['action'] == 'accept') {
+                $company->status        = config('constants.ACTIVE_RESTAURANT');
+                $company->accepted_date = Carbon::now();
+
+                $route      = 'companies.list';
+                $msg        = 'New Restaurant Added.';
+                $msgStatus  = 'success';
+            } 
+            elseif ($request['action'] == 'reject') {
+                $company->status = config('constants.REJECTED_RESTAURANT');
+
+                $route      = 'companies.incoming.list';
+                $msg        = 'Restaurant request rejected.';
+                $msgStatus  = 'warning';
+            }
+
+            $company['updated_by'] = Auth::user()->id;
+            $response = $company->update();
+
+            return redirect()->route($route)->with($msgStatus, $msg);
+        }
         
-        return redirect()->route('companies.list')->with('success', 'New Restaurant Added');
+        return redirect()->route('companies.incoming.list')->with('error', 'Data not correct');
     }
 }

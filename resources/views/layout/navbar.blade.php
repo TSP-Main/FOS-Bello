@@ -36,7 +36,7 @@
 			<span class="icon-Align-left"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
 		</a>	
 		<!-- Logo -->
-		<a href="{{ route('dashboad')}}" class="logo">
+		<a href="{{ route('dashboard')}}" class="logo">
 		  <!-- logo-->
 		  <div class="logo-lg">
 			  <span class="light-logo"><img src="{{ asset('assets/theme/images/bello_logo_160x55.png') }}" alt="logo"></span>

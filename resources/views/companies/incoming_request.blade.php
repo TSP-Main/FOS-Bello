@@ -34,6 +34,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             <strong>Error!</strong> {{ session()->get('error')}}
         </div>
+    @elseif (session()->has('warning'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <strong>Note!</strong> {{ session()->get('warning')}}
+        </div>
     @endif
 
     <div class="col-12">
@@ -51,10 +56,10 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <!-- incoming orders tab -->
-                <div class="tab-pane active" id="incomingOrdersTab" role="tabpanel">
+                <div class="tab-pane active" id="incomingRequestTab" role="tabpanel">
                     <div class="p-15">
                         <div class="table-responsive rounded card-table">
-                            <table class="table border-no" id="incomingOrders">
+                            <table class="table border-no" id="incomingRequestTable">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -65,15 +70,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($requests as $request)
+                                    @foreach ($incomingRequests as $incomingRequest)
                                         <tr>
-                                            <td>{{ $request->name}}</td>
-                                            <td>{{ $request->email }}</td>
-                                            <td>{{ $request->phone}}</td>
-                                            <td>{{ $request->owner_name}}</td>
+                                            <td>{{ $incomingRequest->name}}</td>
+                                            <td>{{ $incomingRequest->email }}</td>
+                                            <td>{{ $incomingRequest->phone}}</td>
+                                            <td>{{ $incomingRequest->owner_name}}</td>
                                             <td> 
-                                                <a class="btn btn-primary" href="{{ route('companies.incoming.action', base64_encode($request->id)) }}" onclick="return confirmAction()">Accept</a>
-                                                <a class="btn btn-danger" href="" onclick="return confirmAction()">Reject</a>
+                                                <form action="{{ route('companies.incoming.action', base64_encode($incomingRequest->id)) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="accept">
+                                                    <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure you want to accept this request?');">Accept</button>
+                                                </form>
+                                                
+                                                <form action="{{ route('companies.incoming.action', base64_encode($incomingRequest->id)) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="reject">
+                                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this request?');">Reject</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -84,21 +98,41 @@
                 </div>
 
                 <!-- Accepted Orders Tab -->
-                <div class="tab-pane" id="acceptedOrdersTab" role="tabpanel">
+                <div class="tab-pane" id="rejectedRequestTab" role="tabpanel">
                     <div class="p-15">
                         <div class="table-responsive rounded card-table">
-                            <table class="table border-no" id="acceptedOrders">
+                            <table class="table border-no" id="rejectedRequestTable">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Owner Name</th>
-                                        <th>Actions</th>
+                                        {{-- <th>Actions</th> --}}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
+                                    @foreach ($rejectedRequests as $rejectedRequest)
+                                        <tr>
+                                            <td>{{ $rejectedRequest->name}}</td>
+                                            <td>{{ $rejectedRequest->email }}</td>
+                                            <td>{{ $rejectedRequest->phone}}</td>
+                                            <td>{{ $rejectedRequest->owner_name}}</td>
+                                            {{-- <td> 
+                                                <form action="{{ route('companies.incoming.action', base64_encode($incomingRequest->id)) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="accept">
+                                                    <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure you want to accept this request?');">Accept</button>
+                                                </form>
+                                                
+                                                <form action="{{ route('companies.incoming.action', base64_encode($incomingRequest->id)) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="action" value="reject">
+                                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to reject this request?');">Reject</button>
+                                                </form>
+                                            </td> --}}
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -115,8 +149,7 @@
 
 @section('script')
     <script>
-        function confirmAction() {
-            return confirm("Are you sure you want to accept this request?");
-        }
+        $('#incomingRequestTable').dataTable();
+        $('#rejectedRequestTable').dataTable();
     </script>
 @endsection

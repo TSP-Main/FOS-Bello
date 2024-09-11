@@ -40,14 +40,15 @@
             <div class="box">
                 <div class="box-body">
                     <div class="table-responsive rounded card-table">
-                        <table class="table border-no" id="example1">
+                        <table class="table border-no" id="activeRestaurantTable">
                             <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Address</th>
                                     <th>Api Token</th>
-                                    <th>Subscription Date</th>
+                                    <th>Expiry Date</th>
+                                    <th>Subscription/Renew</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -76,6 +77,7 @@
                                     <div id="message" style="display:none; color: green;">Token refreshed</div>
                                 </td>
                                 <td>{{ $company->subscription_date}}</td>
+                                <td>{{ $company->accepted_date}}</td>
                                 <td> <a class="btn btn-primary" href="{{ route('companies.edit', base64_encode($company->id)) }}">Edit</a>
                                 </td>
                                 </tr>
@@ -83,56 +85,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script>
-                        $(document).ready(function() {
-
-                            $('form.refreshTokenForm').on('submit', function(event) {
-                                event.preventDefault();
-
-                                var $form = $(this);
-                                var $tokenDisplay = $form.siblings('.tokenDisplay');
-                                var $message = $form.siblings('.message');
-
-                                $.ajax({
-                                    url: $form.attr('action'),
-                                    type: 'POST',
-                                    data: $form.serialize(),
-                                    success: function(response) {
-
-                                        $tokenDisplay.text(response.newToken);
-                                        $message.fadeIn().delay(2000).fadeOut();
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error('Error refreshing token:', error);
-
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-
-                    <script>
-                        $(document).ready(function() {
-                            $('#refreshTokenForm').on('submit', function(event) {
-                                event.preventDefault();
-                                $.ajax({
-                                    url: $(this).attr('action'),
-                                    type: 'POST',
-                                    data: $(this).serialize(),
-                                    success: function(response) {
-                                        $('#tokenDisplay').text(response.newToken);
-                                        $('#message').fadeIn().delay(2000).fadeOut();
-                                    },
-                                    error: function(xhr, status, error) {
-                                        console.error('Error refreshing token:', error);
-
-                                    }
-                                });
-                            });
-                        });
-                    </script>
-
                 </div>
             </div>
         </div>
@@ -140,4 +92,53 @@
 </section>
 <!-- /.content -->
 
+@endsection
+
+@section('script')
+    
+    <script>
+        $('#activeRestaurantTable').dataTable();
+
+        $(document).ready(function() {
+            $('form.refreshTokenForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var $form = $(this);
+                var $tokenDisplay = $form.siblings('.tokenDisplay');
+                var $message = $form.siblings('.message');
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: $form.serialize(),
+                    success: function(response) {
+
+                        $tokenDisplay.text(response.newToken);
+                        $message.fadeIn().delay(2000).fadeOut();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error refreshing token:', error);
+
+                    }
+                });
+            });
+
+            $('#refreshTokenForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#tokenDisplay').text(response.newToken);
+                        $('#message').fadeIn().delay(2000).fadeOut();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error refreshing token:', error);
+
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

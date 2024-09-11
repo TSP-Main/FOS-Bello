@@ -19,10 +19,10 @@ use App\Http\Controllers\NotificationController;
 Auth::routes();
 
 Route::get('/', [HomeController::class, 'index']);
-Route::post('signup', [HomeController::class, 'register'])->name('register.self');
+Route::post('signup', [CompanyController::class, 'register'])->name('register.self');
 
 Route::group(['middleware' => ['auth']], function(){
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboad');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
     // Users Routes
@@ -42,7 +42,7 @@ Route::group(['middleware' => ['auth']], function(){
     // Route::delete('companies/destroy/{id}'0, [CompanyController::class, 'destroy'])->name('companies.destroy');
     Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
     Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
-    Route::get('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
+    Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
 
     // Restaurant Schedule
     Route::get('schedules', [RestaurantScheduleController::class, 'index'])->name('schedules.list');
