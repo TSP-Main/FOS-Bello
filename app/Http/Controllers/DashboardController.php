@@ -19,12 +19,12 @@ class DashboardController extends Controller
             $data['totalCompanies'] = count($companies);
             
             $totalActive  = $companies->filter(function ($value) {
-                return $value->subscription_date > Carbon::today();
+                return $value->expiry_date > Carbon::today();
             });
             $data['totalActive'] = count($totalActive);
 
             $totalInActive  = $companies->filter(function ($value) {
-                return $value->subscription_date < Carbon::today();
+                return $value->expiry_date < Carbon::today();
             });
             $data['totalInActive'] = count($totalInActive);
 

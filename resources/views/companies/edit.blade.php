@@ -53,9 +53,9 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <h5>Subscription Date <span class="text-danger">*</span></h5>
+                                        <h5>Expiry Date <span class="text-danger">*</span></h5>
                                         <div class="controls">
-                                            <input type="date" name="subscription_date" value="{{ $company->subscription_date }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                            <input type="date" name="expiry_date" value="{{ $company->expiry_date }}" class="form-control" required data-validation-required-message="This field is required"> 
                                         </div>
                                     </div>
                                     <div class="col-md-6">

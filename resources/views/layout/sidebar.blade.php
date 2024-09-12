@@ -41,7 +41,7 @@
 			<!-- sidebar menu-->
 			<ul class="sidebar-menu" data-widget="tree">
 				<li class="">
-					<a href="{{ route('dashboad')}}">
+					<a href="{{ route('dashboard')}}">
 						<i class="icon-Home"></i>
 						<span>Dashboard</span>
 					</a>

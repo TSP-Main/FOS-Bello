@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use App\Models\Company;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
     public function index()
     {
-        $data['companies'] = Company::where('status', 1)->get();
+        $data['companies'] = Company::whereIn('status', [1,2])->get();
+
         return view('companies.list', $data);
     }
 
@@ -26,7 +29,7 @@ class CompanyController extends Controller
             'name'      => 'required',
             'email'     => 'required|email',
             'address'   => 'required',
-            'subscription_date' => 'required',
+            'expiry_date' => 'required',
             'status' => 'required|in:1,2',
         ]);
 
@@ -36,10 +39,11 @@ class CompanyController extends Controller
         $company->name       = $request->name;
         $company->email      = $request->email;
         $company->address    = $request->address;
-        $company->subscription_date = $request->subscription_date;
+        $company->expiry_date = $request->expiry_date;
         $company->status     = $request->status;
         $company->token      = $token;
         $company->created_by = Auth::user()->id;
+        $company->accepted_date = Carbon::now();
         $response = $company->save();
 
         return redirect()->route('companies.list')->with('success', 'Company created successfully');
@@ -58,7 +62,7 @@ class CompanyController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             // 'address' => 'required',
-            'subscription_date' => 'required',
+            'expiry_date' => 'required',
             'status' => 'required'
         ]);
 
@@ -66,7 +70,7 @@ class CompanyController extends Controller
             $data['name'] = $request->name;
             $data['email'] = $request->email;
             // $data['address'] = $request->address;
-            $data['subscription_date'] = $request->subscription_date;
+            $data['expiry_date'] = $request->expiry_date;
             $data['status'] = $request->status;
             $data['updated_by'] = Auth::id();
 
@@ -100,21 +104,81 @@ class CompanyController extends Controller
         return response()->json(['success' => true, 'newToken' => $newToken]);
     }
 
+    public function register(Request $request)
+    {
+        // Register restaurant by self on landing page
+        $this->validate($request, [
+            'owner_name' => 'required',
+            'restaurant_name' => 'required',
+            'email'   => 'required|email',
+            'phone' => 'required',
+        ]);
+
+        $company = new Company();
+        $company->owner_name = $request->owner_name;
+        $company->name = $request->restaurant_name;
+        $company->email = $request->email;
+        $company->phone = $request->phone;
+        $company->status = config('constants.INCOMING_RESTAURANT');
+        $response = $company->save();
+
+        return redirect()->route('register')->with('success', 'Signup successfully! We will contact you soon');
+    }
+
     public function incoming_request()
     {
-        $data['requests'] = Company::where('status', 2)->get();
+        $requests = Company::get();
+        
+        $data['incomingRequests'] = $requests->filter(function ($value){
+            return $value->status == config('constants.INCOMING_RESTAURANT');
+        });
+
+        $data['rejectedRequests'] = $requests->filter(function ($value){
+            return $value->status == config('constants.REJECTED_RESTAURANT');
+        });
+
         return view('companies.incoming_request', $data);
     }
 
-    public function incoming_request_action($id)
+    public function incoming_request_action(Request $request, $id)
     {
         $id = base64_decode($id);
-
         $company = Company::find($id);
-        $company['status'] = 1;
-        $company['updated_by'] = Auth::user()->id;
-        $response = $company->update();
+
+        if(in_array($request['action'], ['accept', 'reject'])){
+            if ($request['action'] == 'accept') {
+                $company->status        = config('constants.ACTIVE_RESTAURANT');
+                $company->accepted_date = Carbon::now();
+
+                $route      = 'companies.list';
+                $msg        = 'New Restaurant Added.';
+                $msgStatus  = 'success';
+            } 
+            elseif ($request['action'] == 'reject') {
+                $company->status = config('constants.REJECTED_RESTAURANT');
+
+                $route      = 'companies.incoming.list';
+                $msg        = 'Restaurant request rejected.';
+                $msgStatus  = 'warning';
+            }
+
+            $company['updated_by'] = Auth::user()->id;
+            $response = $company->update();
+
+            return redirect()->route($route)->with($msgStatus, $msg);
+        }
         
-        return redirect()->route('companies.list')->with('success', 'New Restaurant Added');
+        return redirect()->route('companies.incoming.list')->with('error', 'Data not correct');
+    }
+
+    public function check_expiry()
+    {
+        // update company status to in active when expriy date end
+        $today = Carbon::today();
+        Company::where('expiry_date', '<=', $today->toDateString())
+            ->where('status', config('constants.ACTIVE_RESTAURANT'))
+            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT')]);
+
+        return response()->json(['message' => 'Expired restaurants updated to inactive.']);
     }
 }
