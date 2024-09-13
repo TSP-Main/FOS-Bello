@@ -460,41 +460,41 @@
         });
     </script>
 
-@if(isset($chartData))
-    <script>
-        var options = {
-            series: [{
-                name: 'Revenue',
-                data: @json($chartData['series']),
-            }],
-            chart: {
-                height: 350,
-                type: 'area',
-                zoom: {
+    @if(isset($chartData))
+        <script>
+            var options = {
+                series: [{
+                    name: 'Revenue',
+                    data: @json($chartData['series']),
+                }],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    zoom: {
+                        enabled: false
+                    },
+                },
+                colors: ["#4c95dd"],
+                dataLabels: {
                     enabled: false
                 },
-            },
-            colors: ["#4c95dd"],
-            dataLabels: {
-                enabled: false
-            },
-            stroke: {
-                curve: 'smooth'
-            },
-            xaxis: {
-                categories: @json($chartData['categories']),
-            },
-            tooltip: {
-                y: {
-                    formatter: function (val) {
-                        return "£" + val;
-                    }
+                stroke: {
+                    curve: 'smooth'
                 },
-            },
-        };
+                xaxis: {
+                    categories: @json($chartData['categories']),
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return "£" + val;
+                        }
+                    },
+                },
+            };
 
-        var chart = new ApexCharts(document.querySelector("#chartRevenueRestaurant"), options);
-        chart.render();
-    </script>
-@endif
+            var chart = new ApexCharts(document.querySelector("#chartRevenueRestaurant"), options);
+            chart.render();
+        </script>
+    @endif
 @endsection

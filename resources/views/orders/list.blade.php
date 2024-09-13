@@ -289,8 +289,8 @@
                                 <td>${order.order_type}</td>
                                 <td>${order.payment_option}</td>
                                 <td>
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${btoa(order.id)}"><i class="fa fa-check-square order-confirm-icon"></i></a>
-                                    <a href="#" onclick="event.preventDefault(); confirmRejectOrder(${order.id});"><i class="fa fa-close order-reject-icon"></i></a>
+                                    <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${btoa(order.id)}"><i class="fa fa-check"></i></a>
+                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder(${order.id});"><i class="fa fa-ban"></i></a>
                                     <form id="reject-order-form-${order.id}" action="/orders/update/${btoa(order.id)}" method="POST" style="display: none;">
                                         @csrf
                                         <input type="hidden" name="reject" value="1">
@@ -307,7 +307,7 @@
             });
         }
         // Check for new incoming orders every 5 seconds
-        // setInterval(checkIncomingOrders, 5000);
+        setInterval(checkIncomingOrders, 5000);
 
         function confirmRejectOrder(orderId) {
             if (confirm('Are you sure you want to reject this order?')) {
