@@ -91,9 +91,6 @@
 								<div>
 									<h4 class="mb-0 mt-0">Notifications</h4>
 								</div>
-								<div>
-									<a href={{ route('notifications.clear') }} class="text-danger" id="clear-notifications">Clear All</a>
-								</div>
 							</div>
 						</div>
 					</li>

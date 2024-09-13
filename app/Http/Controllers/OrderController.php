@@ -227,16 +227,16 @@ class OrderController extends Controller
         $orderStatus = config('constants.ORDER_STATUS')[$order->order_status];
 
         // Send mail to user if email is entered
-        // if ($order->email) {
-        //     $data = ['name' => "Lana Desert"];
+        if ($order->email) {
+            $data = ['name' => "Lana Desert"];
     
-        //     Mail::send([], $data, function($message) use ($order, $orderStatus) {
-        //         $message->to($order->email, 'User')
-        //                 ->subject('Order Status')
-        //                 ->text('Your Order is '. $orderStatus);
-        //         $message->from('usman@tahqeeqotajzia.com', 'Lana Desert');
-        //     });
-        // }
+            Mail::send([], $data, function($message) use ($order, $orderStatus, $id) {
+                $message->to($order->email, 'User')
+                        ->subject('Order Status')
+                        ->text('Your Order is '. $orderStatus . '. Your Order Id is: ' . $id);
+                $message->from('sales@lanadessert.co.uk', 'Lana Desert');
+            });
+        }
 
         if($order->order_status == config('constants.ACCEPTED')){
             // Generate PDF receipt
