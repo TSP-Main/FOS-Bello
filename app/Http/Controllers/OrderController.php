@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use Stripe\Stripe;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Company;
 use Stripe\PaymentIntent;
 use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Notification;
-use Barryvdh\DomPDF\Facade\PDF;
-use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -140,18 +141,20 @@ class OrderController extends Controller
 
             // Notify all relevant admins
             Notification::send($admins, new NewOrderNotification($orderId, $companyId));
+
+            $orderDetails = Order::with('details')->find($orderId);
     
             if($request['paymentOption'] === 'online'){
                 // Return the client secret to the frontend
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Order placed successfully',
-                    'orderId' => $orderId,
+                    'orderDetails' => $orderDetails,
                     'clientSecret' => $paymentIntent->client_secret,
                 ], 200);
             }
             else{
-                return response()->json(['status' => 'success', 'message' => 'Order placed successfully', 'orderId' => $orderId], 200);
+                return response()->json(['status' => 'success', 'message' => 'Order placed successfully', 'orderDetails' => $orderDetails], 200);
             }
         } 
         else {
@@ -205,7 +208,13 @@ class OrderController extends Controller
     public function update(Request $request, $id)
     {
         $id = base64_decode($id);
-        $order = Order::find($id);
+        $order = Order::with('details')->find($id);
+        
+        $company = Company::find(Auth::user()->company_id);
+        $data['company'] = [
+            'name' => $company->name,
+            'address' => $company->address,
+        ];
 
         if ($request->has('delivery_time')) {
             // Accept order
@@ -238,17 +247,37 @@ class OrderController extends Controller
             });
         }
 
-        if($order->order_status == config('constants.ACCEPTED')){
-            // Generate PDF receipt
-            $pdf = PDF::loadView('orders.reciept', ['order' => $order]);
+        // if($order->order_status == config('constants.ACCEPTED')){
+        //     // Generate PDF receipt
+        //     $pdf = PDF::loadView('orders.reciept', ['order' => $order]);
         
-            // Define the path to store the PDF
-            $pdfPath = 'receipts/order_' . $order->id . '.pdf';
+        //     // Define the path to store the PDF
+        //     $pdfPath = 'receipts/order_' . $order->id . '.pdf';
         
-            // Store the PDF in the storage directory
-            Storage::put($pdfPath, $pdf->output());
+        //     // Store the PDF in the storage directory
+        //     Storage::put($pdfPath, $pdf->output());
+        // }
+        
+        // Redirect to print route if order is accepted
+        if ($order->order_status == config('constants.ACCEPTED')) {
+            $data['order'] = $order;
+            return view('orders.print', $data);
         }
 
         return redirect()->route('orders.list')->with('success', 'Order status updated successfully.');
+    }
+
+    public function print($id)
+    {
+        $id = base64_decode($id);
+        $data['order'] = Order::with('details')->findOrFail($id);
+
+        $company = Company::find(Auth::user()->company_id);
+        $data['company'] = [
+            'name' => $company->name,
+            'address' => $company->address,
+        ];
+
+        return view('orders.print', $data)->render();
     }
 }
