@@ -209,12 +209,6 @@ class OrderController extends Controller
     {
         $id = base64_decode($id);
         $order = Order::with('details')->find($id);
-        
-        $company = Company::find(Auth::user()->company_id);
-        $data['company'] = [
-            'name' => $company->name,
-            'address' => $company->address,
-        ];
 
         if ($request->has('delivery_time')) {
             // Accept order
@@ -258,6 +252,12 @@ class OrderController extends Controller
         //     Storage::put($pdfPath, $pdf->output());
         // }
         
+        $company = Company::find(Auth::user()->company_id);
+        $data['company'] = [
+            'name' => $company->name,
+            'address' => $company->address,
+        ];
+
         // Redirect to print route if order is accepted
         if ($order->order_status == config('constants.ACCEPTED')) {
             $data['order'] = $order;
