@@ -85,6 +85,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('send', [OrderController::class, 'send_mail']);
     Route::get('orders/incoming', [OrderController::class, 'check_incoming_orders'])->name('orders.incoming');
     Route::match(['get', 'post'], 'orders/update/{id}', [OrderController::class, 'update'])->name('orders.update');
+    Route::get('orders/print/{id}', [OrderController::class, 'print'])->name('orders.print');
+    // Route::get('orders/preview/{id}', [OrderController::class, 'print_preview'])->name('orders.preview');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 

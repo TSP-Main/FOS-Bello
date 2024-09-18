@@ -325,10 +325,10 @@
 
 			setInterval(fetchNotifications, 10000); // Refresh every 10 seconds
 
-			document.getElementById('clear-notifications').addEventListener('click', function(event) {
-				event.preventDefault();
-				clearNotifications();
-			});
+			// document.getElementById('clear-notifications').addEventListener('click', function(event) {
+			// 	event.preventDefault();
+			// 	clearNotifications();
+			// });
 
 			document.querySelector('.notifications-menu .dropdown-toggle').addEventListener('click', function() {
 				this.classList.remove('blink-effect');

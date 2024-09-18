@@ -137,6 +137,7 @@
                                                 <td>{{ $acceptedOrder->address ?? NULL}}</td>
                                                 <td>£{{ $acceptedOrder->total}}</td>
                                                 <td>
+                                                    <a href="{{route('orders.print', ['id' => base64_encode($acceptedOrder->id)])}}" target="_balnk" class="btn btn-success btn-sm" ><i class="fa fa-print"></i></a>
                                                     <a href="#" class="btn btn-success btn-sm" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();"><i class="fa fa-truck"></i></a>
                                                     <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
                                                         @csrf
@@ -281,7 +282,7 @@
                     response.incomingOrders.forEach(order => {
                         $('#incomingOrders tbody').append(`
                             <tr>
-                                <td>${order.id}</td>
+                                <td><a href="/orders/detail/${btoa(order.id)}">#${order.id}</td>
                                 <td>${order.name}</td>
                                 <td>${order.phone}</td>
                                 <td>${order.address ? order.address : ''}</td>
