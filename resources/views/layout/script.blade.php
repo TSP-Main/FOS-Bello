@@ -29,3 +29,15 @@
 <!-- daterange -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+
+{{-- <script>
+    $(document).ready(function() {
+        var currentUrl = window.location.href;
+        var ordersListUrl = window.location.origin + '/orders/list';
+
+        if (currentUrl !== ordersListUrl) {
+            localStorage.removeItem('activeTab');
+        }
+    });
+</script> --}}

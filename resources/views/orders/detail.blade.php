@@ -110,6 +110,12 @@
                     </div>
                     <div class="box-body border-bottom">
                         <div class="d-flex align-items-center">
+                            <i class="fa fa-envelope me-10 fs-24"></i>
+                            <h4 class="mb-0 text-black">{{ $orderDetails->email }}</h4>
+                        </div>
+                    </div>
+                    <div class="box-body border-bottom">
+                        <div class="d-flex align-items-center">
                             <i class="fa fa-map-marker me-10 fs-24"></i>
                             <h4 class="mb-0 text-black">{{ $orderDetails->address }}</h4>
                         </div>
