@@ -30,14 +30,28 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
+<!-- Toastr -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
-{{-- <script>
-    $(document).ready(function() {
-        var currentUrl = window.location.href;
-        var ordersListUrl = window.location.origin + '/orders/list';
-
-        if (currentUrl !== ordersListUrl) {
-            localStorage.removeItem('activeTab');
-        }
+<!-- Pusher Notification -->
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+<script>
+    var pusher = new Pusher('9ad54db53542efb36836', {
+        cluster: 'eu'
     });
-</script> --}}
+
+    var channel = pusher.subscribe('my-channel');
+
+    channel.bind('order-received', function(data) {
+        toastr.success('New Order Received. <a href="'+data.url+'" target="_blank" class="order-link">View Order</a>', {
+            timeOut: 0,  
+            extendedTimeOut: 0,
+            allowHtml: true,
+        });
+
+        $('.order-link').css({
+            'color': '#ffffff',
+            'text-decoration': 'underline',
+        });
+    });
+</script>

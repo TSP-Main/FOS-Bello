@@ -123,4 +123,15 @@ class RestaurantScheduleController extends Controller
 
         return redirect()->route('timezone.create')->with('success', 'Set Timezone Successfully!');
     }
+
+    public function create_configurations()
+    {
+        $company_id = Auth::user()->company_id;
+        $response = Company::find($company_id);
+
+        $data['timezone'] = $response->timezone;
+        $data['timezonesList'] = DateTimeZone::listIdentifiers();
+        
+        return view('companies.configurations', $data);
+    }
 }

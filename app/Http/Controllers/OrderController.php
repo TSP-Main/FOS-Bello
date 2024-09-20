@@ -10,7 +10,9 @@ use Stripe\PaymentIntent;
 use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Events\OrderReceived;
 use Barryvdh\DomPDF\Facade\PDF;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -49,8 +51,11 @@ class OrderController extends Controller
 
     public function detail($id)
     {
+        $companyId = Auth::user()->company_id;
+        
         $orderId = base64_decode($id);
-        $data['orderDetails'] = Order::with('details')->find($orderId);
+        $data['orderDetails'] = Order::where('company_id', $companyId)->with('details')->find($orderId);
+        
         return view('orders.detail', $data);
     }
 
@@ -146,8 +151,13 @@ class OrderController extends Controller
                 ->where('company_id', $companyId)
                 ->get();
 
-            // Notify all relevant admins
+            // Database notification
             Notification::send($admins, new NewOrderNotification($orderId, $companyId));
+
+            // pusher notification
+            $data['msg'] = 'order received';
+            $data['url'] = route('orders.detail', base64_encode($orderId));
+            event(new OrderReceived($data, $data['url'], $companyId));
 
             $orderDetails = Order::with('details')->find($orderId);
     
