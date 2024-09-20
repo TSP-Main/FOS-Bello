@@ -68,6 +68,7 @@
                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#rejectedOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Rejected</span></a> </li>
                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#canceledOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Canceled</span></a> </li>
                 </ul>
+
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <!-- incoming orders tab -->
@@ -123,7 +124,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                             <th>Action</th>
                                         </tr>
@@ -168,7 +169,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
@@ -198,7 +199,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                             {{-- <th>Status Order</th> --}}
                                             {{-- <th></th> --}}
@@ -230,7 +231,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
@@ -315,5 +316,17 @@
                 document.getElementById('reject-order-form-' + orderId).submit();
             }
         }
+
+        $(document).ready(function () {
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
+            }
+
+            $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                var tabName = $(e.target).attr('href');
+                localStorage.setItem('activeTab', tabName);
+            });
+        });
     </script>
 @endsection

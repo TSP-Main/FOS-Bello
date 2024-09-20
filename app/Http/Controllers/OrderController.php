@@ -114,6 +114,9 @@ class OrderController extends Controller
                 if($paymentIntent->status == 'succeeded'){
 
                     $orderId = $this->createOrder($request, $companyId);
+                    if($request->email){
+                        $this->sendEmail($request->email, null, $orderId);
+                    }
 
                     // Add transaction entry
                     Transaction::create([
@@ -129,6 +132,10 @@ class OrderController extends Controller
                 
                 $request['payment_method_id'] = null;
                 $orderId = $this->createOrder($request, $companyId);
+
+                if($request->email){
+                    $this->sendEmail($request->email, null, $orderId);
+                }
             }
             else{
                 return response()->json(['status' => 'Payment Method', 'message' => 'Payment method is not valid'], 401);
@@ -230,15 +237,19 @@ class OrderController extends Controller
         $orderStatus = config('constants.ORDER_STATUS')[$order->order_status];
 
         // Send mail to user if email is entered
-        if ($order->email) {
-            $data = ['name' => "Lana Desert"];
+        // if ($order->email) {
+        //     $data = ['name' => "Lana Desert"];
     
-            Mail::send([], $data, function($message) use ($order, $orderStatus, $id) {
-                $message->to($order->email, 'User')
-                        ->subject('Order Status')
-                        ->text('Your Order is '. $orderStatus . '. Your Order Id is: ' . $id);
-                $message->from('sales@lanadessert.co.uk', 'Lana Desert');
-            });
+        //     Mail::send([], $data, function($message) use ($order, $orderStatus, $id) {
+        //         $message->to($order->email, 'User')
+        //                 ->subject('Order Status')
+        //                 ->text('Your Order is '. $orderStatus . '. Your Order Id is: ' . $id);
+        //         $message->from('sales@lanadessert.co.uk', 'Lana Desert');
+        //     });
+        // }
+
+        if($order->email){
+            $this->sendEmail($order->email, $orderStatus, $id);
         }
 
         // if($order->order_status == config('constants.ACCEPTED')){
@@ -279,5 +290,29 @@ class OrderController extends Controller
         ];
 
         return view('orders.print', $data)->render();
+    }
+
+    public function sendEmail($email, $orderStatus = null, $orderId)
+    {
+        // Send mail to user if email is entered
+        $data = ['name' => "Lana Desert"];
+
+        if($orderStatus){
+            $subject = 'Order Status';
+            $text = 'Your Order is '. $orderStatus . '. Your Order Id is: ' . $orderId;
+        }
+        else{
+            $subject = 'Order Received';
+            $text = 'We received your order. Your Order Id is: ' . $orderId;
+        }
+
+        Mail::send([], $data, function($message) use ($email, $orderStatus, $orderId, $subject, $text) {
+            $message->to($email, 'User')
+                    ->subject($subject)
+                    ->text($text);
+            $message->from('sales@lanadessert.co.uk', 'Lana Desert');
+        });
+
+        return true;
     }
 }
