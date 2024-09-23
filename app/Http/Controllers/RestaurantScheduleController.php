@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use DateTimeZone;
 use App\Models\Company;
+use App\Models\RestaurantEmail;
 use Illuminate\Http\Request;
 use App\Models\RestaurantSchedule;
+use App\Models\RestaurantStripeConfig;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -126,12 +128,66 @@ class RestaurantScheduleController extends Controller
 
     public function create_configurations()
     {
-        $company_id = Auth::user()->company_id;
-        $response = Company::find($company_id);
-
-        $data['timezone'] = $response->timezone;
-        $data['timezonesList'] = DateTimeZone::listIdentifiers();
+        $companyId = Auth::user()->company_id;
+        $data['email'] = RestaurantEmail::where('company_id', $companyId)->first();
+        $data['stripe'] = RestaurantStripeConfig::where('company_id', $companyId)->first();
         
         return view('companies.configurations', $data);
+    }
+
+    public function email_store(Request $request)
+    {
+        $request->validate([
+            'mailer'    => 'required',
+            'host'      => 'required',
+            'port'      => 'required',
+            'name'      => 'required',
+            'username'  => 'required',
+            'password'  => 'required'
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['company_id'] = $companyId;
+        $data['mailer']     = trim($request->mailer);
+        $data['host']       = trim($request->host);
+        $data['port']       = trim($request->port);
+        $data['username']   = trim($request->username);
+        $data['password']   = trim($request->password);
+        $data['encryption'] = 'ssl';
+        $data['address']    = trim($request->username);
+        $data['name']       = trim($request->name);
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
+
+        $response = RestaurantEmail::updateOrCreate(
+            ['company_id' => $companyId],
+            $data
+        );
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
+    }
+
+    public function stripe_store(Request $request)
+    {
+        $request->validate([
+            'stripe_key'    => 'required',
+            'stripe_secret' => 'required',
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['company_id'] = $companyId;
+        $data['stripe_key'] = trim($request->stripe_key);
+        $data['stripe_secret'] = trim($request->stripe_secret);
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
+
+        $response = RestaurantStripeConfig::updateOrCreate(
+            ['company_id' => $companyId],
+            $data
+        );
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
     }
 }

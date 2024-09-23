@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     // Configurations
     Route::get('configurations', [RestaurantScheduleController::class, 'create_configurations'])->name('configurations.create');
+    Route::post('email/store', [RestaurantScheduleController::class, 'email_store'])->name('email.store');
+    Route::post('stripe/store', [RestaurantScheduleController::class, 'stripe_store'])->name('stripe.store');
 });
 
 Route::get('check_expiry', [CompanyController::class, 'check_expiry']);

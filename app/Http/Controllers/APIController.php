@@ -6,12 +6,14 @@ use App\Models\Menu;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\Company; 
+use App\Models\Company;
+use App\Models\NewsletterSubscription;
 use App\Models\OptionValue;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Models\RestaurantSchedule;
+use App\Models\RestaurantStripeConfig;
 use App\Models\TemporaryOrder;
 use App\Models\TemporaryOrderDetail;
 
@@ -258,6 +260,45 @@ class APIController extends Controller
     
             return response()->json(['status' => 'success', 'message' => 'Order Placed Successfully', 'orderId' => $orderId], 200);
         } else {
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function stripe_config(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+
+        if($responseData->status == 'success'){
+            $companyId = $responseData->company->id;
+            $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
+            $data['stripeKey'] = $stripeConfig->stripe_key;
+
+            return response()->json(['status' => 'success', 'message' => 'Found', 'data' => $data], 200);
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function newsletter_subscribe(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+        $companyId = $responseData->company->id;
+
+        if($responseData->status == 'success'){
+
+            $subscription = new NewsletterSubscription();
+
+            $subscription->company_id = $companyId;
+            $subscription->email = $request->email;
+            
+            $subscription->save();
+
+            return response()->json(['status' => 'success', 'message' => 'Thanks for subscription'], 200);
+        }
+        else{
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
         }
     }
