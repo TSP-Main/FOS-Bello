@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'Timezone | FO - Food Ordering System')
+@section('title', 'Configurations | FO - Food Ordering System')
 
 @section('content')
     <!-- Content Header (Page header) -->	  
@@ -23,41 +23,116 @@
 
     <!-- Main content -->
     <section class="content">
-        <!-- Basic Forms -->
+        <!-- Email Configuration -->
         <div class="box">
+            <div class="box-header">
+                <h4 class="box-title">Email Configuration</h4>  
+            </div>
             <div class="box-body">
                 <div class="row">
                     <div class="col">
-                        <form action="{{ route('timezone.store') }}" method="post" id="timezone_form" class="form-horizontal needs-validation" role="form" novalidate>
+                        <form action="{{ route('email.store') }}" method="post" class="form-horizontal needs-validation" role="form" novalidate>
                             @csrf
                             <div class="row">
-                                {{-- <div class="col-12">						
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
                                     <div class="form-group">
-                                        <h5>Select Timezone <span class="text-danger">*</span></h5>
+                                        <h5>Mail Mailer <span class="text-danger">*</span></h5>
                                         <div class="controls">
-                                            <select name="timezone" id="timezone" required class="select2 form-select">
-                                                <option value="">Select</option>
-                                                @foreach ($timezonesList as $val)
-                                                    <option value="{{ $val }}" {{ $timezone == $val ? 'selected' : ''}}>{{ $val }}</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" name="mailer" value="{{ $email->mailer ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
                                         </div>
                                     </div>
-                                <div class="text-xs-right">
-                                    <button type="submit" class="btn btn-info">Save</button>
-                                </div> --}}
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Mail Host <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="host" value="{{ $email->host ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Mail Port <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="port" value="{{ $email->port ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Mail From Name <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="name" value="{{ $email->name ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Mail Username <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="username" value="{{ $email->username ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Mail Password <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="password" value="{{ $email->password ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs-right">
+                                <button type="submit" class="btn btn-info">Save</button>
                             </div>
                         </form>
                     </div>
-                    <!-- /.col -->
                 </div>
-                <!-- /.row -->
             </div>
-            <!-- /.box-body -->
         </div>
-        <!-- /.box -->
+
+        <!-- Stripe Configuration -->
+        <div class="box">
+            <div class="box-header">
+                <h4 class="box-title">Stripe Configuration</h4>  
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col">
+                        <form action="{{ route('stripe.store') }}" method="post" class="form-horizontal needs-validation" role="form" novalidate>
+                            @csrf
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Stripe Key <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="stripe_key" value="{{ $stripe->stripe_key ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Stripe Secret <span class="text-danger">*</span></h5>
+                                        <div class="controls">
+                                            <input type="text" name="stripe_secret" value="{{ $stripe->stripe_secret ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs-right">
+                                <button type="submit" class="btn btn-info">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-    <!-- /.content -->
 
 @endsection
 

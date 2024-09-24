@@ -11,6 +11,8 @@ use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Events\OrderReceived;
+use App\Models\RestaurantEmail;
+use App\Models\RestaurantStripeConfig;
 use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -87,6 +89,8 @@ class OrderController extends Controller
         $responseData = $response->getData();
         $companyId = $responseData->company->id;
 
+        $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
+
         if($responseData->status == 'success'){
             $request->validate([
                 'name'          => 'required|string',
@@ -102,7 +106,7 @@ class OrderController extends Controller
 
             if ($request['paymentOption'] === 'online') {
                 // Handle online payments
-                Stripe::setApiKey(env('STRIPE_SECRET'));
+                Stripe::setApiKey($stripeConfig->stripe_secret);
                 $amount = $request['cartTotal'] * 100; // Convert to cents
     
                 $paymentIntent = PaymentIntent::create([
@@ -120,7 +124,7 @@ class OrderController extends Controller
 
                     $orderId = $this->createOrder($request, $companyId);
                     if($request->email){
-                        $this->sendEmail($request->email, null, $orderId);
+                        $this->sendEmail($request->email, null, $orderId, $companyId);
                     }
 
                     // Add transaction entry
@@ -139,7 +143,7 @@ class OrderController extends Controller
                 $orderId = $this->createOrder($request, $companyId);
 
                 if($request->email){
-                    $this->sendEmail($request->email, null, $orderId);
+                    $this->sendEmail($request->email, null, $orderId, $companyId);
                 }
             }
             else{
@@ -246,33 +250,10 @@ class OrderController extends Controller
 
         $orderStatus = config('constants.ORDER_STATUS')[$order->order_status];
 
-        // Send mail to user if email is entered
-        // if ($order->email) {
-        //     $data = ['name' => "Lana Desert"];
-    
-        //     Mail::send([], $data, function($message) use ($order, $orderStatus, $id) {
-        //         $message->to($order->email, 'User')
-        //                 ->subject('Order Status')
-        //                 ->text('Your Order is '. $orderStatus . '. Your Order Id is: ' . $id);
-        //         $message->from('sales@lanadessert.co.uk', 'Lana Desert');
-        //     });
-        // }
-
         if($order->email){
-            $this->sendEmail($order->email, $orderStatus, $id);
+            $res = $this->sendEmail($order->email, $orderStatus, $id, Auth::user()->company_id);
         }
 
-        // if($order->order_status == config('constants.ACCEPTED')){
-        //     // Generate PDF receipt
-        //     $pdf = PDF::loadView('orders.reciept', ['order' => $order]);
-        
-        //     // Define the path to store the PDF
-        //     $pdfPath = 'receipts/order_' . $order->id . '.pdf';
-        
-        //     // Store the PDF in the storage directory
-        //     Storage::put($pdfPath, $pdf->output());
-        // }
-        
         $company = Company::find(Auth::user()->company_id);
         $data['company'] = [
             'name' => $company->name,
@@ -302,10 +283,13 @@ class OrderController extends Controller
         return view('orders.print', $data)->render();
     }
 
-    public function sendEmail($email, $orderStatus = null, $orderId)
+    public function sendEmail($email, $orderStatus = null, $orderId, $companyId)
     {
         // Send mail to user if email is entered
-        $data = ['name' => "Lana Desert"];
+        $mailConfig = RestaurantEmail::where('company_id', $companyId)->first();
+        
+        $data = ['name' => $mailConfig->name];
+        $from = $mailConfig->address;
 
         if($orderStatus){
             $subject = 'Order Status';
@@ -316,12 +300,30 @@ class OrderController extends Controller
             $text = 'We received your order. Your Order Id is: ' . $orderId;
         }
 
-        Mail::send([], $data, function($message) use ($email, $orderStatus, $orderId, $subject, $text) {
-            $message->to($email, 'User')
-                    ->subject($subject)
-                    ->text($text);
-            $message->from('sales@lanadessert.co.uk', 'Lana Desert');
-        });
+        // Dynamically configure the mail settings
+        config([
+            'mail.default'                  => $mailConfig->mailer,
+            'mail.mailers.smtp.host'        => $mailConfig->host,
+            'mail.mailers.smtp.port'        => $mailConfig->port,
+            'mail.mailers.smtp.encryption'  => $mailConfig->encryption,
+            'mail.mailers.smtp.username'    => $mailConfig->username,
+            'mail.mailers.smtp.password'    => $mailConfig->password,
+            'mail.from.address'             => $mailConfig->address,
+            'mail.from.name'                => $mailConfig->name,
+        ]);
+
+        try{
+            Mail::send([], $data, function($message) use ($email, $subject, $text, $from, $mailConfig) {
+                $message->to($email, 'User')
+                        ->subject($subject)
+                        ->text($text);
+                $message->from($from, $mailConfig->name);
+            });
+        }
+        catch(\Exception $e) {
+            Log::error('Email sending failed: ' . $e->getMessage());
+            return false;
+        }
 
         return true;
     }
