@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Models\NewsletterSubscription;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RestaurantScheduleController;
+use App\Http\Controllers\NewsletterSubscriptionController;
 
 Auth::routes();
 
@@ -111,6 +113,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('configurations', [RestaurantScheduleController::class, 'create_configurations'])->name('configurations.create');
     Route::post('email/store', [RestaurantScheduleController::class, 'email_store'])->name('email.store');
     Route::post('stripe/store', [RestaurantScheduleController::class, 'stripe_store'])->name('stripe.store');
+    
+    // Newsletter
+    Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');
 });
 
 Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
