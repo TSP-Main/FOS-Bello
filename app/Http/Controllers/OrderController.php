@@ -12,11 +12,12 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Events\OrderReceived;
 use App\Models\RestaurantEmail;
-use App\Models\RestaurantStripeConfig;
 use Barryvdh\DomPDF\Facade\PDF;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\RestaurantStripeConfig;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Notification;
@@ -107,7 +108,13 @@ class OrderController extends Controller
             if ($request['paymentOption'] === 'online') {
                 // Handle online payments
                 Stripe::setApiKey($stripeConfig->stripe_secret);
-                $amount = $request['cartTotal'] * 100; // Convert to cents
+                if($request['orderType'] == 'delivery'){
+                    // temporary delivery charges
+                    $amount = (2 + $request['cartTotal']) * 100; // Convert to cents
+                }
+                else{
+                    $amount = $request['cartTotal'] * 100; // Convert to cents
+                }
     
                 $paymentIntent = PaymentIntent::create([
                     'amount' => $amount,
@@ -130,7 +137,7 @@ class OrderController extends Controller
                     // Add transaction entry
                     Transaction::create([
                         'stripe_payment_intent_id' => $paymentIntent->id,
-                        'amount' => $request['cartTotal'],
+                        'amount' => $amount,
                         'currency' => 'gbp',
                         'status' => $paymentIntent->status,
                         'order_id' => $orderId,
@@ -185,6 +192,13 @@ class OrderController extends Controller
 
     public function createOrder($postData, $companyId)
     {
+        if($postData->orderType == 'delivery'){
+            // temporary delivery charges
+            $orderTotal = $postData->cartTotal + 2;
+        }
+        else{
+            $orderTotal = $postData->cartTotal;
+        }
         // Save order detail
         $order = new Order();
 
@@ -193,7 +207,7 @@ class OrderController extends Controller
         $order->email           = $postData->email;
         $order->phone           = $postData->phone;
         $order->address         = $postData->address;
-        $order->total           = $postData->cartTotal;
+        $order->total           = $orderTotal;
         $order->order_type      = $postData->orderType;
         $order->payment_option  = $postData->paymentOption;
         $order->order_note      = $postData->orderNote;
@@ -247,6 +261,8 @@ class OrderController extends Controller
         }
 
         $order->save();
+
+        $this->deleteNotification($id);
 
         $orderStatus = config('constants.ORDER_STATUS')[$order->order_status];
 
@@ -326,5 +342,25 @@ class OrderController extends Controller
         }
 
         return true;
+    }
+
+    public function deleteNotification($orderId)
+    {
+        // \Log::info("Attempting to delete notification for order_id: {$orderId}");
+    
+        // Fetch notifications with the specific order_id to see if they exist
+        $notifications = DB::table('notifications')
+            ->whereRaw("JSON_EXTRACT(data, '$.order_id') = ?", [$orderId])
+            ->get();
+
+        // Log the notifications found
+        // \Log::info("Found notifications: ", (array) $notifications);
+
+        // Attempt to delete the notification using a raw query
+        $deletedCount = DB::table('notifications')
+            ->whereRaw("JSON_EXTRACT(data, '$.order_id') = ?", [$orderId])
+            ->delete();
+        
+        // \Log::info("Deleted notifications: {$deletedCount}");
     }
 }

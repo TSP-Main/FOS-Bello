@@ -150,7 +150,8 @@
                                             <span>{{ $item->options }}</span>
                                         </td>
                                         <td>{{ $item->item_instruction }}</td>
-                                        <td>£{{ $item->sub_total / $item->quantity }}</td>
+                                        <!-- temporary delivery charges -->
+                                        <td>£{{ number_format($item->sub_total / $item->quantity, 2) }}</td>
                                         <td width="70">{{ $item->quantity }}</td>
                                         <td width="100" align="center" class="fw-900">£{{ $item->sub_total }}</td>
                                         {{-- <td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-primary btn-xs" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash"></i></a></td> --}}
