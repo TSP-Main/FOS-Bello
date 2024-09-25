@@ -6,17 +6,20 @@ use Stripe\Stripe;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Company;
+use Stripe\SetupIntent;
 use Stripe\PaymentIntent;
+use Stripe\PaymentMethod;
 use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Events\OrderReceived;
 use App\Models\RestaurantEmail;
-use App\Models\RestaurantStripeConfig;
 use Barryvdh\DomPDF\Facade\PDF;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\RestaurantStripeConfig;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Notification;
@@ -104,10 +107,17 @@ class OrderController extends Controller
                 'payment_method_id' => 'nullable|string',
             ]);
 
-            if ($request['paymentOption'] === 'online') {
+            if ($request['paymentOption'] === 'onlsdfasdfasine') {
+                // this is old method will be deleted in future after tsting orf new code
                 // Handle online payments
                 Stripe::setApiKey($stripeConfig->stripe_secret);
-                $amount = $request['cartTotal'] * 100; // Convert to cents
+                if($request['orderType'] == 'delivery'){
+                    // temporary delivery charges
+                    $amount = (2 + $request['cartTotal']) * 100; // Convert to cents
+                }
+                else{
+                    $amount = $request['cartTotal'] * 100; // Convert to cents
+                }
     
                 $paymentIntent = PaymentIntent::create([
                     'amount' => $amount,
@@ -130,11 +140,33 @@ class OrderController extends Controller
                     // Add transaction entry
                     Transaction::create([
                         'stripe_payment_intent_id' => $paymentIntent->id,
-                        'amount' => $request['cartTotal'],
+                        'amount' => $amount,
                         'currency' => 'gbp',
                         'status' => $paymentIntent->status,
                         'order_id' => $orderId,
                     ]);
+                }
+            }
+            else if ($request['paymentOption'] === 'online' && $request['payment_method_id']) {
+                Stripe::setApiKey($stripeConfig->stripe_secret);
+                $setupIntent = SetupIntent::create([
+                    'payment_method' => $request['payment_method_id'],
+                    'confirm' => true,
+                    'automatic_payment_methods' => [
+                        'enabled' => true,
+                        'allow_redirects' => 'never'
+                    ],
+                ]);
+                
+                if($setupIntent->status == 'succeeded'){
+                    $orderId = $this->createOrder($request, $companyId); 
+                    $order = Order::find($orderId);
+                    $order->payment_method_id = $request['payment_method_id'];
+                    $order->save();
+        
+                    if ($request->email) {
+                        $this->sendEmail($request->email, null, $orderId, $companyId);
+                    }
                 }
             }
             else if($request['paymentOption'] === 'cash'){
@@ -171,7 +203,7 @@ class OrderController extends Controller
                     'status' => 'success',
                     'message' => 'Order placed successfully',
                     'orderDetails' => $orderDetails,
-                    'clientSecret' => $paymentIntent->client_secret,
+                    // 'clientSecret' => $paymentIntent->client_secret,
                 ], 200);
             }
             else{
@@ -185,15 +217,38 @@ class OrderController extends Controller
 
     public function createOrder($postData, $companyId)
     {
-        // Save order detail
+        if($postData->orderType == 'delivery'){
+            // temporary delivery charges
+            $orderTotal = $postData->cartTotal + 2;
+        }
+        else{
+            $orderTotal = $postData->cartTotal;
+        }
+
         $order = new Order();
+
+        if($postData->paymentOption == 'online'){
+            $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
+            Stripe::setApiKey($stripeConfig->stripe_secret);
+
+            try {
+                $customer = \Stripe\Customer::create([
+                    'name' => $postData->name,
+                    'phone' => $postData->phone,
+                    'email' => $postData->email ?? null,
+                ]);
+                $order->customer_stripe_id = $customer->id;
+            } catch (\Exception $e) {
+                return 'Failed to create Stripe customer: ' . $e->getMessage();
+            }
+        }
 
         $order->company_id      = $companyId;
         $order->name            = $postData->name;
         $order->email           = $postData->email;
         $order->phone           = $postData->phone;
         $order->address         = $postData->address;
-        $order->total           = $postData->cartTotal;
+        $order->total           = $orderTotal;
         $order->order_type      = $postData->orderType;
         $order->payment_option  = $postData->paymentOption;
         $order->order_note      = $postData->orderNote;
@@ -232,21 +287,72 @@ class OrderController extends Controller
         $order = Order::with('details')->find($id);
 
         if ($request->has('delivery_time')) {
+            
             // Accept order
             $order->order_status = config('constants.ACCEPTED');
             $order->deliver_time = $request->input('delivery_time');
-        } elseif ($request->has('reject')) {
+
+            if ($order->payment_method_id) {
+                // Handle Stripe Payment on Order Acceptance
+                $stripeConfig = RestaurantStripeConfig::where('company_id', $order->company_id)->first();
+                Stripe::setApiKey($stripeConfig->stripe_secret);
+
+                $customerStripeId = $order->customer_stripe_id;
+            
+                // Attach the payment method to the customer
+                try {
+                    $paymentMethod = PaymentMethod::retrieve($order->payment_method_id);
+                    $paymentMethod->attach(['customer' => $customerStripeId]);
+                } catch (\Exception $e) {
+                    return redirect()->route('orders.list')->with('error', 'Payment method attachment failed: ' . $e->getMessage());
+                }
+    
+                // $amount = ($order->order_type == 'delivery') ? (2 + $order->total) * 100 : $order->total * 100;
+
+                try {
+                    $paymentIntent = PaymentIntent::create([
+                        'amount' => $order->total * 100,
+                        'currency' => 'gbp',
+                        'customer' => $customerStripeId,
+                        'payment_method' => $order->payment_method_id,
+                        'confirm' => true,
+                        'automatic_payment_methods' => [
+                            'enabled' => true,
+                            'allow_redirects' => 'never',
+                        ],
+                    ]);
+
+                    // Add transaction entry
+                    Transaction::create([
+                        'stripe_payment_intent_id' => $paymentIntent->id,
+                        'amount' => $order->total * 100,
+                        'currency' => 'gbp',
+                        'status' => $paymentIntent->status,
+                        'order_id' => $order->id,
+                    ]);
+                } catch (\Exception $e) {
+                    return $e->getMessage();
+                    // Handle failed payment
+                    return redirect()->route('orders.list')->with('error', 'Payment failed: ' . $e->getMessage());
+                }
+            }
+        } 
+        elseif ($request->has('reject')) {
             // Reject order
             $order->order_status = config('constants.REJECTED');
-        } elseif ($request->has('deliver')) {
+        }
+        elseif ($request->has('deliver')) {
             // Delivered
             $order->order_status = config('constants.DELIVERED');
-        } elseif ($request->has('cancel')) {
+        }
+        elseif ($request->has('cancel')) {
             // Cancel
             $order->order_status = config('constants.CANCELED');
         }
 
         $order->save();
+
+        $this->deleteNotification($id);
 
         $orderStatus = config('constants.ORDER_STATUS')[$order->order_status];
 
@@ -326,5 +432,25 @@ class OrderController extends Controller
         }
 
         return true;
+    }
+
+    public function deleteNotification($orderId)
+    {
+        // \Log::info("Attempting to delete notification for order_id: {$orderId}");
+    
+        // Fetch notifications with the specific order_id to see if they exist
+        $notifications = DB::table('notifications')
+            ->whereRaw("JSON_EXTRACT(data, '$.order_id') = ?", [$orderId])
+            ->get();
+
+        // Log the notifications found
+        // \Log::info("Found notifications: ", (array) $notifications);
+
+        // Attempt to delete the notification using a raw query
+        $deletedCount = DB::table('notifications')
+            ->whereRaw("JSON_EXTRACT(data, '$.order_id') = ?", [$orderId])
+            ->delete();
+        
+        // \Log::info("Deleted notifications: {$deletedCount}");
     }
 }
