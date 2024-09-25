@@ -77,7 +77,12 @@
             </table>
 
             <hr>
-            <p>Total: £{{ number_format($order->total, 2) }}</p>
+            @if ($order->order_type == 'delivery')
+                <p>Delivery Charges: £2.00</p>
+                <p>Total: £{{ number_format($order->total, 2) }}</p>
+            @else
+                <p>Total: £{{ number_format($order->total, 2) }}</p>
+            @endif
         </div>
 
         <!-- Footer (e.g., Thank You message) -->
