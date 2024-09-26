@@ -397,14 +397,33 @@ class OrderController extends Controller
         $data = ['name' => $mailConfig->name];
         $from = $mailConfig->address;
 
-        if($orderStatus){
-            $subject = 'Order Status';
-            $text = 'Your Order is '. $orderStatus . '. Your Order Id is: ' . $orderId;
+        $orderData = Order::with('details')->find($orderId);
+        
+        if($orderData->order_status == 1){
+            $statusHead = 'Order Accepted';
+            $statusMsg = 'Pleased to inform you that your order has been accepted.';
+        } elseif($orderData->order_status == 2){
+            $statusHead = 'Order Rejected'; 
+            $statusMsg = 'We regret to inform you that your recent order at Lana Dessert has been rejected. We appreciate your understanding and look forward to serving you soon again.'; 
+        } elseif($orderData->order_status == 3){
+            $statusHead = 'Order Delivered'; 
+            $statusMsg = 'Your order has been delivered.'; 
+        } else {
+            $statusHead = 'Order Received';
+            $statusMsg = 'We have received your order! ';
         }
-        else{
-            $subject = 'Order Received';
-            $text = 'We received your order. Your Order Id is: ' . $orderId;
-        }
+        
+        $orderDetails = [
+            'name' => $orderData->name,
+            'statusHead' => $statusHead,
+            'statusMsg' => $statusMsg,
+            'orderId' => $orderId,
+            'isDelivery' => $orderData->order_type == 'delivery' ? true : false,
+            'orderTotal' => $orderData->total,
+            'orderItems' => $orderData->details,
+            'address' => $orderData->address,
+            'restaurantName' => $mailConfig->name
+        ];
 
         // Dynamically configure the mail settings
         config([
@@ -419,10 +438,9 @@ class OrderController extends Controller
         ]);
 
         try{
-            Mail::send([], $data, function($message) use ($email, $subject, $text, $from, $mailConfig) {
+            Mail::send('orders.email_template', $orderDetails, function ($message) use ($email, $from,  $mailConfig) {
                 $message->to($email, 'User')
-                        ->subject($subject)
-                        ->text($text);
+                        ->subject('Order Information');
                 $message->from($from, $mailConfig->name);
             });
         }
