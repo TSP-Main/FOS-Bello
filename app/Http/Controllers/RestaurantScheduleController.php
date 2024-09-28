@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use DateTimeZone;
 use App\Models\Company;
-use App\Models\RestaurantEmail;
 use Illuminate\Http\Request;
+use App\Models\RestaurantEmail;
 use App\Models\RestaurantSchedule;
-use App\Models\RestaurantStripeConfig;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
+use App\Models\RestaurantStripeConfig;
 
 class RestaurantScheduleController extends Controller
 {
@@ -153,7 +155,7 @@ class RestaurantScheduleController extends Controller
         $data['host']       = trim($request->host);
         $data['port']       = trim($request->port);
         $data['username']   = trim($request->username);
-        $data['password']   = trim($request->password);
+        $data['password']   = Crypt::encrypt(trim($request->password));
         $data['encryption'] = 'ssl';
         $data['address']    = trim($request->username);
         $data['name']       = trim($request->name);
@@ -178,8 +180,8 @@ class RestaurantScheduleController extends Controller
         $companyId = Auth::user()->company_id;
 
         $data['company_id'] = $companyId;
-        $data['stripe_key'] = trim($request->stripe_key);
-        $data['stripe_secret'] = trim($request->stripe_secret);
+        $data['stripe_key'] = Crypt::encrypt(trim($request->stripe_key));
+        $data['stripe_secret'] = Crypt::encrypt(trim($request->stripe_secret));
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 

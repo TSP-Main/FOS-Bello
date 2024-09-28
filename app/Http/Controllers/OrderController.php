@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\RestaurantStripeConfig;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewOrderNotification;
@@ -148,7 +149,7 @@ class OrderController extends Controller
                 }
             }
             else if ($request['paymentOption'] === 'online' && $request['payment_method_id']) {
-                Stripe::setApiKey($stripeConfig->stripe_secret);
+                Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
                 $setupIntent = SetupIntent::create([
                     'payment_method' => $request['payment_method_id'],
                     'confirm' => true,
@@ -229,7 +230,7 @@ class OrderController extends Controller
 
         if($postData->paymentOption == 'online'){
             $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
-            Stripe::setApiKey($stripeConfig->stripe_secret);
+            Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
 
             try {
                 $customer = \Stripe\Customer::create([
@@ -295,7 +296,7 @@ class OrderController extends Controller
             if ($order->payment_method_id) {
                 // Handle Stripe Payment on Order Acceptance
                 $stripeConfig = RestaurantStripeConfig::where('company_id', $order->company_id)->first();
-                Stripe::setApiKey($stripeConfig->stripe_secret);
+                Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
 
                 $customerStripeId = $order->customer_stripe_id;
             
@@ -432,7 +433,7 @@ class OrderController extends Controller
             'mail.mailers.smtp.port'        => $mailConfig->port,
             'mail.mailers.smtp.encryption'  => $mailConfig->encryption,
             'mail.mailers.smtp.username'    => $mailConfig->username,
-            'mail.mailers.smtp.password'    => $mailConfig->password,
+            'mail.mailers.smtp.password'    => Crypt::decrypt($mailConfig->password),
             'mail.from.address'             => $mailConfig->address,
             'mail.from.name'                => $mailConfig->name,
         ]);

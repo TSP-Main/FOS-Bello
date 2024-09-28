@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Order;
+use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\Company;
-use App\Models\NewsletterSubscription;
 use App\Models\OptionValue;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Models\TemporaryOrder;
 use Illuminate\Http\JsonResponse;
 use App\Models\RestaurantSchedule;
-use App\Models\RestaurantStripeConfig;
-use App\Models\TemporaryOrder;
 use App\Models\TemporaryOrderDetail;
+use Illuminate\Support\Facades\Crypt;
+use App\Models\NewsletterSubscription;
+use App\Models\RestaurantStripeConfig;
 
 class APIController extends Controller
 {
@@ -272,7 +273,7 @@ class APIController extends Controller
         if($responseData->status == 'success'){
             $companyId = $responseData->company->id;
             $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
-            $data['stripeKey'] = $stripeConfig->stripe_key;
+            $data['stripeKey'] = Crypt::decrypt($stripeConfig->stripe_key);
 
             return response()->json(['status' => 'success', 'message' => 'Found', 'data' => $data], 200);
         }

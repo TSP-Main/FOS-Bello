@@ -81,8 +81,9 @@
                                 <div class="col-xs-12 col-md-6 col-lg-6">						
                                     <div class="form-group">
                                         <h5>Mail Password <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="password" value="{{ $email->password ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        <div class="controls position-relative">
+                                            <input type="password" id="password" name="password" value="{{ Crypt::decrypt($email->password) ?? '' }}" class="form-control" required data-validation-required-message="This field is required">
+                                            <i class="fa fa-eye toggle-password" id="togglePassword" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;" aria-hidden="true"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -110,16 +111,18 @@
                                 <div class="col-xs-12 col-md-6 col-lg-6">						
                                     <div class="form-group">
                                         <h5>Stripe Key <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="stripe_key" value="{{ $stripe->stripe_key ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        <div class="controls position-relative">
+                                            <input type="password" name="stripe_key" id="stripe_key" value="{{ Crypt::decrypt($stripe->stripe_key) ?? NULL }}" class="form-control pr-5" required data-validation-required-message="This field is required" style="padding-right:40px;">
+                                            <i class="fa fa-eye toggle-password" id="toggleStripeKey" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;" aria-hidden="true"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-lg-6">						
                                     <div class="form-group">
                                         <h5>Stripe Secret <span class="text-danger">*</span></h5>
-                                        <div class="controls">
-                                            <input type="text" name="stripe_secret" value="{{ $stripe->stripe_secret ?? NULL }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                        <div class="controls position-relative">
+                                            <input type="password" name="stripe_secret" id="stripe_secret" value="{{ Crypt::decrypt($stripe->stripe_secret) ?? NULL }}" class="form-control pr-5" required data-validation-required-message="This field is required" style="padding-right:40px;">
+                                            <i class="fa fa-eye toggle-password" id="toggleStripeSecret" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;" aria-hidden="true"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -142,6 +145,45 @@
             $('#timezone').select2({
                 placeholder: 'Select a Restaurant',
                 allowClear: true
+            });
+
+            $('#togglePassword').on('click', function() {
+                var passwordField = $('#password');
+                var passwordFieldType = passwordField.attr('type');
+
+                if (passwordFieldType === 'password') {
+                    passwordField.attr('type', 'text');
+                    $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordField.attr('type', 'password');
+                    $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            $('#toggleStripeKey').on('click', function() {
+                var stripeKeyField = $('#stripe_key');
+                var stripeKeyFieldType = stripeKeyField.attr('type');
+
+                if (stripeKeyFieldType === 'password') {
+                    stripeKeyField.attr('type', 'text');
+                    $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    stripeKeyField.attr('type', 'password');
+                    $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            $('#toggleStripeSecret').on('click', function() {
+                var stripeSecretField = $('#stripe_secret');
+                var stripeSecretFieldType = stripeSecretField.attr('type');
+
+                if (stripeSecretFieldType === 'password') {
+                    stripeSecretField.attr('type', 'text');
+                    $(this).removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    stripeSecretField.attr('type', 'password');
+                    $(this).removeClass('fa-eye-slash').addClass('fa-eye');
+                }
             });
         });
     </script>
