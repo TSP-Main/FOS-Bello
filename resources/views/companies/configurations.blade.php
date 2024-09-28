@@ -135,6 +135,68 @@
                 </div>
             </div>
         </div>
+
+        <!-- Free Shipping Configuration -->
+        <div class="box">
+            <div class="box-header">
+                <h4 class="box-title">Free Shipping Amount Setup</h4>  
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col">
+                        <form action="{{ route('free.shipping.store') }}" method="post" class="form-horizontal needs-validation" role="form" novalidate>
+                            @csrf
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Free Shipping on Amount <span class="text-danger">*</span></h5>
+                                        <div class="controls position-relative">
+                                            <input type="text" name="amount" value="{{ $amount ?? NULL }}" class="form-control pr-5" required data-validation-required-message="This field is required" style="padding-right:40px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs-right">
+                                <button type="submit" class="btn btn-info">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Currency Setup -->
+        <div class="box">
+            <div class="box-header">
+                <h4 class="box-title">Currency Setup</h4>  
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col">
+                        <form action="{{ route('currency.store') }}" method="post" class="form-horizontal needs-validation" role="form" novalidate>
+                            @csrf
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Select Currency <span class="text-danger">*</span></h5>
+                                        <select name="currency" id="currency" required class="select2 form-select">
+                                            <option value="">Select</option>
+                                            @foreach (currency_list() as $key => $val)
+                                                <option value="{{ $key }}" {{ $currency == $key ? 'selected' : ''}}>{{ $val['name'] . ' (' . $val['symbol'] . ')' }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs-right">
+                                <button type="submit" class="btn btn-info">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
 @endsection

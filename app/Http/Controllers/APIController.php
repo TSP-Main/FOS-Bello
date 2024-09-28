@@ -33,6 +33,7 @@ class APIController extends Controller
             'radius' => $responseData->company->radius,
             'latitude' => $responseData->company->latitude,
             'longitude' => $responseData->company->longitude,
+            'amount' => $responseData->company->free_shipping_amount,
         ];
 
         if($responseData->status == 'success'){

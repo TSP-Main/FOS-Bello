@@ -23,6 +23,8 @@ class Company extends Model
         'radius',
         'latitude',
         'longitude',
+        'free_shipping_amount',
+        'currency'
     ];
 
     public function getFormattedExpiryDateAttribute()

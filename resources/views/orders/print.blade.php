@@ -77,8 +77,11 @@
             </table>
 
             <hr>
-            @if ($order->order_type == 'delivery')
+            @if ($order->order_type == 'delivery' && ($order->total < $company['freeShippingAmount']))
                 <p>Delivery Charges: £2.00</p>
+                <p>Total: £{{ number_format($order->total, 2) }}</p>
+            @elseif ($order->order_type == 'delivery' && ($order->total > $company['freeShippingAmount']))
+                <p>Delivery Charges: <del>£2.00</del></p>
                 <p>Total: £{{ number_format($order->total, 2) }}</p>
             @else
                 <p>Total: £{{ number_format($order->total, 2) }}</p>

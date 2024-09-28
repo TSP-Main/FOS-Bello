@@ -220,9 +220,17 @@ class OrderController extends Controller
 
     public function createOrder($postData, $companyId)
     {
+        $restaurantData = Company::find($companyId);
+
         if($postData->orderType == 'delivery'){
             // temporary delivery charges
-            $orderTotal = $postData->cartTotal + 2;
+            // free shiping over specific amount
+            if($postData->cartTotal > $restaurantData->free_shipping_amount){
+                $orderTotal = $postData->cartTotal;
+            }
+            else{
+                $orderTotal = $postData->cartTotal + 2;
+            }
         }
         else{
             $orderTotal = $postData->cartTotal;
@@ -361,12 +369,14 @@ class OrderController extends Controller
 
         if($order->email){
             $res = $this->sendEmail($order->email, $orderStatus, $id, Auth::user()->company_id);
+            // return $res;
         }
 
         $company = Company::find(Auth::user()->company_id);
         $data['company'] = [
             'name' => $company->name,
             'address' => $company->address,
+            'freeShippingAmount' => $company->free_shipping_amount,
         ];
 
         // Redirect to print route if order is accepted
@@ -396,6 +406,7 @@ class OrderController extends Controller
     {
         // Send mail to user if email is entered
         $mailConfig = RestaurantEmail::where('company_id', $companyId)->first();
+        $freeShippingAmount = Company::find($companyId)->free_shipping_amount;
         
         $data = ['name' => $mailConfig->name];
         $from = $mailConfig->address;
@@ -425,7 +436,8 @@ class OrderController extends Controller
             'orderTotal' => $orderData->total,
             'orderItems' => $orderData->details,
             'address' => $orderData->address,
-            'restaurantName' => $mailConfig->name
+            'restaurantName' => $mailConfig->name,
+            'freeShippingAmount' => $freeShippingAmount
         ];
 
         // Dynamically configure the mail settings
@@ -446,13 +458,12 @@ class OrderController extends Controller
                         ->subject('Order Information');
                 $message->from($from, $mailConfig->name);
             });
+            return true;
         }
         catch(\Exception $e) {
             Log::error('Email sending failed: ' . $e->getMessage());
             return false;
         }
-
-        return true;
     }
 
     public function deleteNotification($orderId)

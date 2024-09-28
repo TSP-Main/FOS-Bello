@@ -134,6 +134,10 @@ class RestaurantScheduleController extends Controller
         $data['email'] = RestaurantEmail::where('company_id', $companyId)->first();
         $data['stripe'] = RestaurantStripeConfig::where('company_id', $companyId)->first();
         
+        $restaurantDetail = Company::find($companyId);
+        $data['amount'] = $restaurantDetail->free_shipping_amount;
+        $data['currency'] = $restaurantDetail->currency;
+
         return view('companies.configurations', $data);
     }
 
@@ -189,6 +193,40 @@ class RestaurantScheduleController extends Controller
             ['company_id' => $companyId],
             $data
         );
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
+    }
+
+    public function free_shipping_store(Request $request)
+    {
+        $request->validate([
+            'amount'    => 'required',
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['free_shipping_amount'] = $request->amount;
+        $data['updated_by'] = Auth::id();
+
+        $company = Company::find($companyId);
+        $response = $company->update($data);
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
+    }
+
+    public function currency_store(Request $request)
+    {
+        $request->validate([
+            'currency' => 'required',
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['currency'] = $request->currency;
+        $data['updated_by'] = Auth::id();
+
+        $company = Company::find($companyId);
+        $response = $company->update($data);
 
         return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
     }

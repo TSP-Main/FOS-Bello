@@ -77,7 +77,7 @@
         </div>
         <hr>
 
-        @if ($isDelivery)
+        @if ($isDelivery && ( $orderTotal < $freeShippingAmount))
             <div class="order-detail">
                 <p>Shipping <span style="float: inline-end;">£2.00</span></p>
             </div>
