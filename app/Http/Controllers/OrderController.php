@@ -62,6 +62,8 @@ class OrderController extends Controller
         $orderId = base64_decode($id);
         $data['orderDetails'] = Order::where('company_id', $companyId)->with('details')->find($orderId);
         
+        $this->deleteNotification($orderId);
+
         return view('orders.detail', $data);
     }
 

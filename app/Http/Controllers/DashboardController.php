@@ -41,9 +41,10 @@ class DashboardController extends Controller
                 ->get();
                 
             $data['dashboard_data'] = $this->make_dashboard_data($orders);
-            $data['revenue'] = $this->seven_days_revenue($companyId);
+            $data['revenue'] = $this->seven_days_revenue($companyId); // Weekly Graph Data
             $data['chartData'] = $data['revenue']['chartData'];
-
+            $data['customerData'] = $this->seven_days_customer_Data($companyId); // Weekly Customer Data
+// return $data['customerData'];
         }
         // return $data['revenue'];
         return view ('dashboard', $data);
@@ -141,6 +142,62 @@ class DashboardController extends Controller
                 'categories' => $dates,
                 'series' => $revenues,
             ]
+        ];
+    }
+
+    public function seven_days_customer_data($companyId)
+    {
+        // Last 7 Days Revenue
+        $endDate = Carbon::now()->endOfDay();
+        $startDate = Carbon::now()->subDays(6)->startOfDay();
+
+        $orders = Order::where('company_id', $companyId)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+
+        $todayTotalCustomer = count($orders);
+
+        $todayRepeatedCustomers = $orders->groupBy(function ($order) {
+            return $order->email . '-' . $order->phone;
+        })->filter(function ($groupedOrders) {
+            return $groupedOrders->count() > 1;
+        });
+        $todayRepeatedCustomerCount = $todayRepeatedCustomers->count();
+
+        $dates = [];
+        $totalCustomers = [];
+        $repeatedCustomers = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i)->format('Y-m-d');
+            $dates[] = Carbon::parse($date)->format('D');
+
+            // Filter orders for the current date
+            $dailyOrders = $orders->filter(function ($order) use ($date) {
+                return Carbon::parse($order->created_at)->format('Y-m-d') === $date;
+            });
+
+            $dailyCustomer = $orders->filter(function ($order) use ($date) {
+                return Carbon::parse($order->created_at)->format('Y-m-d') === $date;
+            })->count();
+
+            // Count repeated customers (those who have more than 1 order)
+            $repeatedDailyCustomers = $dailyOrders->groupBy(function ($order) {
+                return $order->email . '-' . $order->phone;
+            })->filter(function ($group) {
+                return $group->count() > 1; // More than 1 order
+            })->count();
+
+            $totalCustomers[] = $dailyCustomer;
+            $repeatedCustomers[] = $repeatedDailyCustomers;
+        }
+
+        return [
+            'todayTotalCustomer' => $todayTotalCustomer,
+            'todayRepeatedCustomer' => $todayRepeatedCustomerCount,
+            'categories' => $dates,
+            'totalCustomerLast7Days' => $totalCustomers,
+            'repeatedCustomerLast7Days' => $repeatedCustomers,
         ];
     }
 }
