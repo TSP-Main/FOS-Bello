@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use DateTimeZone;
 use App\Models\Company;
-use App\Models\RestaurantEmail;
 use Illuminate\Http\Request;
+use App\Models\RestaurantEmail;
 use App\Models\RestaurantSchedule;
-use App\Models\RestaurantStripeConfig;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
+use App\Models\RestaurantStripeConfig;
 
 class RestaurantScheduleController extends Controller
 {
@@ -132,6 +134,10 @@ class RestaurantScheduleController extends Controller
         $data['email'] = RestaurantEmail::where('company_id', $companyId)->first();
         $data['stripe'] = RestaurantStripeConfig::where('company_id', $companyId)->first();
         
+        $restaurantDetail = Company::find($companyId);
+        $data['amount'] = $restaurantDetail->free_shipping_amount;
+        $data['currency'] = $restaurantDetail->currency;
+
         return view('companies.configurations', $data);
     }
 
@@ -153,7 +159,7 @@ class RestaurantScheduleController extends Controller
         $data['host']       = trim($request->host);
         $data['port']       = trim($request->port);
         $data['username']   = trim($request->username);
-        $data['password']   = trim($request->password);
+        $data['password']   = Crypt::encrypt(trim($request->password));
         $data['encryption'] = 'ssl';
         $data['address']    = trim($request->username);
         $data['name']       = trim($request->name);
@@ -178,8 +184,8 @@ class RestaurantScheduleController extends Controller
         $companyId = Auth::user()->company_id;
 
         $data['company_id'] = $companyId;
-        $data['stripe_key'] = trim($request->stripe_key);
-        $data['stripe_secret'] = trim($request->stripe_secret);
+        $data['stripe_key'] = Crypt::encrypt(trim($request->stripe_key));
+        $data['stripe_secret'] = Crypt::encrypt(trim($request->stripe_secret));
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 
@@ -187,6 +193,40 @@ class RestaurantScheduleController extends Controller
             ['company_id' => $companyId],
             $data
         );
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
+    }
+
+    public function free_shipping_store(Request $request)
+    {
+        $request->validate([
+            'amount'    => 'required',
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['free_shipping_amount'] = $request->amount;
+        $data['updated_by'] = Auth::id();
+
+        $company = Company::find($companyId);
+        $response = $company->update($data);
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
+    }
+
+    public function currency_store(Request $request)
+    {
+        $request->validate([
+            'currency' => 'required',
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['currency'] = $request->currency;
+        $data['updated_by'] = Auth::id();
+
+        $company = Company::find($companyId);
+        $response = $company->update($data);
 
         return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
     }

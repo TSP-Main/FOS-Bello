@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\RestaurantStripeConfig;
 use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewOrderNotification;
@@ -61,6 +62,8 @@ class OrderController extends Controller
         $orderId = base64_decode($id);
         $data['orderDetails'] = Order::where('company_id', $companyId)->with('details')->find($orderId);
         
+        $this->deleteNotification($orderId);
+
         return view('orders.detail', $data);
     }
 
@@ -148,7 +151,7 @@ class OrderController extends Controller
                 }
             }
             else if ($request['paymentOption'] === 'online' && $request['payment_method_id']) {
-                Stripe::setApiKey($stripeConfig->stripe_secret);
+                Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
                 $setupIntent = SetupIntent::create([
                     'payment_method' => $request['payment_method_id'],
                     'confirm' => true,
@@ -217,9 +220,17 @@ class OrderController extends Controller
 
     public function createOrder($postData, $companyId)
     {
+        $restaurantData = Company::find($companyId);
+
         if($postData->orderType == 'delivery'){
             // temporary delivery charges
-            $orderTotal = $postData->cartTotal + 2;
+            // free shiping over specific amount
+            if($postData->cartTotal > $restaurantData->free_shipping_amount){
+                $orderTotal = $postData->cartTotal;
+            }
+            else{
+                $orderTotal = $postData->cartTotal + 2;
+            }
         }
         else{
             $orderTotal = $postData->cartTotal;
@@ -229,7 +240,7 @@ class OrderController extends Controller
 
         if($postData->paymentOption == 'online'){
             $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
-            Stripe::setApiKey($stripeConfig->stripe_secret);
+            Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
 
             try {
                 $customer = \Stripe\Customer::create([
@@ -295,7 +306,7 @@ class OrderController extends Controller
             if ($order->payment_method_id) {
                 // Handle Stripe Payment on Order Acceptance
                 $stripeConfig = RestaurantStripeConfig::where('company_id', $order->company_id)->first();
-                Stripe::setApiKey($stripeConfig->stripe_secret);
+                Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
 
                 $customerStripeId = $order->customer_stripe_id;
             
@@ -358,12 +369,14 @@ class OrderController extends Controller
 
         if($order->email){
             $res = $this->sendEmail($order->email, $orderStatus, $id, Auth::user()->company_id);
+            // return $res;
         }
 
         $company = Company::find(Auth::user()->company_id);
         $data['company'] = [
             'name' => $company->name,
             'address' => $company->address,
+            'freeShippingAmount' => $company->free_shipping_amount,
         ];
 
         // Redirect to print route if order is accepted
@@ -393,6 +406,7 @@ class OrderController extends Controller
     {
         // Send mail to user if email is entered
         $mailConfig = RestaurantEmail::where('company_id', $companyId)->first();
+        $freeShippingAmount = Company::find($companyId)->free_shipping_amount;
         
         $data = ['name' => $mailConfig->name];
         $from = $mailConfig->address;
@@ -422,7 +436,8 @@ class OrderController extends Controller
             'orderTotal' => $orderData->total,
             'orderItems' => $orderData->details,
             'address' => $orderData->address,
-            'restaurantName' => $mailConfig->name
+            'restaurantName' => $mailConfig->name,
+            'freeShippingAmount' => $freeShippingAmount
         ];
 
         // Dynamically configure the mail settings
@@ -432,7 +447,7 @@ class OrderController extends Controller
             'mail.mailers.smtp.port'        => $mailConfig->port,
             'mail.mailers.smtp.encryption'  => $mailConfig->encryption,
             'mail.mailers.smtp.username'    => $mailConfig->username,
-            'mail.mailers.smtp.password'    => $mailConfig->password,
+            'mail.mailers.smtp.password'    => Crypt::decrypt($mailConfig->password),
             'mail.from.address'             => $mailConfig->address,
             'mail.from.name'                => $mailConfig->name,
         ]);
@@ -443,13 +458,12 @@ class OrderController extends Controller
                         ->subject('Order Information');
                 $message->from($from, $mailConfig->name);
             });
+            return true;
         }
         catch(\Exception $e) {
             Log::error('Email sending failed: ' . $e->getMessage());
             return false;
         }
-
-        return true;
     }
 
     public function deleteNotification($orderId)

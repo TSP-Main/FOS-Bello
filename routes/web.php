@@ -113,6 +113,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('configurations', [RestaurantScheduleController::class, 'create_configurations'])->name('configurations.create');
     Route::post('email/store', [RestaurantScheduleController::class, 'email_store'])->name('email.store');
     Route::post('stripe/store', [RestaurantScheduleController::class, 'stripe_store'])->name('stripe.store');
+    Route::post('shipping/store', [RestaurantScheduleController::class, 'free_shipping_store'])->name('free.shipping.store');
+    Route::post('currency/store', [RestaurantScheduleController::class, 'currency_store'])->name('currency.store');
     
     // Newsletter
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');

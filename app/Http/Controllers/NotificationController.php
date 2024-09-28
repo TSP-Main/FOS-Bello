@@ -13,10 +13,12 @@ class NotificationController extends Controller
     {
         // Get the company_id from the currently authenticated user
         $companyId = Auth::user()->company_id;
+        $UserId = Auth::user()->id;
 
         // Fetch notifications related to the company
         $notifications = DB::table('notifications')
             ->whereRaw('JSON_EXTRACT(data, "$.company_id") = ?', [$companyId])
+            ->where('notifiable_id', $UserId)
             ->get();
 
         return response()->json($notifications);

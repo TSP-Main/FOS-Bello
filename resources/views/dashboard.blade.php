@@ -192,8 +192,15 @@
         <div class="row">
             <div class="col-lg-6 col-md-6 col-sm-12">
                 <div class="form-group fill">
-                    <label for="dateRangeFilter">Date Range Filter:</label>
+                    {{-- <label for="dateRangeFilter">Date Range Filter:</label> --}}
                     <input type="text" id="dateRangeFilter" class="form-control" />
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-group fill">
+                    <button id="todayFilter" class="btn btn-primary">Today</button>
+                    <button id="yesterdayFilter" class="btn btn-primary">Yesterday</button>
+                    <button id="thisMonthFilter" class="btn btn-primary">Last 30 Days</button>
                 </div>
             </div>
         </div>
@@ -309,7 +316,7 @@
                                 <img src="{{ asset('assets/theme/images/food/online-order-4.png')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700" id="totalRevenue">£{{ $dashboard_data['totalRevenue'] }}</h2>
+                                <h2 class="my-0 fw-700" id="totalRevenue">£{{ number_format($dashboard_data['totalRevenue'], 2) }}</h2>
                                 <p class="text-fade mb-0">Total Revenue</p>
                                 <p class="fs-12 mb-0 text-primary"><span class="badge badge-pill badge-primary-light me-5"><i class="fa fa-arrow-down"></i></span>12% (15 Days)</p>
                             </div>
@@ -342,21 +349,23 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Weekly Customer Data -->
             <div class="col-xxxl-5 col-xl-6 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
                         <h4 class="box-title">Customer Flow</h4>
                         <div class="d-md-flex d-block justify-content-between">
                             <div>
-                                <h3 class="mb-0 fw-700">$2,780k</h3>
-                                <p class="mb-0 text-primary"><small>In Restaurant</small></p>
+                                <h3 class="mb-0 fw-700">{{ $customerData['todayTotalCustomer'] }}</h3>
+                                <p class="mb-0 text-primary"><small>Total Customer</small></p>
                             </div>
                             <div>
-                                <h3 class="mb-0 fw-700">$1,410k</h3>
-                                <p class="mb-0 text-danger"><small>Online Order</small></p>
+                                <h3 class="mb-0 fw-700">{{ $customerData['todayRepeatedCustomer'] }}</h3>
+                                <p class="mb-0 text-danger"><small>Repeated Customer</small></p>
                             </div>
                         </div>
-                        <div id="yearly-comparison"></div>
+                        <div id="chartCustomerData"></div>
                     </div>
                 </div>
             </div>
@@ -417,7 +426,7 @@
                         } else if(targetCard == 'totalCancelled') {
                             $('#' + targetCard).text(data.stats.totalCancelled);
                         } else if(targetCard == 'totalRevenue') {
-                            $('#' + targetCard).text('£' +data.stats.totalRevenue);
+                            $('#' + targetCard).text('£' + parseFloat(data.stats.totalRevenue).toFixed(2));
                         }
 
                     },
@@ -428,11 +437,30 @@
             }
 
             $('#dateRangeFilter').daterangepicker({
-                opens: 'left'
-            }, function(start, end, label) {
-                const startDate = $('#dateRangeFilter').data('daterangepicker').startDate.format('YYYY-MM-DD');
-                const endDate = $('#dateRangeFilter').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                fetchFilteredData(startDate, endDate);
+                    opens: 'left'
+                }, function(start, end, label) {
+                    const startDate = $('#dateRangeFilter').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                    const endDate = $('#dateRangeFilter').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                    fetchFilteredData(startDate, endDate);
+            });
+
+            // "Today" button click event
+            $('#todayFilter').click(function() {
+                const today = moment().format('YYYY-MM-DD');
+                fetchFilteredData(today, today);
+            });
+
+            // "Yesterday" button click event
+            $('#yesterdayFilter').click(function() {
+                const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
+                fetchFilteredData(yesterday, yesterday);
+            });
+
+            // "This Month" button click event
+            $('#thisMonthFilter').click(function() {
+                const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+                const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
+                fetchFilteredData(startOfMonth, endOfMonth);
             });
 
             function fetchFilteredData(startDate, endDate) {
@@ -449,7 +477,7 @@
                         $('#totalOrders').text(data.stats.totalOrders);
                         $('#totalDelivered').text(data.stats.totalDelivered);
                         $('#totalCancelled').text(data.stats.totalCancelled);
-                        $('#totalRevenue').text('£' +data.stats.totalRevenue);
+                        $('#totalRevenue').text('£' + parseFloat(data.stats.totalRevenue).toFixed(2));
 
                     },
                     error: function(error) {
@@ -462,6 +490,7 @@
 
     @if(isset($chartData))
         <script>
+            // Revenue Chart Data
             var options = {
                 series: [{
                     name: 'Revenue',
@@ -495,6 +524,82 @@
 
             var chart = new ApexCharts(document.querySelector("#chartRevenueRestaurant"), options);
             chart.render();
+
+            // Customer Chart
+            var optionsCustomer = {
+                chart: {
+                    height: 325,
+                    type: 'bar',
+                    toolbar: {
+                        show: false
+                    },
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        endingShape: 'rounded',
+                        columnWidth: '65%',
+                    },
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 5,
+                    colors: ['transparent']
+                },
+                colors: ["#e66430", "#4c95dd"],
+                series: [{
+                    name: 'Repeated Customer',
+                    data: @json($customerData['repeatedCustomerLast7Days'])
+                }, {
+                    name: 'Total Customer',
+                    data: @json($customerData['totalCustomerLast7Days'])
+                },],
+                xaxis: {
+                    categories: @json($customerData['categories']),
+                    axisBorder: {
+                        show: true,
+                        color: '#bec7e0',
+                    },  
+                    axisTicks: {
+                        show: true,
+                        color: '#bec7e0',
+                    },    
+                },
+                legend: {
+                    show: false,
+                    },
+                fill: {
+                    opacity: 1
+
+                },
+                grid: {
+                    row: {
+                        colors: ['transparent', 'transparent'],
+                        opacity: 0.2
+                    },
+                    borderColor: '#f1f3fa'
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val
+                        }
+                    }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (val) {
+                            return Math.floor(val);
+                        }
+                    }
+                }
+            }
+
+            var chartCustomer = new ApexCharts(document.querySelector("#chartCustomerData"), optionsCustomer);
+            chartCustomer.render();
         </script>
     @endif
 @endsection
