@@ -93,8 +93,9 @@
         <p><strong>Total Due:</strong> £{{ number_format(($order->total - ($order->discount ?? 0)) + ($order->service_charge ?? 0.49) + ($order->delivery_charge ?? 3.00), 2) }}</p>
 
         <p><strong>Important:</strong> For food allergen info, call the restaurant or check their menu</p>
+        --------------------------------------------------------
         <h2>ORDER HAS BEEN PAID</h2>
-
+        --------------------------------------------------------
         <p><strong>Customer ID:</strong> {{ $order->id }}</p>
 
         <p><strong>Customer details:</strong></p>
