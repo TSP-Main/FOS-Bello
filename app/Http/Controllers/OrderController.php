@@ -397,6 +397,7 @@ class OrderController extends Controller
         $data['company'] = [
             'name' => $company->name,
             'address' => $company->address,
+            'freeShippingAmount' => $company->free_shipping_amount
         ];
 
         return view('orders.print', $data)->render();
