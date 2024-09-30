@@ -109,7 +109,7 @@
                                                 <td>{{ $incomingOrder->name }}</td>
                                                 <td>{{ $incomingOrder->phone }}</td>
                                                 <td>{{ $incomingOrder ->address}}</td>
-                                                <td>£{{ $incomingOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $incomingOrder->total }}</td>
                                                 <td>{{ $incomingOrder->order_type }}</td>
                                                 <td>{{ $incomingOrder->payment_option }}</td>
                                                 <td>
@@ -150,7 +150,7 @@
                                                 <td>{{ $acceptedOrder->formatted_updated_at }}</td>
                                                 <td>{{ $acceptedOrder->name }}</td>
                                                 <td>{{ $acceptedOrder->address ?? NULL}}</td>
-                                                <td>£{{ $acceptedOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $acceptedOrder->total}}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-success btn-sm" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();"><i class="fa fa-check"></i></a>
                                                     <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
@@ -195,7 +195,7 @@
                                                 <td>{{ $deliveredOrder->formatted_updated_at }}</td>
                                                 <td>{{ $deliveredOrder->name }}</td>
                                                 <td>{{ $deliveredOrder->address ?? NULL}}</td>
-                                                <td>£{{ $deliveredOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $deliveredOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -227,7 +227,7 @@
                                                 <td>{{ $rejectedOrder->formatted_updated_at }}</td>
                                                 <td>{{ $rejectedOrder->name }}</td>
                                                 <td>{{ $rejectedOrder->address ?? NULL}}</td>
-                                                <td>£{{ $rejectedOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $rejectedOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -257,7 +257,7 @@
                                                 <td>{{ $canceledOrder->formatted_updated_at }}</td>
                                                 <td>{{ $canceledOrder->name }}</td>
                                                 <td>{{ $canceledOrder->address ?? NULL}}</td>
-                                                <td>£{{ $canceledOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $canceledOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -290,6 +290,7 @@
         });
         
         function checkIncomingOrders() {
+            var currencySymbol = @json($currencySymbol);
             $.ajax({
                 url: "{{ route('orders.incoming') }}",
                 method: 'GET',
@@ -303,7 +304,7 @@
                                 <td>${order.name}</td>
                                 <td>${order.phone}</td>
                                 <td>${order.address ? order.address : ''}</td>
-                                <td>£${order.total}</td>
+                                <td>${currencySymbol}${order.total}</td>
                                 <td>${order.order_type}</td>
                                 <td>${order.payment_option}</td>
                                 <td>

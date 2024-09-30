@@ -61,7 +61,7 @@
                 <thead>
                     <th></th>
                     <th></th>
-                    <th>GBP</th>
+                    <th>{{ $company['currency'] }}</th>
                 </thead>
                 <tbody>
                     @php

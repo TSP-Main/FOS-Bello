@@ -24,7 +24,8 @@ class Company extends Model
         'latitude',
         'longitude',
         'free_shipping_amount',
-        'currency'
+        'currency',
+        'currency_symbol',
     ];
 
     public function getFormattedExpiryDateAttribute()

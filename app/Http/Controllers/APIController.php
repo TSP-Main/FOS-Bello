@@ -34,6 +34,8 @@ class APIController extends Controller
             'latitude' => $responseData->company->latitude,
             'longitude' => $responseData->company->longitude,
             'amount' => $responseData->company->free_shipping_amount,
+            'currency' => $responseData->company->currency,
+            'currency_symbol' => $responseData->company->currency_symbol,
         ];
 
         if($responseData->status == 'success'){
