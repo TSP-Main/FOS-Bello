@@ -31,6 +31,7 @@ class OrderController extends Controller
     {
         $companyId = Auth::user()->company_id;
         $orders = Order::where('company_id', $companyId)->orderBy('id', 'desc')->get();
+        $data['currencySymbol'] = Company::where('id', $companyId)->pluck('currency_symbol')->first();
         
         $data['incomingOrders'] = $orders->filter(function ($value) {
             return $value->order_status == 0;
@@ -296,7 +297,8 @@ class OrderController extends Controller
     {
         $id = base64_decode($id);
         $order = Order::with('details')->find($id);
-
+        $currency = Company::where('id', $order->company_id)->pluck('currency')->first();
+        
         if ($request->has('delivery_time')) {
             
             // Accept order
@@ -323,7 +325,7 @@ class OrderController extends Controller
                 try {
                     $paymentIntent = PaymentIntent::create([
                         'amount' => $order->total * 100,
-                        'currency' => 'gbp',
+                        'currency' => strtolower($currency),
                         'customer' => $customerStripeId,
                         'payment_method' => $order->payment_method_id,
                         'confirm' => true,
@@ -337,7 +339,7 @@ class OrderController extends Controller
                     Transaction::create([
                         'stripe_payment_intent_id' => $paymentIntent->id,
                         'amount' => $order->total * 100,
-                        'currency' => 'gbp',
+                        'currency' => strtolower($currency),
                         'status' => $paymentIntent->status,
                         'order_id' => $order->id,
                     ]);
@@ -377,6 +379,7 @@ class OrderController extends Controller
             'name' => $company->name,
             'address' => $company->address,
             'freeShippingAmount' => $company->free_shipping_amount,
+            'currency' => $company->currency
         ];
 
         // Redirect to print route if order is accepted
@@ -397,6 +400,8 @@ class OrderController extends Controller
         $data['company'] = [
             'name' => $company->name,
             'address' => $company->address,
+            'freeShippingAmount' => $company->free_shipping_amount,
+            'currency' => $company->currency
         ];
 
         return view('orders.print', $data)->render();

@@ -221,8 +221,8 @@ class RestaurantScheduleController extends Controller
         ]);
 
         $companyId = Auth::user()->company_id;
-
         $data['currency'] = $request->currency;
+        $data['currency_symbol'] = currency_list()[$request->currency]['symbol'];
         $data['updated_by'] = Auth::id();
 
         $company = Company::find($companyId);

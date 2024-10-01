@@ -4,7 +4,7 @@
     <title>Receipt</title>
     <style>
         body {
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Verdana';
             width: 80mm; /* Set width for receipt printers (80mm standard) */
             margin: 0;
             padding: 0;
@@ -14,28 +14,24 @@
             width: 100%;
         }
         .header {
-            font-size: 14px;
+            /* font-size: 14px; */
             margin-bottom: 10px;
         }
         .order-details {
             text-align: left;
-            font-size: 14px;
+            font-size: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 18px;
         }
-        th, td {
-            padding: 5px;
+        .address {
+            font-size: 20px;
         }
-        th {
-            text-align: left;
-            border-bottom: 1px dashed black;
-        }
-        .footer {
-            font-size: 14px;
-            margin-top: 10px;
+        .order-type{
+            text-align: center;
+            font-size: 25px;
         }
     </style>
 </head>
@@ -43,54 +39,130 @@
     <div class="receipt-container">
         <!-- Header (e.g., Store Name, Address, etc.) -->
         <div class="header">
-            <h3>{{ $company['name'] }}</h3>
-            <p>{{ $company['address'] }}</p>
+            <h1>{{ $company['name'] }}</h1>
+            <div class="address">
+                <p>{{ $company['address'] }}</p>
+            </div>
         </div>
+        <hr style="border: 1px dotted black;">
+
+        <div class="order-type">
+            <span style="font-weight: bold">
+                {{ Str::ucfirst($order->order_type) }}
+            </span>
+            <br>
+            <span>Order number: {{ $order->id }}</span>
+        </div>
+        <hr style="border: 1px dotted black;">
 
         <!-- Order Details -->
         <div class="order-details">
-            <p>Order #: {{ $order->id }}</p>
-            <p>Date: {{ $order->created_at->format('Y-m-d H:i:s') }}</p>
-            <p>Name: {{ $order->name }}</p>
-            <p>Phone: {{ $order->phone }}</p>
-            <p>Order Type: {{ Str::ucfirst($order->order_type) }}</p>
-            <p>Payment: {{ Str::ucfirst($order->payment_option) }}</p>
-            <hr>
-
             <table>
                 <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                    </tr>
+                    <th></th>
+                    <th></th>
+                    <th>{{ $company['currency'] }}</th>
                 </thead>
                 <tbody>
+                    @php
+                        $subtotalSum = 0;
+                    @endphp
                     @foreach($order->details as $item)
                         <tr>
+                            <td>{{ $item->quantity }} x #</td>
                             <td>{{ $item->product_title }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td>£{{ number_format($item->sub_total, 2) }}</td>
+                            <td>{{ number_format($item->sub_total, 2) }}</td>
                         </tr>
+                        @php
+                            $subtotalSum +=  $item->sub_total;
+                        @endphp
                     @endforeach
                 </tbody>
             </table>
+            <br>
+            
+            <div style="display: flex; justify-content: space-between;">
+                <span>Subtotal</span>
+                <span>{{ number_format($subtotalSum, 2) }}</span> 
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Restaurant discount</span>
+                <span>0.00</span> 
+            </div>
+            <br>
 
-            <hr>
-            @if ($order->order_type == 'delivery' && ($order->total < $company['freeShippingAmount']))
-                <p>Delivery Charges: £2.00</p>
-                <p>Total: £{{ number_format($order->total, 2) }}</p>
-            @elseif ($order->order_type == 'delivery' && ($order->total > $company['freeShippingAmount']))
-                <p>Delivery Charges: <del>£2.00</del></p>
-                <p>Total: £{{ number_format($order->total, 2) }}</p>
-            @else
-                <p>Total: £{{ number_format($order->total, 2) }}</p>
-            @endif
-        </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Order total</span>
+                <span>{{ number_format($subtotalSum, 2) }}</span> 
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Service charge</span>
+                <span>0.00</span> 
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Delivery charge</span>
+                <span>
+                    @if ($order->order_type == 'delivery' && ($subtotalSum < $company['freeShippingAmount']))
+                        2.00
+                    @else
+                        0.00
+                    @endif    
+                </span> 
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span></span>
+                <span>-----</span> 
+            </div>
+            <br>
 
-        <!-- Footer (e.g., Thank You message) -->
-        <div class="footer">
-            <p>Thank you for your order!</p>
+            <div style="display: flex; justify-content: space-between; font-weight:bold">
+                <span>Total Due</span>
+                <span>{{ number_format($order->total, 2) }}</span> 
+            </div>
+            <br>
+
+            <div>
+                <span>{{ $order->payment_option == 'cash' ? 'Pay by:' : 'Paid by:'}}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>{{ $order->payment_option == 'cash' ? 'Cash' : 'Card'}}</span>
+                <span>{{ number_format($order->total, 2) }}</span> 
+            </div>
+            <hr style="border: 1px dotted black;">
+            
+            <div style="text-align: center">
+                <span style="font-weight: bold">IMPORTANT: FOR FOOD ALLERGIAN INFO</span><br>
+                <span>Call the restaurant or check their menu</span>
+            </div>
+            <hr style="border: 1px dotted black;">
+
+            <div style="text-align: center">
+                <span style="font-size: 25px; font-weight: bold">{{ $order->payment_option == 'cash' ? 'ORDER HAS NOT BEEN PAID' : 'ORDER HAS BEEN PAID'}}</span>
+            </div>
+            <hr style="border: 1px dotted black;">
+
+            <div>
+                <span>Customer details:</span><br>
+                <span style="font-size: 22px; font-weight: bold">{{ $order->name }}</span><br>
+                <span style="font-size: 22px; font-weight: bold">{{ $order->address }}</span><br>
+            </div>
+            <br>
+
+            <div>
+                <span>To contact customer call:</span><br>
+                <span style="font-size: 22px; font-weight: bold">{{ $order->phone }}</span><br>
+            </div>
+            <br>
+            <hr style="border: 1px dotted black;">
+
+            <div style="display: flex; justify-content: space-between;">
+                <span>Order placed at</span>
+                <span>{{ $order->created_at->format('H:i d-M') }}</span> 
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Order accepted at</span>
+                <span>{{ $order->updated_at->format('H:i d-M') }}</span> 
+            </div>
         </div>
     </div>
 
