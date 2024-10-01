@@ -39,14 +39,16 @@ class DashboardController extends Controller
             $orders = Order::where('company_id', $companyId)
                 ->whereBetween('created_at', [$todayStart, $todayEnd])
                 ->get();
+
+            $data['currencySymbol'] = Company::where('id', $companyId)->pluck('currency_symbol')->first();
                 
             $data['dashboard_data'] = $this->make_dashboard_data($orders);
             $data['revenue'] = $this->seven_days_revenue($companyId); // Weekly Graph Data
             $data['chartData'] = $data['revenue']['chartData'];
             $data['customerData'] = $this->seven_days_customer_Data($companyId); // Weekly Customer Data
-// return $data['customerData'];
+
         }
-        // return $data['revenue'];
+        
         return view ('dashboard', $data);
     }
 
