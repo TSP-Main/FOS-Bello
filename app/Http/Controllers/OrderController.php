@@ -411,7 +411,7 @@ class OrderController extends Controller
     {
         // Send mail to user if email is entered
         $mailConfig = RestaurantEmail::where('company_id', $companyId)->first();
-        $freeShippingAmount = Company::find($companyId)->free_shipping_amount;
+        $company = Company::find($companyId);
         
         $data = ['name' => $mailConfig->name];
         $from = $mailConfig->address;
@@ -442,7 +442,8 @@ class OrderController extends Controller
             'orderItems' => $orderData->details,
             'address' => $orderData->address,
             'restaurantName' => $mailConfig->name,
-            'freeShippingAmount' => $freeShippingAmount
+            'freeShippingAmount' => $company->free_shipping_amount,
+            'currencySymbol' => $company->currency_symbol,
         ];
 
         // Dynamically configure the mail settings
