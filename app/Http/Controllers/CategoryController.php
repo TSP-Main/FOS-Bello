@@ -102,6 +102,17 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->fill($validatedData);
     
+        // remove icon file
+        if($request->input('icon_file_remove')){
+            $category->icon_file = null;
+        }
+        if($request->input('background_image_remove')){
+            $category->background_image = null;
+        }
+        if($request->input('banner_image_remove')){
+            $category->banner_image = null;
+        }
+
         // Handle icon_file upload
         if ($request->hasFile('icon_file')) {
             $path = $request->file('icon_file')->store('public/icons');

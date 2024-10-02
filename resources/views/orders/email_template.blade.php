@@ -72,20 +72,20 @@
         </div>
         <div class="order-detail">
             @foreach ($orderItems as $orderItem)
-                <p>{{ $orderItem->product_title }} <span style="float: inline-end;">£{{ $orderItem->sub_total }}</span></p>
+                <p>{{ $orderItem->product_title }} <span style="float: inline-end;">{{ $currencySymbol . $orderItem->sub_total }}</span></p>
             @endforeach
         </div>
         <hr>
 
         @if ($isDelivery && ( $orderTotal < $freeShippingAmount))
             <div class="order-detail">
-                <p>Shipping <span style="float: inline-end;">£2.00</span></p>
+                <p>Shipping <span style="float: inline-end;">{{ $currencySymbol }}2.00</span></p>
             </div>
         <hr>
         @endif
 
         <div class="order-detail">
-            <h4>Total <span style="float: inline-end;">£{{ number_format($orderTotal, 2)}}</span></h4>
+            <h4>Total <span style="float: inline-end;">{{ $currencySymbol . number_format($orderTotal, 2)}}</span></h4>
         </div>
         <hr>
 

@@ -316,7 +316,7 @@
                                 <img src="{{ asset('assets/theme/images/food/online-order-4.png')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700" id="totalRevenue">£{{ number_format($dashboard_data['totalRevenue'], 2) }}</h2>
+                                <h2 class="my-0 fw-700">{{ $currencySymbol }}<span id="totalRevenue">{{ number_format($dashboard_data['totalRevenue'], 2) }}</span></h2>
                                 <p class="text-fade mb-0">Total Revenue</p>
                                 <p class="fs-12 mb-0 text-primary"><span class="badge badge-pill badge-primary-light me-5"><i class="fa fa-arrow-down"></i></span>12% (15 Days)</p>
                             </div>
@@ -341,7 +341,7 @@
                                     $sign = $percentageChange >= 0 ? '+' : '';
                                 @endphp
 
-                                <h3 class="box-title mb-0 fw-700">£{{ $revenue['lastSevenDaysRevenue'] }}</h3>
+                                <h3 class="box-title mb-0 fw-700">{{ $currencySymbol . $revenue['lastSevenDaysRevenue'] }}</h3>
                                 <p class="mb-0"><span class="{{$colorClass}}">{{ $sign . number_format($percentageChange, 1) }}%</span> than last week</p>
                             </div>
                         </div>
@@ -426,7 +426,7 @@
                         } else if(targetCard == 'totalCancelled') {
                             $('#' + targetCard).text(data.stats.totalCancelled);
                         } else if(targetCard == 'totalRevenue') {
-                            $('#' + targetCard).text('£' + parseFloat(data.stats.totalRevenue).toFixed(2));
+                            $('#' + targetCard).text(parseFloat(data.stats.totalRevenue).toFixed(2));
                         }
 
                     },
@@ -477,7 +477,7 @@
                         $('#totalOrders').text(data.stats.totalOrders);
                         $('#totalDelivered').text(data.stats.totalDelivered);
                         $('#totalCancelled').text(data.stats.totalCancelled);
-                        $('#totalRevenue').text('£' + parseFloat(data.stats.totalRevenue).toFixed(2));
+                        $('#totalRevenue').text(parseFloat(data.stats.totalRevenue).toFixed(2));
 
                     },
                     error: function(error) {
@@ -516,7 +516,7 @@
                 tooltip: {
                     y: {
                         formatter: function (val) {
-                            return "£" + val;
+                            return @json($currencySymbol) + val;
                         }
                     },
                 },

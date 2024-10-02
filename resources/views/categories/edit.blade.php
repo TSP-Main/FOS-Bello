@@ -85,6 +85,7 @@
                                         <p>Upload Icon</p>
                                         <div class="btn btn-info mb-20">
                                             <input type="file" class="upload" id="icon_file" name="icon_file">
+                                            <input type="hidden" id="icon_file_remove" value="" name="icon_file_remove">
                                         </div>
                                         <button class="btn btn-danger delete-file mb-20">Delete</button>
                                     </div>
@@ -101,12 +102,13 @@
                                         <p>Upload Image</p>
                                         <div class="btn btn-info mb-20">
                                             <input type="file" class="upload" id="background_image" name="background_image">
+                                            <input type="hidden" id="background_image_remove" value="" name="background_image_remove">
                                         </div>
                                         <button class="btn btn-danger delete-file mb-20">Delete</button>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <h4 class="box-title mt-20">Uploaded Icon</h4>
+                                    <h4 class="box-title mt-20">Uploaded Banner</h4>
                                     <div class="product-img text-start">
                                         @if ($category->banner_image)
                                             <img id="preview-banner" src="{{ asset('storage/' . $category->banner_image) }}" alt="" class="mb-15 preview-image">
@@ -116,6 +118,7 @@
                                         <p>Upload Icon</p>
                                         <div class="btn btn-info mb-20">
                                             <input type="file" class="upload" id="banner_image" name="banner_image">
+                                            <input type="hidden" id="banner_image_remove" value="" name="banner_image_remove">
                                         </div>
                                         <button class="btn btn-danger delete-file mb-20">Delete</button>
                                     </div>
@@ -159,6 +162,7 @@
                                 
                                 var inputId = $(this).siblings('.btn-info').children('input').attr('id');
                                 $('#' + inputId).val(''); 
+                                $('#' + inputId + '_remove').val(1); 
                                 $(this).siblings('.preview-image').attr('src', '{{ asset('images/product-placeholder.png') }}'); // Reset preview image
                             });
                
