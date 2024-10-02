@@ -17,6 +17,7 @@ use App\Models\TemporaryOrderDetail;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\NewsletterSubscription;
 use App\Models\RestaurantStripeConfig;
+use App\Models\Discount;
 
 class APIController extends Controller
 {
@@ -301,6 +302,35 @@ class APIController extends Controller
             $subscription->save();
 
             return response()->json(['status' => 'success', 'message' => 'Thanks for subscription'], 200);
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function discount_check(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+        $companyId = $responseData->company->id;
+
+        if($responseData->status == 'success'){
+            $code = strtoupper(trim($request->code));
+            $discountDetail = Discount::where('company_id', $companyId)
+            ->where('code', $code)
+            ->where('expiry', '>', now())
+            ->first();
+
+            if($discountDetail){
+                $data['type'] = $discountDetail->type;
+                $data['rate'] = $discountDetail->rate;
+                $data['minimum_amount'] = $discountDetail->minimum_amount;
+                
+                return response()->json(['status' => 'success', 'message' => 'Found', 'data' => $data], 200);
+            }
+            else{
+                return response()->json(['status' => 'fail', 'message' => 'Invalid or Expire Code'], 404);
+            }
         }
         else{
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);

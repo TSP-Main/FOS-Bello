@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\RestaurantStripeConfig;
+use App\Models\Discount;
 
 class RestaurantScheduleController extends Controller
 {
@@ -229,5 +230,37 @@ class RestaurantScheduleController extends Controller
         $response = $company->update($data);
 
         return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
+    }
+
+    public function discount()
+    {
+        $companyId = Auth::user()->company_id;
+        $data['discounts'] = Discount::where('company_id', $companyId)->get();
+
+        return view('companies.discounts', $data);
+    }
+
+    public function discount_store(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|alpha_num|unique:discounts,code',
+            'type' => 'required|in:1,2',
+            'rate' => 'required|numeric',
+            'expiry' => 'required',
+            'minimum_amount' => 'nullable|numeric',
+        ]);
+
+        $discount = new Discount();
+        $discount['company_id'] = Auth::user()->company_id;
+        $discount['code'] = strtoupper(trim($request->code));
+        $discount['type'] = $request->type;
+        $discount['rate'] = $request->rate;
+        $discount['minimum_amount'] = $request->minimum_amount ?? '0';
+        $discount['expiry'] = $request->expiry;
+        $discount['created_by'] = Auth::user()->id;
+
+        $response = $discount->save();
+
+        return redirect()->route('discount')->with('success', 'Saved Successfully!');
     }
 }

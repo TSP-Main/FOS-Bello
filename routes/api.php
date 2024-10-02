@@ -33,4 +33,7 @@ Route::get('stripe/config', [APIController::class, 'stripe_config']);
 
 Route::post('newsletter/subscribe', [APIController::class, 'newsletter_subscribe']);
 
+// check discount code
+Route::post('discount/check', [APIController::class, 'discount_check']);
+
 
