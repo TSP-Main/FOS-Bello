@@ -13,6 +13,7 @@ use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Events\OrderReceived;
+use App\Models\Discount;
 use App\Models\RestaurantEmail;
 use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\DB;
@@ -222,19 +223,26 @@ class OrderController extends Controller
     public function createOrder($postData, $companyId)
     {
         $restaurantData = Company::find($companyId);
+        $discountData = $this->calculateDiscount($postData->discountCode, $postData);
 
         if($postData->orderType == 'delivery'){
             // temporary delivery charges
             // free shiping over specific amount
             if($postData->cartTotal > $restaurantData->free_shipping_amount){
-                $orderTotal = $postData->cartTotal;
+                // $orderTotal = $postData->cartTotal;
+                $orderTotal = $discountData['orderTotal'];
+                $originalBill = $postData->cartTotal;
             }
             else{
-                $orderTotal = $postData->cartTotal + 2;
+                // $orderTotal = $postData->cartTotal + 2;
+                $orderTotal = $discountData['orderTotal'] + 2;
+                $originalBill = $postData->cartTotal + 2;
             }
         }
         else{
-            $orderTotal = $postData->cartTotal;
+            // $orderTotal = $postData->cartTotal;
+            $orderTotal = $discountData['orderTotal'];
+            $originalBill = $postData->cartTotal;
         }
 
         $order = new Order();
@@ -264,6 +272,9 @@ class OrderController extends Controller
         $order->order_type      = $postData->orderType;
         $order->payment_option  = $postData->paymentOption;
         $order->order_note      = $postData->orderNote;
+        $order->original_bill   = $originalBill;
+        $order->discount_code   = $postData->discountCode ? strtoupper($postData->discountCode) : NULL;
+        $order->discount_amount = $discountData['discountAmount'];
 
         $order->save();
         $orderId = $order->id;
@@ -490,5 +501,34 @@ class OrderController extends Controller
             ->delete();
         
         // \Log::info("Deleted notifications: {$deletedCount}");
+    }
+
+    public function calculateDiscount($code, $orderData)
+    {
+        $discountDetail = Discount::where('code', $code)->first();
+        $orderTotal = $orderData->cartTotal;
+        $discountAmount = 0;
+
+        if($discountDetail){
+            $minimumAmount = $discountDetail->minimum_amount ?? 0.00;
+            $discountRate = $discountDetail->rate;
+
+            if ($orderTotal > $minimumAmount) {
+                if ($discountDetail->type == 1) {
+                    // percentage discount calculation
+                    $discountAmount = round(($orderTotal * ($discountRate / 100)), 2);
+                } elseif ($discountDetail->type == 2) {
+                    // fixed amount discount calculation
+                    $discountAmount = $discountRate;
+                }
+            
+                // Apply discount if valid
+                if (isset($discountAmount) && $orderTotal > $discountAmount) {
+                    $orderTotal -= $discountAmount;
+                }
+            }
+        }
+
+        return ['orderTotal' => $orderTotal, 'discountAmount' => $discountAmount];
     }
 }
