@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Stripe\Stripe;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Company;
 use Stripe\SetupIntent;
+use App\Models\Discount;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
 use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Events\OrderReceived;
-use App\Models\Discount;
 use App\Models\RestaurantEmail;
 use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\DB;
@@ -530,5 +531,32 @@ class OrderController extends Controller
         }
 
         return ['orderTotal' => $orderTotal, 'discountAmount' => $discountAmount];
+    }
+
+    public function ordersList()
+    {
+        $companyId = Auth::user()->company_id;
+        $data['orders'] = Order::where('company_id', $companyId)->orderBy('id', 'desc')->get();
+        $data['currencySymbol'] = Company::where('id', $companyId)->pluck('currency_symbol')->first();
+
+        return view('orders.orders_list', $data);
+    }
+
+    public function ordersFilter(Request $request)
+    {
+        $companyId = Auth::user()->company_id; 
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Order::where('company_id', $companyId);
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        $orders = $query->get();
+        
+        return response()->json($orders);
     }
 }
