@@ -336,5 +336,25 @@ class APIController extends Controller
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
         }
     }
+
+    public function products_search(Request $request)
+    {
+        // fetch  single or all products of a company
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+
+        if($responseData->status == 'success'){
+            $companyId = $responseData->company->id;
+            $products = Product::where('company_id', $companyId)
+                ->where('is_enable', 1)
+                ->where('title', 'LIKE', '%' . $request->title . '%')
+                ->get();
+
+            return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products], 200);
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
     
 }

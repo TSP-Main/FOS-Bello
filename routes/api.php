@@ -36,4 +36,5 @@ Route::post('newsletter/subscribe', [APIController::class, 'newsletter_subscribe
 // check discount code
 Route::post('discount/check', [APIController::class, 'discount_check']);
 
+Route::get('searching', [APIController::class, 'products_search']);
 

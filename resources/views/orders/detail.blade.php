@@ -68,10 +68,10 @@
                             </div>
                             @if ($orderDetails->order_status == 0)
                                 <div>
-                                    <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($orderDetails->id) }}"><i class="fa fa-check"></i> Accept</a>
+                                    <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($orderDetails->id) }}"><i class="fa fa-check"></i></a>
 
                                     <a href="#" class="btn btn-danger" onclick="event.preventDefault(); confirmRejectOrder({{ $orderDetails->id }});">
-                                        <i class="fa fa-ban"></i> Reject
+                                        <i class="fa fa-ban"></i>
                                     </a>
                                     <form id="reject-order-form-{{ $orderDetails->id }}" action="{{ route('orders.update', base64_encode($orderDetails->id)) }}" method="POST" style="display: none;">
                                         @csrf
@@ -81,7 +81,7 @@
                             @elseif ($orderDetails->order_status == 1)
                                 <div>
                                     <a href="#" class="btn btn-success me-2" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $orderDetails->id }}').submit();">
-                                        <i class="fa fa-truck"></i> Delivered
+                                        <i class="fa fa-truck"></i>
                                     </a>
                                     <form id="deliver-order-form-{{ $orderDetails->id }}" action="{{ route('orders.update', base64_encode($orderDetails->id)) }}" method="POST" style="display: none;">
                                         @csrf
@@ -89,7 +89,7 @@
                                     </form>
 
                                     <a href="#" class="btn btn-danger" onclick="event.preventDefault(); confirmCancelOrder({{ $orderDetails->id }});">
-                                        <i class="fa fa-times-circle"></i> Canceled
+                                        <i class="fa fa-times-circle"></i>
                                     </a>
                                     <form id="cancel-order-form-{{ $orderDetails->id }}" action="{{ route('orders.update', base64_encode($orderDetails->id)) }}" method="POST" style="display: none;">
                                         @csrf
