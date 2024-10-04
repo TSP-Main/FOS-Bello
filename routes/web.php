@@ -89,7 +89,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/incoming', [OrderController::class, 'check_incoming_orders'])->name('orders.incoming');
     Route::match(['get', 'post'], 'orders/update/{id}', [OrderController::class, 'update'])->name('orders.update');
     Route::get('orders/print/{id}', [OrderController::class, 'print'])->name('orders.print');
-    // Route::get('orders/preview/{id}', [OrderController::class, 'print_preview'])->name('orders.preview');
+    Route::get('orders', [OrderController::class, 'ordersList'])->name('orders');
+    Route::get('orders/filter', [OrderController::class, 'ordersFilter'])->name('orders.filter');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 
@@ -115,6 +116,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('stripe/store', [RestaurantScheduleController::class, 'stripe_store'])->name('stripe.store');
     Route::post('shipping/store', [RestaurantScheduleController::class, 'free_shipping_store'])->name('free.shipping.store');
     Route::post('currency/store', [RestaurantScheduleController::class, 'currency_store'])->name('currency.store');
+    Route::get('discount', [RestaurantScheduleController::class, 'discount'])->name('discount');
+    Route::post('discount/store', [RestaurantScheduleController::class, 'discount_store'])->name('discount.store');
     
     // Newsletter
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');

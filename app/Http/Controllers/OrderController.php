@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Stripe\Stripe;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Company;
 use Stripe\SetupIntent;
+use App\Models\Discount;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
 use App\Models\OrderDetail;
@@ -222,19 +224,26 @@ class OrderController extends Controller
     public function createOrder($postData, $companyId)
     {
         $restaurantData = Company::find($companyId);
+        $discountData = $this->calculateDiscount($postData->discountCode, $postData);
 
         if($postData->orderType == 'delivery'){
             // temporary delivery charges
             // free shiping over specific amount
             if($postData->cartTotal > $restaurantData->free_shipping_amount){
-                $orderTotal = $postData->cartTotal;
+                // $orderTotal = $postData->cartTotal;
+                $orderTotal = $discountData['orderTotal'];
+                $originalBill = $postData->cartTotal;
             }
             else{
-                $orderTotal = $postData->cartTotal + 2;
+                // $orderTotal = $postData->cartTotal + 2;
+                $orderTotal = $discountData['orderTotal'] + 2;
+                $originalBill = $postData->cartTotal + 2;
             }
         }
         else{
-            $orderTotal = $postData->cartTotal;
+            // $orderTotal = $postData->cartTotal;
+            $orderTotal = $discountData['orderTotal'];
+            $originalBill = $postData->cartTotal;
         }
 
         $order = new Order();
@@ -264,6 +273,9 @@ class OrderController extends Controller
         $order->order_type      = $postData->orderType;
         $order->payment_option  = $postData->paymentOption;
         $order->order_note      = $postData->orderNote;
+        $order->original_bill   = $originalBill;
+        $order->discount_code   = $postData->discountCode ? strtoupper($postData->discountCode) : NULL;
+        $order->discount_amount = $discountData['discountAmount'];
 
         $order->save();
         $orderId = $order->id;
@@ -490,5 +502,61 @@ class OrderController extends Controller
             ->delete();
         
         // \Log::info("Deleted notifications: {$deletedCount}");
+    }
+
+    public function calculateDiscount($code, $orderData)
+    {
+        $discountDetail = Discount::where('code', $code)->first();
+        $orderTotal = $orderData->cartTotal;
+        $discountAmount = 0;
+
+        if($discountDetail){
+            $minimumAmount = $discountDetail->minimum_amount ?? 0.00;
+            $discountRate = $discountDetail->rate;
+
+            if ($orderTotal > $minimumAmount) {
+                if ($discountDetail->type == 1) {
+                    // percentage discount calculation
+                    $discountAmount = round(($orderTotal * ($discountRate / 100)), 2);
+                } elseif ($discountDetail->type == 2) {
+                    // fixed amount discount calculation
+                    $discountAmount = $discountRate;
+                }
+            
+                // Apply discount if valid
+                if (isset($discountAmount) && $orderTotal > $discountAmount) {
+                    $orderTotal -= $discountAmount;
+                }
+            }
+        }
+
+        return ['orderTotal' => $orderTotal, 'discountAmount' => $discountAmount];
+    }
+
+    public function ordersList()
+    {
+        $companyId = Auth::user()->company_id;
+        $data['orders'] = Order::where('company_id', $companyId)->orderBy('id', 'desc')->get();
+        $data['currencySymbol'] = Company::where('id', $companyId)->pluck('currency_symbol')->first();
+
+        return view('orders.orders_list', $data);
+    }
+
+    public function ordersFilter(Request $request)
+    {
+        $companyId = Auth::user()->company_id; 
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = Order::where('company_id', $companyId);
+
+        if ($startDate && $endDate) {
+            $startDate = Carbon::parse($startDate)->startOfDay();
+            $endDate = Carbon::parse($endDate)->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        $orders = $query->get();
+        
+        return response()->json($orders);
     }
 }

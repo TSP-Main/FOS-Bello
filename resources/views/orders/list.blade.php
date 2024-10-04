@@ -96,6 +96,9 @@
                                             <th>Phone</th>
                                             <th>Address</th>
                                             <th>Total</th>
+                                            <th>Original Bill</th>
+                                            <th>Discount Code</th>
+                                            <th>Discount Amount</th>
                                             <th>Order Type</th>
                                             <th>Payment Option</th>
                                             <th>Actions</th>
@@ -110,6 +113,9 @@
                                                 <td>{{ $incomingOrder->phone }}</td>
                                                 <td>{{ $incomingOrder ->address}}</td>
                                                 <td>{{ $currencySymbol . $incomingOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $incomingOrder->original_bill }}</td>
+                                                <td>{{ $incomingOrder->discount_code }}</td>
+                                                <td>{{ $currencySymbol . $incomingOrder->discount_amount }}</td>
                                                 <td>{{ $incomingOrder->order_type }}</td>
                                                 <td>{{ $incomingOrder->payment_option }}</td>
                                                 <td>
@@ -305,6 +311,9 @@
                                 <td>${order.phone}</td>
                                 <td>${order.address ? order.address : ''}</td>
                                 <td>${currencySymbol}${order.total}</td>
+                                <td>${currencySymbol}${order.original_bill}</td>
+                                <td>${order.discount_code ? order.discount_code : ''}</td>
+                                <td>${currencySymbol}${order.discount_amount}</td>
                                 <td>${order.order_type}</td>
                                 <td>${order.payment_option}</td>
                                 <td>

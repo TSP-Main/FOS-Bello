@@ -58,6 +58,7 @@
 						</a>
 						<ul class="treeview-menu">
 						<li><a href="{{ route('orders.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
+						<li><a href="{{ route('orders') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Orders Report</a></li>
 						</ul>
 					</li>
 				@endif
@@ -167,6 +168,7 @@
 							<li><a href="{{ route('radius.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Radius</a></li>
 							<li><a href="{{ route('timezone.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Set Timezone</a></li>
 							<li><a href="{{ route('configurations.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Configurations</a></li>
+							<li><a href="{{ route('discount') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Discount</a></li>
 						</ul>
 					</li>
 				@endif

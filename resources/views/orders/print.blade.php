@@ -87,13 +87,13 @@
             </div>
             <div style="display: flex; justify-content: space-between;">
                 <span>Restaurant discount</span>
-                <span>0.00</span> 
+                <span>{{ number_format($order->discount_amount, 2) }}</span> 
             </div>
             <br>
 
             <div style="display: flex; justify-content: space-between;">
                 <span>Order total</span>
-                <span>{{ number_format($subtotalSum, 2) }}</span> 
+                <span>{{ number_format($subtotalSum - $order->discount_amount , 2) }}</span> 
             </div>
             <div style="display: flex; justify-content: space-between;">
                 <span>Service charge</span>

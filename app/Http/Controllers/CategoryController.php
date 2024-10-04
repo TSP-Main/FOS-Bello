@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
@@ -146,9 +147,16 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::findOrFail($id);
-            $category->delete();
-    
-            return redirect()->route('category.list')->with('success', 'Category deleted successfully.');
+            if($category){
+                $products = Product::where('category_id', $id)->get();
+                if(count($products)){
+                    return redirect()->route('category.list')->with('error', 'There are products related to this category. First delete or update their category');
+                }
+                else{
+                    $category->delete();
+                    return redirect()->route('category.list')->with('success', 'Category deleted successfully.');
+                }
+            }
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }
