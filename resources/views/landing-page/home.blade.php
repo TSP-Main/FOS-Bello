@@ -33,7 +33,7 @@
 
   <header id="header" class="header sticky-top">
 
-    <div class="branding d-flex align-items-center">
+    <div class="branding d-flex align-items-center" style="padding: 0">
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="#" class="logo d-flex justify-content-center align-items-center">
           <img src="{{ asset('assets/landing-page/images/bello-logo.png') }}" alt="Logo">
@@ -58,9 +58,8 @@
       <div class="container">
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center hero-text" data-aos="zoom-out">
-            <h1>Hungry? We've Got You Covered!</h1>
-            <p>Explore, Order, and Savor – Delicious  Meals Delivered Fast to
-              Your Doorstep.</p>
+            <h1>Focus on Flavours While We Manage Your Orders!</h1>
+            <p>Seamless Ordering & Operations For Your Restaurant's Online Presence.</p>
             <div class="d-flex">
               <a href="#" class="btn hero-btn">Learn more</a>
             </div>
@@ -283,7 +282,7 @@
       <div class="container section-title price-card" data-aos="fade-up">
         <div class="container">
           <h2>THE <span>BEST</span> CHOICE FOR YOU</h2>
-          <p style="text-align: center">Free trial period of 14 days, unlocking all features</p>
+          {{-- <p style="text-align: center">Free trial period of 14 days, unlocking all features</p> --}}
           <div class="switch-container">
               <span class="switch-label">Monthly</span>
               <label class="switch">
@@ -299,45 +298,58 @@
 
         <div class="row gy-3 justify-content-between">
 
+          <!-- Basic Package -->
           <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="100">
             <div class="pricing-item" style="background-color: #FCFAFA; border: 1px solid black;">
               <h3 style="color:black">Basic</h3>
-              <p style="color:black">
-                Lorem ipsum dolor sit amet
-                Consectetur adipiscing elit
+              <p style="color:black; text-align:justify">
+                It will include the Software Api for the customer to connect to their app as well as Api integration documents to help. Please note we will not do this for the customer they will set it up themselves.
               </p>
-              <h4>20£ /Mo</h4>
+              <h4 class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
+              <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
+              <p>20£ one-off Api generation fee</p>
               <div class="btn-wrap">
                 <a href="#" class="btn-buy" style="background-color: #FECD7A;">Try for free</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->
 
+          <!-- Delux Package -->
           <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="200">
             <div class="pricing-item featured" style="background-color: #1EABAE;">
               <div class="button-container">
                 <a href="#" class="btn-popular" style="background-color: #FECD7A;">Most Popular</a>
               </div>
               <h3 style="color:#FFFFFF">Delux</h3>
-              <p style="color:#FFFFFF">
-               Lorem ipsum dolor sit amet
-               Consectetur adipiscing elit
+              <p style="color:#FFFFFF; text-align:justify">
+                We create the website WordPress and connect the software to it and help setup the menu, delivery addresses, content for their site and the site etc.
               </p>
-              <h4 style="color:#FFFFFF">20£ /Mo</h4>
+              <h4 style="color:#FFFFFF" class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
+              <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
+              <p class="text-white">
+                1000£ setup fee <br>
+                100£ a year hosting of the new site
+              </p>
+              <p class="text-white"> ( Tablet and printer will be purchased by the customer )</p>
               <div class="btn-wrap">
                 <a href="#" class="btn-buy" style="background-color: #FFFFFF;">Try for free</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->          
 
+          <!-- Premium Package -->
           <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="400">
             <div class="pricing-item" style="background-color: #FCFAFA; border: 1px solid black;">
               <h3 style="color:black">Premium</h3>
               <p style="color:black">
-                Lorem ipsum dolor sit amet
-                Consectetur adipiscing elit
+                Full help to set up the website and tablet at the shop etc.
               </p>
-              <h4>80£ /Mo</h4>
+              <h4 class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
+              <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
+              <p>
+                1500£ custom website <br>
+                100£ a year hosting of the new site
+              </p>
               <div class="btn-wrap">
                 <a href="#" class="btn-buy" style="background-color: #FECD7A;">Try for free</a>
               </div>
@@ -475,6 +487,28 @@
 
   <!-- Main JS File -->
   <script src="{{ asset('assets/landing-page/js/main.js') }}"></script>
+
+  <script>
+    // JavaScript to toggle prices
+    document.getElementById('toggleSwitch').addEventListener('change', function () {
+    const isYearly = this.checked;
+    const prices = document.querySelectorAll('.price');
+    const discounts = document.querySelectorAll('.yearly-discount');
+    
+    prices.forEach((price, index) => {
+      const monthlyPrice = parseFloat(price.getAttribute('data-monthly'));
+      const yearlyPrice = parseFloat(price.getAttribute('data-yearly'));
+
+      if (isYearly) {
+        price.textContent = yearlyPrice.toFixed(2) + '£ /Yr';
+        discounts[index].style.display = 'block';  // Show "15% Off"
+      } else {
+        price.textContent = monthlyPrice.toFixed(2) + '£ /Mo';
+        discounts[index].style.display = 'none';  // Hide "15% Off"
+      }
+    });
+  });
+  </script>
 
 </body>
 

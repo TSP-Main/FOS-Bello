@@ -26,6 +26,10 @@ class Company extends Model
         'free_shipping_amount',
         'currency',
         'currency_symbol',
+        'package',
+        'plan',
+        'customer_stripe_id',
+        'payment_method_id'
     ];
 
     public function getFormattedExpiryDateAttribute()

@@ -41,8 +41,9 @@
 								@endif						
 							</div>
 							<div class="p-40">
-								<form action="{{ route('register.self') }}" method="post">
+								<form action="{{ route('register.self') }}" method="post" id="payment-form">
 									@csrf
+									<input type="hidden" name="stripe_key" id="stripe_key" value="{{ env('STRIPE_API_KEY') }}">
 									<div class="form-group">
                                         <span>Full Name</span>
 										<div class="input-group mb-3">
@@ -95,12 +96,49 @@
 											@enderror
 										</div>
 									</div>
+									<div class="form-group">
+                                        <span>Package</span>
+                                        <div class="input-group mb-3">
+                                            <select name="package" id="package" required class="form-select" aria-invalid="false">
+                                                <option value="">Select Package</option>
+												<option value="1">Basic</option>
+												<option value="2">Delux</option>
+												<option value="3">Premium</option>
+										</select>
+                                        @error('package')
+											<span class="invalid-feedback" role="alert">
+												<strong>{{ $message }}</strong>
+											</span>
+										@enderror
+                                    </div>
+									<div class="form-group">
+                                        <span>Payment Plan</span>
+                                        <div class="input-group mb-3">
+                                            <select name="plan" id="plan" required class="form-select" aria-invalid="false">
+                                                <option value="">Select Plan</option>
+												<option value="1">Monthly</option>
+												<option value="2">Yearly</option>
+										</select>
+                                        @error('plan')
+											<span class="invalid-feedback" role="alert">
+												<strong>{{ $message }}</strong>
+											</span>
+										@enderror
+                                    </div>
+
+									<div class="form-group">
+										<span for="card-element">Card Detail</span>
+										<div id="card-element"></div>
+										<div id="card-errors" role="alert"></div>
+									</div>
+
                                     <div class="row">
                                         <div class="col-12 text-center">
                                             <button type="submit" class="btn btn-danger mt-10">SIGN UP</button>
                                         </div>
                                     </div>
 								</form>	
+								
 								<div class="text-center">
 									<p class="mt-15 mb-0">Already have an account?<a href="/login" class="text-danger ms-5"> Sign In</a></p>
 								</div>
@@ -122,5 +160,33 @@
 	<script src="{{ asset('assets/theme/assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js') }}"></script>
     <script src="{{ asset('assets/theme/assets/icons/feather-icons/feather.min.js') }}"></script>	
 
+	<script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+		const stripe = Stripe(document.getElementById('stripe_key').value);
+		const elements = stripe.elements();
+		const cardElement = elements.create('card');
+		cardElement.mount('#card-element');
+	
+		const form = document.querySelector('#payment-form');
+		form.addEventListener('submit', async (event) => {
+		  event.preventDefault();
+	
+		  const { paymentMethod, error } = await stripe.createPaymentMethod('card', cardElement);
+	
+		  if (error) {
+			document.getElementById('card-errors').textContent = error.message;
+		  } else {
+			// Create hidden input for paymentMethod.id and submit the form
+			const input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = 'payment_method';
+			input.value = paymentMethod.id;
+			form.appendChild(input);
+	
+			form.submit();
+		  }
+		});
+	  </script>
 </body>
 </html>
