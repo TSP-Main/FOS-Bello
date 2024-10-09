@@ -33,9 +33,7 @@ class OrderReceived implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return ['my-channel'];
-        // return new PrivateChannel('company.' . $this->companyId);
-
+        return ['my-channel-' . $this->companyId];
     }
 
     public function broadcastAs()

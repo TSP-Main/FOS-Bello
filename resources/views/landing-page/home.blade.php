@@ -61,7 +61,7 @@
             <h1>Focus on Flavours While We Manage Your Orders!</h1>
             <p>Seamless Ordering & Operations For Your Restaurant's Online Presence.</p>
             <div class="d-flex">
-              <a href="#" class="btn hero-btn">Learn more</a>
+              <a href="#featured-services" class="btn hero-btn">Learn more</a>
             </div>
           </div>
         </div>
@@ -118,14 +118,14 @@
 
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center counter">
             <div class="stats-item">
-              <h3>+10K</h3>
+              <h3>{{ $users }}</h3>
               <p>Users</p>
             </div>
           </div><!-- End Stats Item -->
 
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center counter">
             <div class="stats-item">
-              <h3>+2K</h3>
+              <h3>{{ $patners }}</h3>
             <p>Partners</p>
             </div>
           </div><!-- End Stats Item -->
@@ -427,15 +427,15 @@
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
           </div>
   
-          <div class="col-lg-2 col-6 footer-links">
+          {{-- <div class="col-lg-2 col-6 footer-links">
             <h4>Menu</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Best Choice</a></li>
-            <li><a href="#">Best Price</a></li>
-            <li><a href="#">Best Location</a></li>
-          </ul>
-          </div>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Best Choice</a></li>
+              <li><a href="#">Best Price</a></li>
+              <li><a href="#">Best Location</a></li>
+            </ul>
+          </div> --}}
   
           <div class="col-lg-2 col-6 footer-links">
             <h4>Service</h4>

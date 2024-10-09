@@ -65,9 +65,14 @@ class OrderController extends Controller
         $orderId = base64_decode($id);
         $data['orderDetails'] = Order::where('company_id', $companyId)->with('details')->find($orderId);
         
-        $this->deleteNotification($orderId);
+        if($data['orderDetails']){
+            $this->deleteNotification($orderId);
 
-        return view('orders.detail', $data);
+            return view('orders.detail', $data);
+        }
+        else{
+            return redirect()->route('dashboard')->with('error', 'No Order Found!');
+        }
     }
 
     public function send_mail()
