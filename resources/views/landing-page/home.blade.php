@@ -75,34 +75,44 @@
         <h2>HOW IT WORKS</h2>
         <div class="row gy-4">
 
-          <div class="col-xl-3 col-md-6 d-flex cards-row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-xl-1"></div>
+
+          <div class="col-xs-12 col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="100">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icon2.png') }}" alt=""></div>
-              <button style="white-space: nowrap;">Browse Our Menu</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/sign-up.webp') }}" alt=""></div>
+              <button style="white-space: nowrap;">Sign Up</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-3 col-md-6 d-flex  cards-row" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-xl-2 col-md-3 d-flex  cards-row" data-aos="fade-up" data-aos-delay="200">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icon1.png') }}" alt=""></i></div>
-              <button>Customise Order</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/api.webp') }}" alt=""></i></div>
+              <button>API Integration</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-3 col-md-6 d-flex cards-row" data-aos="fade-up" data-aos-delay="300">
+          <div class="col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="300">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icons (3).webp') }}" alt=""></i></div>
-              <button>Fast Delivery</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/setup-restaurant.webp') }}" alt=""></i></div>
+              <button>Setup Restaurant</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-3 col-md-6 d-flex cards-row" data-aos="fade-up" data-aos-delay="400">
+          <div class="col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="400">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icons (4).webp') }}" alt=""></i></div>
-              <button>Enjoy</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/order.webp') }}" alt=""></i></div>
+              <button>Order Management</button>
             </div>
           </div><!-- End Service Item -->
 
+          <div class="col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="400">
+            <div class="service-item position-relative card">
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/review.webp') }}" alt=""></i></div>
+              <button>Give Us A Review</button>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-xl-1"></div>
         </div>
 
       </div>
@@ -156,9 +166,9 @@
 
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="about-content ps-0 ps-lg-3">
-              <h2>Experience the best from our handpicked selection of local eateries</h2>
+              <h2>Simplified Online Ordering</h2>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Manage all your orders in one place with Bello. Our platform enables your restaurant to display a full menu for customers to browse, order, and pay directly online. With an easy-to-use dashboard, you can track incoming orders and streamline your operations without any hassle.
               </p>
             </div>
 
@@ -176,16 +186,16 @@
         <div class="row gy-3">
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="about-content ps-0 ps-lg-3">
-              <h2>Experience the best from our handpicked selection of local eateries</h2>
+              <h2>The Future of Dining is Digital</h2>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                As the world rapidly shifts to online services, the restaurant industry must keep pace. Rather than building your own online system from scratch, our platform offers a quick, reliable solution to get your restaurant online. From menu integration to order management, we provide the tools you need to thrive in the digital age.
               </p>
             </div>
           
          
           </div>
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-            <img src="{{ asset('assets/landing-page/images/illustration 1.webp') }}" alt="" class="img-fluid">
+            <img src="{{ asset('assets/landing-page/images/digital.webp') }}" alt="" class="img-fluid">
           </div>
 
         </div>
@@ -236,9 +246,11 @@
               <div class="testimonial-item">
             <p>
               <i class=" bi bi-quote quote-icon-left"></i>
-                <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+                <span>
+                  We were struggling to keep up with the shift to online ordering, but Bello made it easy by giving us a custom app for our restaurant. Our customers love it, and it’s been a game-changer for our business.
+                </span>
                 <i class="bi bi-quote quote-icon-right"></i>
-                <span class="author-name">Tresha F</span>
+                <span class="author-name">Lana Dessert</span>
                 </p>
               </div>
             </div><!-- End testimonial item -->
@@ -247,9 +259,11 @@
               <div class="testimonial-item">
                 <p>
                   <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+                  <span>
+                    Thanks to Bello, my restaurant went from barely managing orders to having a smooth, professional online system. The platform is reliable, and customers love the convenience.
+                  </span>
                   <i class="bi bi-quote quote-icon-right"></i>
-                  <span class="author-name">Sally G</span>
+                  <span class="author-name">John Smith</span>
                 </p>
               </div>
             </div><!-- End testimonial item -->
@@ -258,9 +272,11 @@
               <div class="testimonial-item">
                 <p>
                   <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+                  <span>
+                    The thought of setting up online ordering was overwhelming, but Bello took all the stress away. Their platform made everything simple, and now we are reaching more customers than ever.
+                  </span>
                   <i class="bi bi-quote quote-icon-right"></i>
-                  <span class="author-name">Robert F</span>
+                  <span class="author-name">Bailey H</span>
                 </p>
               </div>
             </div><!-- End testimonial item -->
@@ -382,7 +398,9 @@
               <div class="faq-item faq-active">
                 <h3>What is Bello?</h3>
                 <div class="faq-content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                  <p>
+                    Bello is a powerful software solution designed for restaurants to streamline their online operations. It allows you to easily integrate your menu, manage orders, and provide customers with a seamless experience for takeaway or delivery. Bello eliminates the need for complicated tech setups by offering an all-in-one platform tailored to restaurant needs.
+                  </p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
               </div><!-- End Faq item-->
@@ -390,7 +408,9 @@
               <div class="faq-item">
                 <h3>What devices does Bello support?</h3>
                 <div class="faq-content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                  <p>
+                    Bello is compatible with laptops, PCs, and tablets, providing flexibility for managing your restaurant’s operations.
+                  </p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
               </div><!-- End Faq item-->
@@ -398,7 +418,25 @@
               <div class="faq-item">
                 <h3>How can I use Bello?</h3>
                 <div class="faq-content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                  <p>
+                    Using Bello is simple and straightforward:<br>
+
+                    <b>Step 1:</b> Select suitable package, register on the Bello platform and create your restaurant account.<br>
+                    <b>Step 2:</b> Generate your API key for seamless integration with your website.<br>
+                    <b>Step 3:</b> Set up your restaurant’s details, including contact information and delivery options.<br>
+                    <b>Step 4:</b> Manage your menu by adding items, prices, and categories.<br>
+                    <b>Step 5:</b> Start managing online orders through Bello, offering your customers an easy way to order takeaway or delivery.
+                  </p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Does Bello provide delivery services?</h3>
+                <div class="faq-content">
+                  <p>
+                    No, Bello does not offer delivery services. However, it allows you to manage customer orders and organise delivery through your own team. Bello gives you full control over your takeaway and delivery operations, ensuring a smooth experience for both your staff and customers.
+                  </p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
               </div><!-- End Faq item-->
@@ -424,7 +462,10 @@
             <a href="#" class="logo d-flex align-items-center">
               <img src="{{ asset('assets/landing-page/images/bello-logo.png') }}" alt="Logo" style="height: 80px; width: 80px;">
             </a>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+            <p>
+              <b>Bello - The Digital Home Where Your Restaurant Grows</b><br>
+              Bello equips your restaurant with everything it needs to thrive online. Manage orders, menus, and customer experience effortlessly with our powerful, easy-to-use platform.
+            </p>
           </div>
   
           {{-- <div class="col-lg-2 col-6 footer-links">
