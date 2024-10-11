@@ -59,7 +59,7 @@
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center hero-text" data-aos="zoom-out">
             <h1>Focus on Flavours While We Manage Your Orders!</h1>
-            <p>Seamless Ordering & Operations For Your Restaurant's Online Presence.</p>
+            <p style="font-size: 23px">Seamless Ordering & Operations For Your Restaurant's Online Presence.</p>
             <div class="d-flex">
               <a href="#featured-services" class="btn hero-btn">Learn more</a>
             </div>
@@ -73,39 +73,39 @@
     <section id="featured-services" class="featured-services section how-it-works">
       <div class="container">
         <h2>HOW IT WORKS</h2>
-        <div class="row gy-4">
+        <div class="row gy-4 justify-content-center">
 
           <div class="col-xl-1"></div>
 
-          <div class="col-xs-12 col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="100">
             <div class="service-item position-relative card">
               <div class="icon"><img src="{{ asset('assets/landing-page/images/sign-up.webp') }}" alt=""></div>
               <button style="white-space: nowrap;">Sign Up</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-2 col-md-3 d-flex  cards-row" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="200">
             <div class="service-item position-relative card">
               <div class="icon"><img src="{{ asset('assets/landing-page/images/api.webp') }}" alt=""></i></div>
               <button>API Integration</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="300">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="300">
             <div class="service-item position-relative card">
               <div class="icon"><img src="{{ asset('assets/landing-page/images/setup-restaurant.webp') }}" alt=""></i></div>
               <button>Setup Restaurant</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="400">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="400">
             <div class="service-item position-relative card">
               <div class="icon"><img src="{{ asset('assets/landing-page/images/order.webp') }}" alt=""></i></div>
               <button>Order Management</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-2 col-md-3 d-flex cards-row" data-aos="fade-up" data-aos-delay="400">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="400">
             <div class="service-item position-relative card">
               <div class="icon"><img src="{{ asset('assets/landing-page/images/review.webp') }}" alt=""></i></div>
               <button>Give Us A Review</button>
