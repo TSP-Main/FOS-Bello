@@ -40,9 +40,19 @@
         cluster: 'eu'
     });
 
-    var channel = pusher.subscribe('my-channel');
+    var companyId = {{ Auth::user()->company_id }}
+    var channel = pusher.subscribe('my-channel-' + companyId);
+
+    var soundEnabled = true;
+    var audio = new Audio("{{ asset('assets/sound/order-received.wav') }}");
 
     channel.bind('order-received', function(data) {
+        if (soundEnabled) {
+            audio.play().catch(function(error) {
+                console.error('Error playing sound:', error);
+            });
+        }
+
         toastr.success('New Order Received. <a href="'+data.url+'" target="_blank" class="order-link">View Order</a>', {
             timeOut: 0,  
             extendedTimeOut: 0,

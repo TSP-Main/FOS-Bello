@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Models\Order;
 
 class HomeController extends Controller
 {
@@ -24,8 +25,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // #1eabae primary color
-        // #f8a61b secondary color
-        return view('landing-page.home');
+        // Primary #1EABAE
+        // Secondary #F8A61B
+
+        $data['patners'] = Company::where('status', 1)->count();
+        $data['users'] = Order::distinct()->count('email');
+        
+        return view('landing-page.home', $data);
     }
 }

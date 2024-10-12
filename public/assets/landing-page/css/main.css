@@ -14,7 +14,7 @@
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */
   --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
   --heading-color: #222222; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #106eea; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --accent-color: #1EABAE; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
 }
@@ -103,7 +103,7 @@ h6 {
 }
 
 .header .logo img {
-  max-width: 80px;
+  max-width: 100px;
   height: auto;
 }
 
@@ -413,7 +413,8 @@ h6 {
   right: 15px;
   bottom: 15px;
   z-index: 99999;
-  background-color: var(--accent-color);
+  /* background-color: var(--accent-color); */
+  background-color: #1EABAE;
   width: 40px;
   height: 40px;
   border-radius: 4px;
@@ -427,7 +428,7 @@ h6 {
 }
 
 .scroll-top:hover {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+  background-color: color-mix(in srgb, #1EABAE, transparent 20%);
   color: var(--contrast-color);
 }
 
@@ -561,7 +562,7 @@ section,
   padding: 60px 0;
   display: flex;
   align-items: center;
-  background: url("../images/hero\ banner.webp") top left;
+  background: url("../images/banner.png") top left;
   background-size: cover;
 }
 
@@ -711,7 +712,7 @@ section,
   position: relative;
   padding-bottom: 50px;
   height: 200px;
-  margin: 0 50px;
+  margin: 0;
   background-color: #FCFAFA;
 }
 
@@ -729,7 +730,7 @@ section,
   font-weight: bold;
   border: 2px solid #FECD7A;
   border-top: none;
-  padding: 10px;
+  /* padding: 10px; */
   cursor: pointer;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
@@ -1020,9 +1021,10 @@ section,
 
 .pricing .pricing-item ul {
   padding: 15px 0;
-  list-style: none;
+  /* list-style: none; */
   line-height: 20px;
   font-size: 14px;
+  text-align: left;
 }
 
 .pricing .pricing-item ul li {

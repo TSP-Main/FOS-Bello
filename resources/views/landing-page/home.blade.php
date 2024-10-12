@@ -17,6 +17,9 @@
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
+  <!-- Fontawesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <!-- Vendor CSS Files -->
   <link href="{{ asset('assets/landing-page/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/landing-page/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
@@ -33,7 +36,7 @@
 
   <header id="header" class="header sticky-top">
 
-    <div class="branding d-flex align-items-center">
+    <div class="branding d-flex align-items-center" style="padding: 0">
       <div class="container position-relative d-flex align-items-center justify-content-between">
         <a href="#" class="logo d-flex justify-content-center align-items-center">
           <img src="{{ asset('assets/landing-page/images/bello-logo.png') }}" alt="Logo">
@@ -58,11 +61,10 @@
       <div class="container">
         <div class="row gy-4">
           <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center hero-text" data-aos="zoom-out">
-            <h1>Hungry? We've Got You Covered!</h1>
-            <p>Explore, Order, and Savor – Delicious  Meals Delivered Fast to
-              Your Doorstep.</p>
+            <h1>Focus on Flavours While We Manage Your Orders!</h1>
+            <p style="font-size: 23px">Seamless Ordering & Operations For Your Restaurant's Online Presence.</p>
             <div class="d-flex">
-              <a href="#" class="btn hero-btn">Learn more</a>
+              <a href="#featured-services" class="btn hero-btn">Learn more</a>
             </div>
           </div>
         </div>
@@ -74,36 +76,46 @@
     <section id="featured-services" class="featured-services section how-it-works">
       <div class="container">
         <h2>HOW IT WORKS</h2>
-        <div class="row gy-4">
+        <div class="row gy-4 justify-content-center">
 
-          <div class="col-xl-3 col-md-6 d-flex cards-row" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-xl-1"></div>
+
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="100">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icon2.png') }}" alt=""></div>
-              <button style="white-space: nowrap;">Browse Our Menu</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/sign-up.webp') }}" alt=""></div>
+              <button style="white-space: nowrap;">Sign Up</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-3 col-md-6 d-flex  cards-row" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="200">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icon1.png') }}" alt=""></i></div>
-              <button>Customise Order</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/api.webp') }}" alt=""></i></div>
+              <button>API Integration</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-3 col-md-6 d-flex cards-row" data-aos="fade-up" data-aos-delay="300">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="300">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icons (3).webp') }}" alt=""></i></div>
-              <button>Fast Delivery</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/setup-restaurant.webp') }}" alt=""></i></div>
+              <button>Setup Restaurant</button>
             </div>
           </div><!-- End Service Item -->
 
-          <div class="col-xl-3 col-md-6 d-flex cards-row" data-aos="fade-up" data-aos-delay="400">
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="400">
             <div class="service-item position-relative card">
-              <div class="icon"><img src="{{ asset('assets/landing-page/images/icons (4).webp') }}" alt=""></i></div>
-              <button>Enjoy</button>
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/order.webp') }}" alt=""></i></div>
+              <button>Order Management</button>
             </div>
           </div><!-- End Service Item -->
 
+          <div class="col-xl-2 col-md-3 d-flex justify-content-center cards-row" data-aos="fade-up" data-aos-delay="400">
+            <div class="service-item position-relative card">
+              <div class="icon"><img src="{{ asset('assets/landing-page/images/review.webp') }}" alt=""></i></div>
+              <button>Give Us A Review</button>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-xl-1"></div>
         </div>
 
       </div>
@@ -119,21 +131,21 @@
 
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center counter">
             <div class="stats-item">
-              <h3>+10K</h3>
+              <h3>{{ $users }}</h3>
               <p>Users</p>
             </div>
           </div><!-- End Stats Item -->
 
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center counter">
             <div class="stats-item">
-              <h3>+2K</h3>
+              <h3>{{ $patners }}</h3>
             <p>Partners</p>
             </div>
           </div><!-- End Stats Item -->
 
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center counter">
             <div class="stats-item">
-              <h3>+5K</h3>
+              <h3>+5</h3>
               <p>Reviews</p>
             </div>
           </div><!-- End Stats Item -->
@@ -157,9 +169,9 @@
 
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="about-content ps-0 ps-lg-3">
-              <h2>Experience the best from our handpicked selection of local eateries</h2>
+              <h2>Simplified Online Ordering</h2>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Manage all your orders in one place with Bello. Our platform enables your restaurant to display a full menu for customers to browse, order, and pay directly online. With an easy-to-use dashboard, you can track incoming orders and streamline your operations without any hassle.
               </p>
             </div>
 
@@ -177,16 +189,16 @@
         <div class="row gy-3">
           <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
             <div class="about-content ps-0 ps-lg-3">
-              <h2>Experience the best from our handpicked selection of local eateries</h2>
+              <h2>The Future of Dining is Digital</h2>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                As the world rapidly shifts to online services, the restaurant industry must keep pace. Rather than building your own online system from scratch, our platform offers a quick, reliable solution to get your restaurant online. From menu integration to order management, we provide the tools you need to thrive in the digital age.
               </p>
             </div>
           
          
           </div>
           <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-            <img src="{{ asset('assets/landing-page/images/illustration 1.webp') }}" alt="" class="img-fluid">
+            <img src="{{ asset('assets/landing-page/images/digital.webp') }}" alt="" class="img-fluid">
           </div>
 
         </div>
@@ -237,9 +249,11 @@
               <div class="testimonial-item">
             <p>
               <i class=" bi bi-quote quote-icon-left"></i>
-                <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+                <span>
+                  We were struggling to keep up with the shift to online ordering, but Bello made it easy by giving us a custom app for our restaurant. Our customers love it, and it’s been a game-changer for our business.
+                </span>
                 <i class="bi bi-quote quote-icon-right"></i>
-                <span class="author-name">Tresha F</span>
+                <span class="author-name">Lana Dessert</span>
                 </p>
               </div>
             </div><!-- End testimonial item -->
@@ -248,9 +262,11 @@
               <div class="testimonial-item">
                 <p>
                   <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+                  <span>
+                    Thanks to Bello, my restaurant went from barely managing orders to having a smooth, professional online system. The platform is reliable, and customers love the convenience.
+                  </span>
                   <i class="bi bi-quote quote-icon-right"></i>
-                  <span class="author-name">Sally G</span>
+                  <span class="author-name">John Smith</span>
                 </p>
               </div>
             </div><!-- End testimonial item -->
@@ -259,9 +275,11 @@
               <div class="testimonial-item">
                 <p>
                   <i class="bi bi-quote quote-icon-left"></i>
-                  <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span>
+                  <span>
+                    The thought of setting up online ordering was overwhelming, but Bello took all the stress away. Their platform made everything simple, and now we are reaching more customers than ever.
+                  </span>
                   <i class="bi bi-quote quote-icon-right"></i>
-                  <span class="author-name">Robert F</span>
+                  <span class="author-name">Bailey H</span>
                 </p>
               </div>
             </div><!-- End testimonial item -->
@@ -283,7 +301,7 @@
       <div class="container section-title price-card" data-aos="fade-up">
         <div class="container">
           <h2>THE <span>BEST</span> CHOICE FOR YOU</h2>
-          <p style="text-align: center">Free trial period of 14 days, unlocking all features</p>
+          {{-- <p style="text-align: center">Free trial period of 14 days, unlocking all features</p> --}}
           <div class="switch-container">
               <span class="switch-label">Monthly</span>
               <label class="switch">
@@ -299,47 +317,62 @@
 
         <div class="row gy-3 justify-content-between">
 
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+          <!-- Basic Package -->
+          <div class="col-xs-12 col-md-4 col-xl-4 col-lg-4" data-aos="fade-up" data-aos-delay="100">
             <div class="pricing-item" style="background-color: #FCFAFA; border: 1px solid black;">
               <h3 style="color:black">Basic</h3>
-              <p style="color:black">
-                Lorem ipsum dolor sit amet
-                Consectetur adipiscing elit
+              <p style="color:black;">
+                It will include the Software Api for the customer to connect to their app as well as Api integration documents to help. Please note we will not do this for the customer they will set it up themselves.
               </p>
-              <h4>20£ /Mo</h4>
+              <h4 class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
+              <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
+              <ul>
+                <li>20£ one-off Api generation fee</li>
+              </ul>
               <div class="btn-wrap">
-                <a href="#" class="btn-buy" style="background-color: #FECD7A;">Try for free</a>
+                <a href="#" data-package="basic" class="btn-buy text-white" style="background-color: #1EABAE;">Buy Now</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->
 
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="200">
+          <!-- Delux Package -->
+          <div class="col-xs-12 col-md-4 col-xl-4 col-lg-4" data-aos="fade-up" data-aos-delay="200">
             <div class="pricing-item featured" style="background-color: #1EABAE;">
               <div class="button-container">
-                <a href="#" class="btn-popular" style="background-color: #FECD7A;">Most Popular</a>
+                <a href="#" class="btn-popular" style="background-color: #F8A61B;">Most Popular</a>
               </div>
               <h3 style="color:#FFFFFF">Delux</h3>
-              <p style="color:#FFFFFF">
-               Lorem ipsum dolor sit amet
-               Consectetur adipiscing elit
+              <p style="color:#FFFFFF;">
+                We create the website WordPress and connect the software to it and help setup the menu, delivery addresses, content for their site and the site etc.
               </p>
-              <h4 style="color:#FFFFFF">20£ /Mo</h4>
+              <h4 style="color:#FFFFFF" class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
+              <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
+              <ul class="text-white">
+                <li>1000£ setup fee</li>
+                <li>100£ a year hosting of the new site</li>
+              </ul>
+              <p class="text-white" style="font-size: 11px;"> ( Tablet and printer will be purchased by the customer )</p>
               <div class="btn-wrap">
-                <a href="#" class="btn-buy" style="background-color: #FFFFFF;">Try for free</a>
+                <a href="#" data-package="delux" class="btn-buy text-white" style="background-color: #F8A61B;">Buy Now</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->          
 
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="400">
+          <!-- Premium Package -->
+          <div class="col-xs-12 col-md-4 col-xl-4 col-lg-4" data-aos="fade-up" data-aos-delay="400">
             <div class="pricing-item" style="background-color: #FCFAFA; border: 1px solid black;">
               <h3 style="color:black">Premium</h3>
               <p style="color:black">
-                Lorem ipsum dolor sit amet
-                Consectetur adipiscing elit
+                Full help to set up the website and tablet at the shop etc.
               </p>
-              <h4>80£ /Mo</h4>
+              <h4 class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
+              <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
+              <ul>
+                <li>1500£ custom website</li>
+                <li>100£ a year hosting of the new site</li>
+              </ul>
               <div class="btn-wrap">
-                <a href="#" class="btn-buy" style="background-color: #FECD7A;">Try for free</a>
+                <a href="" data-package="premium" class="btn-buy text-white" style="background-color: #1EABAE;">Buy Now</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->
@@ -370,7 +403,9 @@
               <div class="faq-item faq-active">
                 <h3>What is Bello?</h3>
                 <div class="faq-content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                  <p>
+                    Bello is a powerful software solution designed for restaurants to streamline their online operations. It allows you to easily integrate your menu, manage orders, and provide customers with a seamless experience for takeaway or delivery. Bello eliminates the need for complicated tech setups by offering an all-in-one platform tailored to restaurant needs.
+                  </p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
               </div><!-- End Faq item-->
@@ -378,7 +413,9 @@
               <div class="faq-item">
                 <h3>What devices does Bello support?</h3>
                 <div class="faq-content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                  <p>
+                    Bello is compatible with laptops, PCs, and tablets, providing flexibility for managing your restaurant’s operations.
+                  </p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
               </div><!-- End Faq item-->
@@ -386,7 +423,25 @@
               <div class="faq-item">
                 <h3>How can I use Bello?</h3>
                 <div class="faq-content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+                  <p>
+                    Using Bello is simple and straightforward:<br>
+
+                    <b>Step 1:</b> Select suitable package, register on the Bello platform and create your restaurant account.<br>
+                    <b>Step 2:</b> Generate your API key for seamless integration with your website.<br>
+                    <b>Step 3:</b> Set up your restaurant’s details, including contact information and delivery options.<br>
+                    <b>Step 4:</b> Manage your menu by adding items, prices, and categories.<br>
+                    <b>Step 5:</b> Start managing online orders through Bello, offering your customers an easy way to order takeaway or delivery.
+                  </p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <div class="faq-item">
+                <h3>Does Bello provide delivery services?</h3>
+                <div class="faq-content">
+                  <p>
+                    No, Bello does not offer delivery services. However, it allows you to manage customer orders and organise delivery through your own team. Bello gives you full control over your takeaway and delivery operations, ensuring a smooth experience for both your staff and customers.
+                  </p>
                 </div>
                 <i class="faq-toggle bi bi-chevron-right"></i>
               </div><!-- End Faq item-->
@@ -408,24 +463,29 @@
 
       <div class="container footer-top">
         <div class="row gy-4">
-          <div class="col-lg-5 col-md-12 footer-about">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-5 footer-about">
             <a href="#" class="logo d-flex align-items-center">
               <img src="{{ asset('assets/landing-page/images/bello-logo.png') }}" alt="Logo" style="height: 80px; width: 80px;">
             </a>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim</p>
+            <p>
+              <b>Bello - The Digital Home Where Your Restaurant Grows</b><br>
+              Bello equips your restaurant with everything it needs to thrive online. Manage orders, menus, and customer experience effortlessly with our powerful, easy-to-use platform.
+            </p>
+
+            <!-- Social Media Links -->
+            <div class="social-links" style="display: flex">
+              <a href="https://www.facebook.com/profile.php?id=61566675602351" target="_blank" class="social-icon">
+                <i class="fa-brands fa-facebook"></i>
+              </a>
+              <a href="https://www.instagram.com/bello.fos/" target="_blank" class="social-icon">
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+            </div>
           </div>
+
+          <div class="col-md-3 col-lg-3"></div>
   
-          <div class="col-lg-2 col-6 footer-links">
-            <h4>Menu</h4>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Best Choice</a></li>
-            <li><a href="#">Best Price</a></li>
-            <li><a href="#">Best Location</a></li>
-          </ul>
-          </div>
-  
-          <div class="col-lg-2 col-6 footer-links">
+          <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2 footer-links">
             <h4>Service</h4>
           <ul>
             <li><a href="#">FAQS</a></li>
@@ -434,7 +494,7 @@
           </ul>
           </div>
   
-          <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+          <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2  footer-contact">
             <h4>About Us</h4>
             <p><a href="#" style="color: unset;">Careers</a></p>
             <p><a href="#" style="color: unset;">Features</a></p>
@@ -446,7 +506,7 @@
       </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© 2024<strong class="px-1 sitename"><a href="https://techsolutionspro.co.uk/" target="_blank">Tech Solutions Pro</a></strong> <span>All Rights Reserved</span></p>
+      <p>© 2024<strong class="px-1 sitename"><a href="https://techsolutionspro.co.uk/" target="_blank" style="color: #1EABAE">Tech Solutions Pro</a></strong> <span>All Rights Reserved</span></p>
     </div>
 
   </footer>
@@ -472,9 +532,44 @@
   <script src="{{ asset('assets/landing-page/vendor/swiper/swiper-bundle.min.js') }}"></script>
   <script src="{{ asset('assets/landing-page/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
   <script src="{{ asset('assets/landing-page/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Main JS File -->
   <script src="{{ asset('assets/landing-page/js/main.js') }}"></script>
+
+  <script>
+    // JavaScript to toggle prices
+    let currentPlan = 'monthly';
+
+    document.getElementById('toggleSwitch').addEventListener('change', function () {
+      const isYearly = this.checked;
+      currentPlan = this.checked ? 'yealry' : 'monthly';
+
+      const prices = document.querySelectorAll('.price');
+      const discounts = document.querySelectorAll('.yearly-discount');
+      
+      prices.forEach((price, index) => {
+        const monthlyPrice = parseFloat(price.getAttribute('data-monthly'));
+        const yearlyPrice = parseFloat(price.getAttribute('data-yearly'));
+
+        if (isYearly) {
+          price.textContent = yearlyPrice.toFixed(2) + '£ /Yr';
+          discounts[index].style.display = 'block';  // Show "15% Off"
+        } else {
+          price.textContent = monthlyPrice.toFixed(2) + '£ /Mo';
+          discounts[index].style.display = 'none';  // Hide "15% Off"
+        }
+      });
+    });
+
+    $('.btn-buy').click(function(event) {
+      event.preventDefault();
+      const packageType = $(this).data('package');
+      const planType = currentPlan;
+
+      const url = `{{ url('/register') }}?package=${packageType}&plan=${planType}`;
+      window.location.href = url;
+    });
+  </script>
 
 </body>
 
