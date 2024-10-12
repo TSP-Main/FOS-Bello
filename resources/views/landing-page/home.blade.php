@@ -17,6 +17,9 @@
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
+  <!-- Fontawesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <!-- Vendor CSS Files -->
   <link href="{{ asset('assets/landing-page/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/landing-page/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
@@ -142,7 +145,7 @@
 
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center counter">
             <div class="stats-item">
-              <h3>+5K</h3>
+              <h3>+5</h3>
               <p>Reviews</p>
             </div>
           </div><!-- End Stats Item -->
@@ -315,46 +318,48 @@
         <div class="row gy-3 justify-content-between">
 
           <!-- Basic Package -->
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-xs-12 col-md-4 col-xl-4 col-lg-4" data-aos="fade-up" data-aos-delay="100">
             <div class="pricing-item" style="background-color: #FCFAFA; border: 1px solid black;">
               <h3 style="color:black">Basic</h3>
-              <p style="color:black; text-align:justify">
+              <p style="color:black;">
                 It will include the Software Api for the customer to connect to their app as well as Api integration documents to help. Please note we will not do this for the customer they will set it up themselves.
               </p>
               <h4 class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
               <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
-              <p>20£ one-off Api generation fee</p>
+              <ul>
+                <li>20£ one-off Api generation fee</li>
+              </ul>
               <div class="btn-wrap">
-                <a href="#" class="btn-buy" style="background-color: #FECD7A;">Try for free</a>
+                <a href="#" data-package="basic" class="btn-buy text-white" style="background-color: #1EABAE;">Buy Now</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->
 
           <!-- Delux Package -->
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-xs-12 col-md-4 col-xl-4 col-lg-4" data-aos="fade-up" data-aos-delay="200">
             <div class="pricing-item featured" style="background-color: #1EABAE;">
               <div class="button-container">
-                <a href="#" class="btn-popular" style="background-color: #FECD7A;">Most Popular</a>
+                <a href="#" class="btn-popular" style="background-color: #F8A61B;">Most Popular</a>
               </div>
               <h3 style="color:#FFFFFF">Delux</h3>
-              <p style="color:#FFFFFF; text-align:justify">
+              <p style="color:#FFFFFF;">
                 We create the website WordPress and connect the software to it and help setup the menu, delivery addresses, content for their site and the site etc.
               </p>
               <h4 style="color:#FFFFFF" class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
               <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
-              <p class="text-white">
-                1000£ setup fee <br>
-                100£ a year hosting of the new site
-              </p>
-              <p class="text-white"> ( Tablet and printer will be purchased by the customer )</p>
+              <ul class="text-white">
+                <li>1000£ setup fee</li>
+                <li>100£ a year hosting of the new site</li>
+              </ul>
+              <p class="text-white" style="font-size: 11px;"> ( Tablet and printer will be purchased by the customer )</p>
               <div class="btn-wrap">
-                <a href="#" class="btn-buy" style="background-color: #FFFFFF;">Try for free</a>
+                <a href="#" data-package="delux" class="btn-buy text-white" style="background-color: #F8A61B;">Buy Now</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->          
 
           <!-- Premium Package -->
-          <div class="col-xl-3 col-lg-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="col-xs-12 col-md-4 col-xl-4 col-lg-4" data-aos="fade-up" data-aos-delay="400">
             <div class="pricing-item" style="background-color: #FCFAFA; border: 1px solid black;">
               <h3 style="color:black">Premium</h3>
               <p style="color:black">
@@ -362,12 +367,12 @@
               </p>
               <h4 class="price" data-monthly="35" data-yearly="357">35£ /Mo</h4>
               <p class="yearly-discount" style="color:green; display:none;">15% Off</p>
-              <p>
-                1500£ custom website <br>
-                100£ a year hosting of the new site
-              </p>
+              <ul>
+                <li>1500£ custom website</li>
+                <li>100£ a year hosting of the new site</li>
+              </ul>
               <div class="btn-wrap">
-                <a href="#" class="btn-buy" style="background-color: #FECD7A;">Try for free</a>
+                <a href="" data-package="premium" class="btn-buy text-white" style="background-color: #1EABAE;">Buy Now</a>
               </div>
             </div>
           </div><!-- End Pricing Item -->
@@ -458,7 +463,7 @@
 
       <div class="container footer-top">
         <div class="row gy-4">
-          <div class="col-lg-5 col-md-12 footer-about">
+          <div class="col-xs-12 col-sm-6 col-md-5 col-lg-5 footer-about">
             <a href="#" class="logo d-flex align-items-center">
               <img src="{{ asset('assets/landing-page/images/bello-logo.png') }}" alt="Logo" style="height: 80px; width: 80px;">
             </a>
@@ -466,19 +471,21 @@
               <b>Bello - The Digital Home Where Your Restaurant Grows</b><br>
               Bello equips your restaurant with everything it needs to thrive online. Manage orders, menus, and customer experience effortlessly with our powerful, easy-to-use platform.
             </p>
+
+            <!-- Social Media Links -->
+            <div class="social-links" style="display: flex">
+              <a href="https://www.facebook.com/profile.php?id=61566675602351" target="_blank" class="social-icon">
+                <i class="fa-brands fa-facebook"></i>
+              </a>
+              <a href="https://www.instagram.com/bello.fos/" target="_blank" class="social-icon">
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+            </div>
           </div>
+
+          <div class="col-md-3 col-lg-3"></div>
   
-          {{-- <div class="col-lg-2 col-6 footer-links">
-            <h4>Menu</h4>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Best Choice</a></li>
-              <li><a href="#">Best Price</a></li>
-              <li><a href="#">Best Location</a></li>
-            </ul>
-          </div> --}}
-  
-          <div class="col-lg-2 col-6 footer-links">
+          <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2 footer-links">
             <h4>Service</h4>
           <ul>
             <li><a href="#">FAQS</a></li>
@@ -487,7 +494,7 @@
           </ul>
           </div>
   
-          <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+          <div class="col-xs-6 col-sm-6 col-md-2 col-lg-2  footer-contact">
             <h4>About Us</h4>
             <p><a href="#" style="color: unset;">Careers</a></p>
             <p><a href="#" style="color: unset;">Features</a></p>
@@ -499,7 +506,7 @@
       </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© 2024<strong class="px-1 sitename"><a href="https://techsolutionspro.co.uk/" target="_blank">Tech Solutions Pro</a></strong> <span>All Rights Reserved</span></p>
+      <p>© 2024<strong class="px-1 sitename"><a href="https://techsolutionspro.co.uk/" target="_blank" style="color: #1EABAE">Tech Solutions Pro</a></strong> <span>All Rights Reserved</span></p>
     </div>
 
   </footer>
@@ -525,30 +532,43 @@
   <script src="{{ asset('assets/landing-page/vendor/swiper/swiper-bundle.min.js') }}"></script>
   <script src="{{ asset('assets/landing-page/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
   <script src="{{ asset('assets/landing-page/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
-
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!-- Main JS File -->
   <script src="{{ asset('assets/landing-page/js/main.js') }}"></script>
 
   <script>
     // JavaScript to toggle prices
-    document.getElementById('toggleSwitch').addEventListener('change', function () {
-    const isYearly = this.checked;
-    const prices = document.querySelectorAll('.price');
-    const discounts = document.querySelectorAll('.yearly-discount');
-    
-    prices.forEach((price, index) => {
-      const monthlyPrice = parseFloat(price.getAttribute('data-monthly'));
-      const yearlyPrice = parseFloat(price.getAttribute('data-yearly'));
+    let currentPlan = 'monthly';
 
-      if (isYearly) {
-        price.textContent = yearlyPrice.toFixed(2) + '£ /Yr';
-        discounts[index].style.display = 'block';  // Show "15% Off"
-      } else {
-        price.textContent = monthlyPrice.toFixed(2) + '£ /Mo';
-        discounts[index].style.display = 'none';  // Hide "15% Off"
-      }
+    document.getElementById('toggleSwitch').addEventListener('change', function () {
+      const isYearly = this.checked;
+      currentPlan = this.checked ? 'yealry' : 'monthly';
+
+      const prices = document.querySelectorAll('.price');
+      const discounts = document.querySelectorAll('.yearly-discount');
+      
+      prices.forEach((price, index) => {
+        const monthlyPrice = parseFloat(price.getAttribute('data-monthly'));
+        const yearlyPrice = parseFloat(price.getAttribute('data-yearly'));
+
+        if (isYearly) {
+          price.textContent = yearlyPrice.toFixed(2) + '£ /Yr';
+          discounts[index].style.display = 'block';  // Show "15% Off"
+        } else {
+          price.textContent = monthlyPrice.toFixed(2) + '£ /Mo';
+          discounts[index].style.display = 'none';  // Hide "15% Off"
+        }
+      });
     });
-  });
+
+    $('.btn-buy').click(function(event) {
+      event.preventDefault();
+      const packageType = $(this).data('package');
+      const planType = currentPlan;
+
+      const url = `{{ url('/register') }}?package=${packageType}&plan=${planType}`;
+      window.location.href = url;
+    });
   </script>
 
 </body>

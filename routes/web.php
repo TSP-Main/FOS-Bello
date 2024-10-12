@@ -15,6 +15,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 
@@ -22,6 +23,7 @@ Auth::routes();
 
 Route::get('/', [HomeController::class, 'index']);
 Route::post('signup', [CompanyController::class, 'register'])->name('register.self');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 
 Route::group(['middleware' => ['auth']], function(){
 

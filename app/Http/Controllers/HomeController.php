@@ -25,6 +25,9 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // Primary #1EABAE
+        // Secondary #F8A61B
+
         $data['patners'] = Company::where('status', 1)->count();
         $data['users'] = Order::distinct()->count('email');
         
