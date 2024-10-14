@@ -46,6 +46,8 @@
     var soundEnabled = true;
     var audio = new Audio("{{ asset('assets/sound/order-received.wav') }}");
 
+    audio.loop = true;
+    
     channel.bind('order-received', function(data) {
         if (soundEnabled) {
             audio.play().catch(function(error) {
