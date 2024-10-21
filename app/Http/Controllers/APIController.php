@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Menu;
 use App\Models\Order;
+use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\Company; 
 use App\Models\OptionValue;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
+use App\Models\TemporaryOrder;
 use Illuminate\Http\JsonResponse;
 use App\Models\RestaurantSchedule;
-use App\Models\TemporaryOrder;
 use App\Models\TemporaryOrderDetail;
+use Illuminate\Support\Facades\Crypt;
+use App\Models\NewsletterSubscription;
+use App\Models\RestaurantStripeConfig;
+use App\Models\Discount;
 
 class APIController extends Controller
 {
@@ -23,8 +27,16 @@ class APIController extends Controller
         $responseData = $response->getData();
 
         $data = [
+            'address' => $responseData->company->address,
+            'apartment' => $responseData->company->apartment,
+            'city' => $responseData->company->city,
+            'postcode' => $responseData->company->postcode,
             'radius' => $responseData->company->radius,
-            'coordinates' => $responseData->company->coordinates,
+            'latitude' => $responseData->company->latitude,
+            'longitude' => $responseData->company->longitude,
+            'amount' => $responseData->company->free_shipping_amount,
+            'currency' => $responseData->company->currency,
+            'currency_symbol' => $responseData->company->currency_symbol,
         ];
 
         if($responseData->status == 'success'){
@@ -147,7 +159,7 @@ class APIController extends Controller
                 if($categoryDetail){
                     $companyId = $responseData->company->id;
                     $products = Product::with('category', 'images', 'options.option.option_values')->where('company_id', $companyId)->where('category_id', $categoryDetail->id)->where('is_enable', 1)->get();
-                    return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products], 200);
+                    return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products, 'categoryDetail' => $categoryDetail], 200);
                 }
                 else{
                     return response()->json(['status' => 'error', 'message' => 'Category is disable', 'data' => ''], 404);
@@ -253,6 +265,94 @@ class APIController extends Controller
     
             return response()->json(['status' => 'success', 'message' => 'Order Placed Successfully', 'orderId' => $orderId], 200);
         } else {
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function stripe_config(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+
+        if($responseData->status == 'success'){
+            $companyId = $responseData->company->id;
+            $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
+            $data['stripeKey'] = Crypt::decrypt($stripeConfig->stripe_key);
+
+            return response()->json(['status' => 'success', 'message' => 'Found', 'data' => $data], 200);
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function newsletter_subscribe(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+        $companyId = $responseData->company->id;
+
+        if($responseData->status == 'success'){
+
+            $subscription = new NewsletterSubscription();
+
+            $subscription->company_id = $companyId;
+            $subscription->email = $request->email;
+            
+            $subscription->save();
+
+            return response()->json(['status' => 'success', 'message' => 'Thanks for subscription'], 200);
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function discount_check(Request $request)
+    {
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+        $companyId = $responseData->company->id;
+
+        if($responseData->status == 'success'){
+            $code = strtoupper(trim($request->code));
+            $discountDetail = Discount::where('company_id', $companyId)
+            ->where('code', $code)
+            ->where('expiry', '>', now())
+            ->first();
+
+            if($discountDetail){
+                $data['type'] = $discountDetail->type;
+                $data['rate'] = $discountDetail->rate;
+                $data['minimum_amount'] = $discountDetail->minimum_amount;
+                
+                return response()->json(['status' => 'success', 'message' => 'Found', 'data' => $data], 200);
+            }
+            else{
+                return response()->json(['status' => 'fail', 'message' => 'Invalid or Expire Code'], 404);
+            }
+        }
+        else{
+            return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function products_search(Request $request)
+    {
+        // fetch  single or all products of a company
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+
+        if($responseData->status == 'success'){
+            $companyId = $responseData->company->id;
+            $products = Product::where('company_id', $companyId)
+                ->where('is_enable', 1)
+                ->where('title', 'LIKE', '%' . $request->title . '%')
+                ->get();
+
+            return response()->json(['status' => 'success', 'message' => 'Products Found', 'data' => $products], 200);
+        }
+        else{
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
         }
     }

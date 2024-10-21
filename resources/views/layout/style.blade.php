@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="{{ asset('assets/theme/css/style.css')}}">
 <link rel="stylesheet" href="{{ asset('assets/theme/css/skin_color.css')}}">
 
+<!-- Toastr -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ asset('assets/custom.css')}}">
 

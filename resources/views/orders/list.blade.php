@@ -2,6 +2,18 @@
 @section('title', 'Orders | FO - Food Ordering System')
 
 @section('content')
+    @if (session()->has('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <strong>Success!</strong> {{ session()->get('success')}}
+        </div>
+    @elseif (session()->has('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <strong>Error!</strong> {{ session()->get('error')}}
+        </div>
+    @endif
+
     <!-- Content Header (Page header) -->	  
     <div class="content-header">
         <div class="d-flex align-items-center">
@@ -68,6 +80,7 @@
                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#rejectedOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Rejected</span></a> </li>
                     <li class="nav-item"> <a class="nav-link" data-bs-toggle="tab" href="#canceledOrdersTab" role="tab"><span class="hidden-sm-up"><i class="ion-person"></i></span> <span class="hidden-xs-down">Canceled</span></a> </li>
                 </ul>
+
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <!-- incoming orders tab -->
@@ -77,11 +90,15 @@
                                 <table class="table border-no" id="incomingOrders">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>Order ID</th>
+                                            <th>Received Date Time</th>
                                             <th>Name</th>
                                             <th>Phone</th>
                                             <th>Address</th>
                                             <th>Total</th>
+                                            <th>Original Bill</th>
+                                            <th>Discount Code</th>
+                                            <th>Discount Amount</th>
                                             <th>Order Type</th>
                                             <th>Payment Option</th>
                                             <th>Actions</th>
@@ -89,27 +106,25 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($incomingOrders as $incomingOrder)
-                                            <tr>
-                                                <td>{{ $incomingOrder->id }}</td>
+                                            <tr  class="hover-primary">
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($incomingOrder->id) ]) }}"> #{{ $incomingOrder->id }} </a></td>
+                                                <td>{{ $incomingOrder->formatted_created_at }}</td>
                                                 <td>{{ $incomingOrder->name }}</td>
                                                 <td>{{ $incomingOrder->phone }}</td>
                                                 <td>{{ $incomingOrder ->address}}</td>
-                                                <td>£{{ $incomingOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $incomingOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $incomingOrder->original_bill }}</td>
+                                                <td>{{ $incomingOrder->discount_code }}</td>
+                                                <td>{{ $currencySymbol . $incomingOrder->discount_amount }}</td>
                                                 <td>{{ $incomingOrder->order_type }}</td>
                                                 <td>{{ $incomingOrder->payment_option }}</td>
                                                 <td>
-                                                    <div class="btn-group">
-                                                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
-                                                        <div class="dropdown-menu">
-                                                          <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($incomingOrder->id) }}">Accept Order</a>
-                                                          {{-- <a class="dropdown-item" href="{{ route('orders.update', base64_encode($incomingOrder->id)) }}" onclick="return confirm('Are you sure you want to reject this order?');">Reject Order</a> --}}
-                                                          <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('reject-order-form-{{ $incomingOrder->id }}').submit();">Reject Order</a>
-                                                            <form id="reject-order-form-{{ $incomingOrder->id }}" action="{{ route('orders.update', base64_encode($incomingOrder->id)) }}" method="POST" style="display: none;">
-                                                                @csrf
-                                                                <input type="hidden" name="reject" value="1">
-                                                            </form>
-                                                        </div>
-                                                    </div>
+                                                    <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($incomingOrder->id) }}"><i class="fa fa-check"></i></a>
+                                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder({{ $incomingOrder->id }});"><i class="fa fa-ban"></i></a>
+                                                    <form id="reject-order-form-{{ $incomingOrder->id }}" action="{{ route('orders.update', base64_encode($incomingOrder->id)) }}" method="POST" style="display: none;">
+                                                        @csrf
+                                                        <input type="hidden" name="reject" value="1">
+                                                    </form>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -127,9 +142,9 @@
                                     <thead>
                                         <tr>
                                             <th>Order ID</th>
-                                            <th>Date</th>
+                                            <th>Accepted Date Time</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                             <th>Action</th>
                                         </tr>
@@ -137,28 +152,25 @@
                                     <tbody>
                                         @foreach ($acceptedOrders as $acceptedOrder)
                                             <tr class="hover-primary">
-                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($acceptedOrder->id) ]) }}" target="_blank"> #{{ $acceptedOrder->id }} </a></td>
-                                                <td>{{ $acceptedOrder->created_at }}</td>
+                                                <td><a href="{{ route('orders.detail', ["id" => base64_encode($acceptedOrder->id) ]) }}"> #{{ $acceptedOrder->id }} </a></td>
+                                                <td>{{ $acceptedOrder->formatted_updated_at }}</td>
                                                 <td>{{ $acceptedOrder->name }}</td>
                                                 <td>{{ $acceptedOrder->address ?? NULL}}</td>
-                                                <td>£{{ $acceptedOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $acceptedOrder->total}}</td>
                                                 <td>
-                                                    <div class="btn-group">
-                                                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();">Delivered</a>
-                                                            <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
-                                                                @csrf
-                                                                <input type="hidden" name="deliver" value="1">
-                                                            </form>
-                                                            
-                                                            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('cancel-order-form-{{ $acceptedOrder->id }}').submit();">Cancel</a>
-                                                            <form id="cancel-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
-                                                                @csrf
-                                                                <input type="hidden" name="cancel" value="1">
-                                                            </form>
-                                                        </div>
-                                                    </div>
+                                                    <a href="#" class="btn btn-success btn-sm" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();"><i class="fa fa-check"></i></a>
+                                                    <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
+                                                        @csrf
+                                                        <input type="hidden" name="deliver" value="1">
+                                                    </form>
+
+                                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); document.getElementById('cancel-order-form-{{ $acceptedOrder->id }}').submit();"><i class="fa fa-close"></i></a>
+                                                    <form id="cancel-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
+                                                        @csrf
+                                                        <input type="hidden" name="cancel" value="1">
+                                                    </form>
+
+                                                    <a href="{{route('orders.print', ['id' => base64_encode($acceptedOrder->id)])}}" target="_balnk" class="btn btn-success btn-sm" ><i class="fa fa-print"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -178,7 +190,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
@@ -186,10 +198,10 @@
                                         @foreach ($deliveredOrders as $deliveredOrder)
                                             <tr class="hover-primary">
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($deliveredOrder->id) ]) }}" target="_blank"> #{{ $deliveredOrder->id }} </a></td>
-                                                <td>{{ $deliveredOrder->created_at }}</td>
+                                                <td>{{ $deliveredOrder->formatted_updated_at }}</td>
                                                 <td>{{ $deliveredOrder->name }}</td>
                                                 <td>{{ $deliveredOrder->address ?? NULL}}</td>
-                                                <td>£{{ $deliveredOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $deliveredOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -208,7 +220,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                             {{-- <th>Status Order</th> --}}
                                             {{-- <th></th> --}}
@@ -218,10 +230,10 @@
                                         @foreach ($rejectedOrders as $rejectedOrder)
                                             <tr class="hover-primary">
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($rejectedOrder->id) ]) }}" target="_blank"> #{{ $rejectedOrder->id }} </a></td>
-                                                <td>{{ $rejectedOrder->created_at }}</td>
+                                                <td>{{ $rejectedOrder->formatted_updated_at }}</td>
                                                 <td>{{ $rejectedOrder->name }}</td>
                                                 <td>{{ $rejectedOrder->address ?? NULL}}</td>
-                                                <td>£{{ $rejectedOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $rejectedOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -240,7 +252,7 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
-                                            <th>Location</th>
+                                            <th>Address</th>
                                             <th>Amount</th>
                                         </tr>
                                     </thead>
@@ -248,10 +260,10 @@
                                         @foreach ($canceledOrders as $canceledOrder)
                                             <tr class="hover-primary">
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($canceledOrder->id) ]) }}" target="_blank"> #{{ $canceledOrder->id }} </a></td>
-                                                <td>{{ $canceledOrder->created_at }}</td>
+                                                <td>{{ $canceledOrder->formatted_updated_at }}</td>
                                                 <td>{{ $canceledOrder->name }}</td>
                                                 <td>{{ $canceledOrder->address ?? NULL}}</td>
-                                                <td>£{{ $canceledOrder->total}}</td>
+                                                <td>{{ $currencySymbol . $canceledOrder->total}}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -270,7 +282,7 @@
 @endsection
 
 @section('script')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var orderApprovalModal = document.getElementById('orderApprovalModal');
@@ -284,6 +296,7 @@
         });
         
         function checkIncomingOrders() {
+            var currencySymbol = @json($currencySymbol);
             $.ajax({
                 url: "{{ route('orders.incoming') }}",
                 method: 'GET',
@@ -292,21 +305,25 @@
                     response.incomingOrders.forEach(order => {
                         $('#incomingOrders tbody').append(`
                             <tr>
-                                <td>${order.id}</td>
+                                <td><a href="/orders/detail/${btoa(order.id)}">#${order.id}</td>
+                                <td>${order.formatted_created_at}</td>
                                 <td>${order.name}</td>
                                 <td>${order.phone}</td>
                                 <td>${order.address ? order.address : ''}</td>
-                                <td>£${order.total}</td>
+                                <td>${currencySymbol}${order.total}</td>
+                                <td>${currencySymbol}${order.original_bill}</td>
+                                <td>${order.discount_code ? order.discount_code : ''}</td>
+                                <td>${currencySymbol}${order.discount_amount}</td>
                                 <td>${order.order_type}</td>
                                 <td>${order.payment_option}</td>
                                 <td>
-                                    <div class="btn-group">
-                                        <a class="hover-primary dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="fa fa-ellipsis-h"></i></a>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="btoa(${order.id})">Accept Order</a>
-                                            <a class="dropdown-item" href="/orders/update/${btoa(order.id)}" onclick="return confirm('Are you sure you want to reject this order?');">Reject Order</a>
-                                        </div>
-                                    </div>
+                                    <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${btoa(order.id)}"><i class="fa fa-check"></i></a>
+                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder(${order.id});"><i class="fa fa-ban"></i></a>
+                                    <form id="reject-order-form-${order.id}" action="/orders/update/${btoa(order.id)}" method="POST" style="display: none;">
+                                        @csrf
+                                        <input type="hidden" name="reject" value="1">
+                                    </form>
+                                    
                                 </td>
                             </tr>
                         `);
@@ -319,5 +336,23 @@
         }
         // Check for new incoming orders every 5 seconds
         setInterval(checkIncomingOrders, 5000);
+
+        function confirmRejectOrder(orderId) {
+            if (confirm('Are you sure you want to reject this order?')) {
+                document.getElementById('reject-order-form-' + orderId).submit();
+            }
+        }
+
+        $(document).ready(function () {
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
+            }
+
+            $('.nav-tabs a').on('shown.bs.tab', function (e) {
+                var tabName = $(e.target).attr('href');
+                localStorage.setItem('activeTab', tabName);
+            });
+        });
     </script>
 @endsection

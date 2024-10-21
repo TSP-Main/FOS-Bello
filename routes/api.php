@@ -6,6 +6,7 @@ use App\Http\Controllers\APIController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TemporaryOrderController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\NotificationController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -26,11 +27,14 @@ Route::get('options/detail', [APIController::class, 'get_option_value_detail']);
 // store incoming order
 Route::post('order/store', [OrderController::class, 'store_incoming_order']);
 
-
-Route::post('/charge', [PaymentController::class, 'charge']);
-// Route::post('/temporary_orders/process', [TemporaryOrderController::class, 'process']);
-
-use App\Http\Controllers\NotificationController;
-
 Route::get('/notifications', [NotificationController::class, 'index']);
+
+Route::get('stripe/config', [APIController::class, 'stripe_config']);
+
+Route::post('newsletter/subscribe', [APIController::class, 'newsletter_subscribe']);
+
+// check discount code
+Route::post('discount/check', [APIController::class, 'discount_check']);
+
+Route::get('searching', [APIController::class, 'products_search']);
 

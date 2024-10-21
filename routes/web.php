@@ -2,25 +2,32 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Models\NewsletterSubscription;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
+use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\OptionController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\AdminOrderController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
-
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\RestaurantScheduleController;
+use App\Http\Controllers\NewsletterSubscriptionController;
 
 Auth::routes();
 
 Route::get('/', [HomeController::class, 'index']);
+Route::post('signup', [CompanyController::class, 'register'])->name('register.self');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+
 Route::group(['middleware' => ['auth']], function(){
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboad');
+
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/filter', [DashboardController::class, 'filter'])->name('dashboard.filter');
 
     // Users Routes
@@ -39,6 +46,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
     // Route::delete('companies/destroy/{id}'0, [CompanyController::class, 'destroy'])->name('companies.destroy');
     Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
+    Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
+    Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
 
     // Restaurant Schedule
     Route::get('schedules', [RestaurantScheduleController::class, 'index'])->name('schedules.list');
@@ -81,6 +90,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('send', [OrderController::class, 'send_mail']);
     Route::get('orders/incoming', [OrderController::class, 'check_incoming_orders'])->name('orders.incoming');
     Route::match(['get', 'post'], 'orders/update/{id}', [OrderController::class, 'update'])->name('orders.update');
+    Route::get('orders/print/{id}', [OrderController::class, 'print'])->name('orders.print');
+    Route::get('orders', [OrderController::class, 'ordersList'])->name('orders');
+    Route::get('orders/filter', [OrderController::class, 'ordersFilter'])->name('orders.filter');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 
@@ -99,6 +111,24 @@ Route::group(['middleware' => ['auth']], function(){
     // TimeZone
     Route::get('timezone', [RestaurantScheduleController::class, 'create_timezone'])->name('timezone.create');
     Route::post('timezone/store', [RestaurantScheduleController::class, 'store_timezone'])->name('timezone.store');
+
+    // Configurations
+    Route::get('configurations', [RestaurantScheduleController::class, 'create_configurations'])->name('configurations.create');
+    Route::post('email/store', [RestaurantScheduleController::class, 'email_store'])->name('email.store');
+    Route::post('stripe/store', [RestaurantScheduleController::class, 'stripe_store'])->name('stripe.store');
+    Route::post('shipping/store', [RestaurantScheduleController::class, 'free_shipping_store'])->name('free.shipping.store');
+    Route::post('currency/store', [RestaurantScheduleController::class, 'currency_store'])->name('currency.store');
+    Route::get('discount', [RestaurantScheduleController::class, 'discount'])->name('discount');
+    Route::post('discount/store', [RestaurantScheduleController::class, 'discount_store'])->name('discount.store');
+    
+    // Newsletter
+    Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');
+});
+
+Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
+
+Route::get('/pusher', function () {
+    return view('pusher');
 });
 
    

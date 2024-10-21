@@ -32,7 +32,7 @@ function view_permission($page_name = null)
                 case 'categories':
                 case 'menu':
                 case 'orders':
-                // case 'radius':
+                case 'newsletter':
                     return true;
                 default:
                     return false;
@@ -75,4 +75,52 @@ function validate_token($token)
     else{
         return response()->json(['status' => 'error', 'message' => 'Unauthorized access'], 401);
     }
+}
+
+function currency_list()
+{
+    return [
+        'USD' => ['name' => 'United States Dollar', 'symbol' => '$'],
+        'EUR' => ['name' => 'Euro', 'symbol' => '€'],
+        'GBP' => ['name' => 'British Pound Sterling', 'symbol' => '£'],
+        'JPY' => ['name' => 'Japanese Yen', 'symbol' => '¥'],
+        'AUD' => ['name' => 'Australian Dollar', 'symbol' => 'A$'],
+        'CAD' => ['name' => 'Canadian Dollar', 'symbol' => 'C$'],
+        'CHF' => ['name' => 'Swiss Franc', 'symbol' => 'CHF'],
+        'CNY' => ['name' => 'Chinese Yuan', 'symbol' => '¥'],
+        'INR' => ['name' => 'Indian Rupee', 'symbol' => '₹'],
+        'RUB' => ['name' => 'Russian Ruble', 'symbol' => '₽'],
+        'BRL' => ['name' => 'Brazilian Real', 'symbol' => 'R$'],
+        'ZAR' => ['name' => 'South African Rand', 'symbol' => 'R'],
+        'NZD' => ['name' => 'New Zealand Dollar', 'symbol' => 'NZ$'],
+        'SGD' => ['name' => 'Singapore Dollar', 'symbol' => 'S$'],
+        'HKD' => ['name' => 'Hong Kong Dollar', 'symbol' => 'HK$'],
+        'SEK' => ['name' => 'Swedish Krona', 'symbol' => 'kr'],
+        'NOK' => ['name' => 'Norwegian Krone', 'symbol' => 'kr'],
+        'MXN' => ['name' => 'Mexican Peso', 'symbol' => 'MX$'],
+        'DKK' => ['name' => 'Danish Krone', 'symbol' => 'kr'],
+        'MYR' => ['name' => 'Malaysian Ringgit', 'symbol' => 'RM'],
+        'THB' => ['name' => 'Thai Baht', 'symbol' => '฿'],
+        'IDR' => ['name' => 'Indonesian Rupiah', 'symbol' => 'Rp'],
+        'PHP' => ['name' => 'Philippine Peso', 'symbol' => '₱'],
+        'PLN' => ['name' => 'Polish Zloty', 'symbol' => 'zł'],
+        'ISK' => ['name' => 'Icelandic Krona', 'symbol' => 'kr'],
+        'CZK' => ['name' => 'Czech Koruna', 'symbol' => 'Kč'],
+        'HUF' => ['name' => 'Hungarian Forint', 'symbol' => 'Ft'],
+        'AED' => ['name' => 'United Arab Emirates Dirham', 'symbol' => 'د.إ'],
+        'SAR' => ['name' => 'Saudi Riyal', 'symbol' => 'ر.س'],
+        'TRY' => ['name' => 'Turkish Lira', 'symbol' => '₺'],
+        'ILS' => ['name' => 'Israeli New Shekel', 'symbol' => '₪'],
+        'ARS' => ['name' => 'Argentine Peso', 'symbol' => '$'],
+        'CLP' => ['name' => 'Chilean Peso', 'symbol' => '$'],
+        'COP' => ['name' => 'Colombian Peso', 'symbol' => '$'],
+        'PEN' => ['name' => 'Peruvian Nuevo Sol', 'symbol' => 'S/'],
+        'PKR' => ['name' => 'Pakistani Rupee', 'symbol' => '₨'],
+        'NGN' => ['name' => 'Nigerian Naira', 'symbol' => '₦'],
+        'EGP' => ['name' => 'Egyptian Pound', 'symbol' => '£'],
+        'KWD' => ['name' => 'Kuwaiti Dinar', 'symbol' => 'د.ك'],
+        'QAR' => ['name' => 'Qatari Rial', 'symbol' => 'ر.ق'],
+        'OMR' => ['name' => 'Omani Rial', 'symbol' => 'ر.ع.'],
+        'JOD' => ['name' => 'Jordanian Dinar', 'symbol' => 'د.ا'],
+    ];
 }

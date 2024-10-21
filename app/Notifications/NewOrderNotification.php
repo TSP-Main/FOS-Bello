@@ -34,7 +34,7 @@ class NewOrderNotification extends Notification
             'message' => 'A new order has been placed',
             'order_id' => $this->temporaryOrderId,
             'company_id' => $this->companyId, 
-            'url' => route('orders.list'),
+            'url' => route('orders.detail', ["id" => base64_encode($this->temporaryOrderId)]),
             'type' => 'info',
         ];
     }

@@ -41,7 +41,7 @@
 			<!-- sidebar menu-->
 			<ul class="sidebar-menu" data-widget="tree">
 				<li class="">
-					<a href="{{ route('dashboad')}}">
+					<a href="{{ route('dashboard')}}">
 						<i class="icon-Home"></i>
 						<span>Dashboard</span>
 					</a>
@@ -58,6 +58,7 @@
 						</a>
 						<ul class="treeview-menu">
 						<li><a href="{{ route('orders.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
+						<li><a href="{{ route('orders') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Orders Report</a></li>
 						</ul>
 					</li>
 				@endif
@@ -74,6 +75,7 @@
 						<ul class="treeview-menu">
 						  <li><a href="{{ route('companies.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add New</a></li>
 						  <li><a href="{{ route('companies.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>List</a></li>
+						  <li><a href="{{ route('companies.incoming.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Incoming Request</a></li>
 						</ul>
 					</li>
 				@endif
@@ -165,6 +167,23 @@
 							<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
 							<li><a href="{{ route('radius.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Radius</a></li>
 							<li><a href="{{ route('timezone.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Set Timezone</a></li>
+							<li><a href="{{ route('configurations.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Configurations</a></li>
+							<li><a href="{{ route('discount') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Discount</a></li>
+						</ul>
+					</li>
+				@endif
+
+				@if (view_permission('newsletter'))
+					<li class="treeview">
+						<a href="#">
+							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+							<span>Newsletter</span>
+							<span class="pull-right-container">
+								<i class="fa fa-angle-right pull-right"></i>
+							</span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="{{ route('subscriptions.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Subscriptions</a></li>
 						</ul>
 					</li>
 				@endif
