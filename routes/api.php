@@ -38,3 +38,5 @@ Route::post('discount/check', [APIController::class, 'discount_check']);
 
 Route::get('searching', [APIController::class, 'products_search']);
 
+Route::get('customers', [APIController::class, 'customers']);
+
