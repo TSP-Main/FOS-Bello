@@ -29,7 +29,8 @@ class Company extends Model
         'package',
         'plan',
         'customer_stripe_id',
-        'payment_method_id'
+        'payment_method_id',
+        'is_enable'
     ];
 
     public function getFormattedExpiryDateAttribute()

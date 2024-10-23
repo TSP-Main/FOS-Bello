@@ -74,6 +74,7 @@ class CompanyController extends Controller
             // $data['address'] = $request->address;
             $data['expiry_date'] = $request->expiry_date;
             $data['status'] = $request->status;
+            $data['is_enable'] = $request->status;
             $data['updated_by'] = Auth::id();
 
             $company = Company::find(base64_decode($request->id));
@@ -208,7 +209,7 @@ class CompanyController extends Controller
         $today = Carbon::today();
         Company::where('expiry_date', '<=', $today->toDateString())
             ->where('status', config('constants.ACTIVE_RESTAURANT'))
-            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT')]);
+            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT'), 'is_enable' => 2]);
 
         return response()->json(['message' => 'Expired restaurants updated to inactive.']);
     }
