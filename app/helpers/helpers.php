@@ -67,10 +67,15 @@ function validate_token($token)
     //     return response()->json(['error' => 'Authorization token not found'], 401);
     // }
 
-    $company = Company::where('token', $token)->where('is_enable', 1)->first();
+    $company = Company::where('token', $token)->first();
 
     if ($company) {
-        return response()->json(['status' => 'success', 'message' => 'success', 'company' => $company], 200);
+        if($company->is_enable == 1){
+            return response()->json(['status' => 'success', 'message' => 'success', 'company' => $company], 200);
+        }
+        else{
+            return response()->json(['status' => 'error', 'message' => 'Company is inactive due to expired subscription'], 403);
+        }
     }
     else{
         return response()->json(['status' => 'error', 'message' => 'Unauthorized access'], 401);

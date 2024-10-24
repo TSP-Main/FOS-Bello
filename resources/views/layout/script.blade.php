@@ -36,7 +36,9 @@
 <!-- Pusher Notification -->
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 <script>
-    var pusher = new Pusher('9ad54db53542efb36836', {
+    var pusher_key = "{{ env('PUSHER_APP_KEY')}}";
+    
+    var pusher = new Pusher(pusher_key, {
         cluster: 'eu'
     });
 

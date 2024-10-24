@@ -160,24 +160,34 @@ class OrderController extends Controller
             }
             else if ($request['paymentOption'] === 'online' && $request['payment_method_id']) {
                 Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
-                $setupIntent = SetupIntent::create([
-                    'payment_method' => $request['payment_method_id'],
-                    'confirm' => true,
-                    'automatic_payment_methods' => [
-                        'enabled' => true,
-                        'allow_redirects' => 'never'
-                    ],
-                ]);
-                
-                if($setupIntent->status == 'succeeded'){
-                    $orderId = $this->createOrder($request, $companyId); 
-                    $order = Order::find($orderId);
-                    $order->payment_method_id = $request['payment_method_id'];
-                    $order->save();
-        
-                    if ($request->email) {
-                        $this->sendEmail($request->email, null, $orderId, $companyId);
+
+                try{
+                    $setupIntent = SetupIntent::create([
+                        'payment_method' => $request['payment_method_id'],
+                        'confirm' => true,
+                        'automatic_payment_methods' => [
+                            'enabled' => true,
+                            'allow_redirects' => 'never'
+                        ],
+                    ]);
+
+                    if($setupIntent->status == 'succeeded'){
+                        $paymentMethodId = $request['payment_method_id'];
+                        $orderId = $this->createOrder($request, $companyId); 
+                        $order = Order::find($orderId);
+                        $order->payment_method_id = $paymentMethodId;
+                        $order->save();
+            
+                        if ($request->email) {
+                            $this->sendEmail($request->email, null, $orderId, $companyId);
+                        }
                     }
+                    else{
+                        return response()->json(['error' => 'Payment not successful. Please try again.'], 400);
+                    }
+                }
+                catch(\Exception $e){
+                    return response()->json(['error' => 'Payment processing error: ' . $e->getMessage()], 500);
                 }
             }
             else if($request['paymentOption'] === 'cash'){
