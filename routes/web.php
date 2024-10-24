@@ -18,6 +18,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\NewsletterSubscriptionController;
+use App\Http\Middleware\CheckPermission;
 
 Auth::routes();
 
@@ -39,15 +40,17 @@ Route::group(['middleware' => ['auth']], function(){
     // Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
     // Company Routes
-    Route::get('companies', [CompanyController::class, 'index'])->name('companies.list');
-    Route::get('companies/create', [CompanyController::class, 'create'])->name('companies.create');
-    Route::post('companies/store', [CompanyController::class, 'store'])->name('companies.store');
-    Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
-    Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
-    // Route::delete('companies/destroy/{id}'0, [CompanyController::class, 'destroy'])->name('companies.destroy');
-    Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
-    Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
-    Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
+    Route::group(['middleware' => [CheckPermission::class . ':company']], function () {
+        Route::get('companies', [CompanyController::class, 'index'])->name('companies.list');
+        Route::get('companies/create', [CompanyController::class, 'create'])->name('companies.create');
+        Route::post('companies/store', [CompanyController::class, 'store'])->name('companies.store');
+        Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
+        Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
+        // Route::delete('companies/destroy/{id}'0, [CompanyController::class, 'destroy'])->name('companies.destroy');
+        Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
+        Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
+        Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
+    });
 
     // Restaurant Schedule
     Route::get('schedules', [RestaurantScheduleController::class, 'index'])->name('schedules.list');
@@ -95,10 +98,6 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/filter', [OrderController::class, 'ordersFilter'])->name('orders.filter');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
-
-    // Route::post('/orders/approve/{id}', [AdminOrderController::class, 'approve'])->name('orders.approve');
-    // Route::get('/orders/reject/{id}', [AdminOrderController::class, 'reject'])->name('orders.reject');
-    // Route::get('/admin/new-orders', [AdminOrderController::class, 'index'])->name('orders.noti');
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/clear', [NotificationController::class, 'clear'])->name('notifications.clear');

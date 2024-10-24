@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Menu;
 use App\Models\Order;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Discount;
 use App\Models\OptionValue;
 use App\Models\OrderDetail;
 use Illuminate\Http\Request;
@@ -17,7 +19,6 @@ use App\Models\TemporaryOrderDetail;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\NewsletterSubscription;
 use App\Models\RestaurantStripeConfig;
-use App\Models\Discount;
 
 class APIController extends Controller
 {
@@ -354,6 +355,32 @@ class APIController extends Controller
         }
         else{
             return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+        }
+    }
+
+    public function customers(Request $request)
+    {
+        // fetch total cutomers sum
+        $response = validate_token($request->header('Authorization'));
+        $responseData = $response->getData();
+
+        try{
+            if($responseData->status == 'success'){
+                $companyId = $responseData->company->id;
+                $customers = Order::distinct()->count('email');
+
+                return response()->json(['status' => 'success', 'message' => 'Customers Data', 'data' => $customers], 200);
+            }
+            else{
+                return response()->json(['status' => $responseData->status, 'message' => $responseData->message], 401);
+            }
+        }
+        catch (Exception $e){
+            return response()->json([
+                'status' => 'error', 
+                'message' => 'An error occurred while fetching customers data.', 
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
     
