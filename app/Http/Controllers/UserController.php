@@ -35,10 +35,10 @@ class UserController extends Controller
         $data['roles'] = $this->constants['USER_ROLES_NAME'];
 
         if(Auth::user()->role == $this->constants['SOFTWARE_MANAGER']){
-            $data['companies'] = Company::where('is_enable', 1)->get();
+            $data['companies'] = Company::where('is_enable', 1)->where('status', 1)->get();
         }
         else{
-            $data['companies'] = Company::where('id', Auth::user()->company_id)->where('is_enable', 1)->get();
+            $data['companies'] = Company::where('id', Auth::user()->company_id)->where('is_enable', 1)->where('status', 1)->get();
             unset($data['roles'][2]);
         }
         unset($data['roles'][1]);
@@ -74,10 +74,10 @@ class UserController extends Controller
         $data['roles'] = $this->constants['USER_ROLES_NAME'];
 
         if(Auth::user()->role == $this->constants['SOFTWARE_MANAGER']){
-            $data['companies'] = Company::where('is_enable', 1)->get();
+            $data['companies'] = Company::where('is_enable', 1)->where('status', 1)->get();
         }
         else{
-            $data['companies'] = Company::where('id', Auth::user()->company_id)->where('is_enable', 1)->get();
+            $data['companies'] = Company::where('id', Auth::user()->company_id)->where('is_enable', 1)->where('status', 1)->get();
             unset($data['roles'][2]);
         }
         unset($data['roles'][1]);
