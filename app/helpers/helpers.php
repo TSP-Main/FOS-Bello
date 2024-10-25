@@ -17,6 +17,7 @@ function view_permission($page_name = null)
                 case 'dashboard':
                 case 'users':
                 case 'company':
+                case 'revenue':
                     return true;
                 default:
                     return false;

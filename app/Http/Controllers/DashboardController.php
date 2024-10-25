@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Company;
+use App\Models\CompanyTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -15,21 +16,30 @@ class DashboardController extends Controller
     {
         $data = [];
         if(Auth::user()->role == 1){
-            $companies = Company::where('status', 1)->get();
+            $companies = Company::whereIn('status', [1,2])->get();
 
             $data['totalCompanies'] = count($companies);
             
             $totalActive  = $companies->filter(function ($value) {
-                return $value->expiry_date > Carbon::today();
+                return $value->status == 1;
             });
             $data['totalActive'] = count($totalActive);
 
             $totalInActive  = $companies->filter(function ($value) {
-                return $value->expiry_date < Carbon::today();
+                return $value->status == 2;
             });
             $data['totalInActive'] = count($totalInActive);
 
             $data['latestSubscriptions'] = $totalActive->sortByDesc('created_at')->take(5);
+            
+            $data['revenue'] = $this->seven_days_revenue(); 
+            $data['chartData'] = $data['revenue']['chartData'];
+            $data['currencySymbol'] = '£';
+
+            $data['customerData'] = $this->seven_days_customer_Data();
+
+            $companyTransactions = CompanyTransaction::where('is_enable', 1)->get();
+            $data['totalRevenue'] = $companyTransactions->sum('amount');
         }
         else{
             $companyId = Auth::user()->company_id; 
@@ -95,14 +105,16 @@ class DashboardController extends Controller
         return response()->json(['stats' => $response]);
     }
 
-    public function seven_days_revenue($companyId)
+    public function seven_days_revenue($companyId = null)
     {
         // Last 7 Days Revenue
         $endDate = Carbon::now()->endOfDay();
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         
-        $orders = Order::where('company_id', $companyId)
-                ->where('order_status', config('constants.DELIVERED'))
+        $orders = Order::where('order_status', config('constants.DELIVERED'))
+                ->when($companyId, function ($query, $companyId) {
+                    return $query->where('company_id', $companyId);
+                })
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
 
@@ -112,8 +124,10 @@ class DashboardController extends Controller
         $previousEndDate = $startDate->copy()->subDay()->endOfDay(); 
         $previousStartDate = $previousEndDate->copy()->subDays(6)->startOfDay();
 
-        $previousOrders = Order::where('company_id', $companyId)
-            ->where('order_status', config('constants.DELIVERED'))
+        $previousOrders = Order::where('order_status', config('constants.DELIVERED'))
+            ->when($companyId, function ($query, $companyId) {
+                return $query->where('company_id', $companyId);
+            })
             ->whereBetween('created_at', [$previousStartDate, $previousEndDate])
             ->get();
 
@@ -147,14 +161,16 @@ class DashboardController extends Controller
         ];
     }
 
-    public function seven_days_customer_data($companyId)
+    public function seven_days_customer_data($companyId = null)
     {
         // Last 7 Days Revenue
         $endDate = Carbon::now()->endOfDay();
         $startDate = Carbon::now()->subDays(6)->startOfDay();
 
-        $orders = Order::where('company_id', $companyId)
-                ->whereBetween('created_at', [$startDate, $endDate])
+        $orders = Order::whereBetween('created_at', [$startDate, $endDate])
+                ->when($companyId, function ($query, $companyId) {
+                    return $query->where('company_id', $companyId);
+                })
                 ->get();
 
         $todayTotalCustomer = count($orders);

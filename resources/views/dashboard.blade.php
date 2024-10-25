@@ -19,6 +19,7 @@
     {{-- software manager role --}}
     @if (Auth::user()->role == 1)
         <div class="row">
+            <!-- Total Restaurant -->
             <div class="col-xxxl-3 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
@@ -35,6 +36,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Total Active -->
             <div class="col-xxxl-3 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
@@ -51,6 +54,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Total Inactive -->
             <div class="col-xxxl-3 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
@@ -67,6 +72,8 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Total Revenue -->
             <div class="col-xxxl-3 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
@@ -75,7 +82,7 @@
                                 <img src="{{ asset('assets/theme/images/dashboad_logo/total_revenue.webp')}}" class="w-80 me-20" alt="" />
                             </div>
                             <div>
-                                <h2 class="my-0 fw-700">$789k</h2>
+                                <h2 class="my-0 fw-700">£{{ $totalRevenue}}</h2>
                                 <p class="text-fade mb-0">Total Revenue</p>
                                 {{-- <p class="fs-12 mb-0 text-primary"><span class="badge badge-pill badge-primary-light me-5"><i class="fa fa-arrow-down"></i></span>12% (15 Days)</p> --}}
                             </div>
@@ -83,96 +90,51 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Weekly Revenue -->
             <div class="col-xxxl-7 col-xl-6 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="box-title mb-0">Daily Revenue</h4>
-                                <p class="mb-0 text-mute">Lorem ipsum dolor</p>
+                                <h4 class="box-title mb-0">Weekly Revenue</h4>
                             </div>
                             <div class="text-end">
-                                <h3 class="box-title mb-0 fw-700">$ 154K</h3>
-                                <p class="mb-0"><span class="text-success">+ 1.5%</span> than last week</p>
+                                @php
+                                    $percentageChange = $revenue['percentage'];
+                                    $colorClass = $percentageChange >= 0 ? 'text-success' : 'text-danger';
+                                    $sign = $percentageChange >= 0 ? '+' : '';
+                                @endphp
+
+                                <h3 class="box-title mb-0 fw-700">{{ $currencySymbol . $revenue['lastSevenDaysRevenue'] }}</h3>
+                                <p class="mb-0"><span class="{{$colorClass}}">{{ $sign . number_format($percentageChange, 1) }}%</span> than last week</p>
                             </div>
                         </div>
-                        <div id="chart" class="mt-20"></div>
+                        <div id="chartRevenueRestaurant" class="mt-20"></div>
                     </div>
                 </div>
             </div>
+
+            <!-- Weekly Customer Data -->
             <div class="col-xxxl-5 col-xl-6 col-lg-6 col-12">
                 <div class="box">
                     <div class="box-body">
                         <h4 class="box-title">Customer Flow</h4>
                         <div class="d-md-flex d-block justify-content-between">
                             <div>
-                                <h3 class="mb-0 fw-700">$2,780k</h3>
-                                <p class="mb-0 text-primary"><small>In Restaurant</small></p>
+                                <h3 class="mb-0 fw-700">{{ $customerData['todayTotalCustomer'] }}</h3>
+                                <p class="mb-0 text-primary"><small>Total Customer</small></p>
                             </div>
                             <div>
-                                <h3 class="mb-0 fw-700">$1,410k</h3>
-                                <p class="mb-0 text-danger"><small>Online Order</small></p>
+                                <h3 class="mb-0 fw-700">{{ $customerData['todayRepeatedCustomer'] }}</h3>
+                                <p class="mb-0 text-danger"><small>Repeated Customer</small></p>
                             </div>
                         </div>
-                        <div id="yearly-comparison"></div>
+                        <div id="chartCustomerData"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-xxxl-5 col-12">
-                <div class="box">
-                    <div class="box-header no-border">
-                        <h4 class="box-title">
-                            Trending Keyword
-                            <small class="subtitle">Lorem ipsum dolor sit amet, consectetur adipisicing elit</small>
-                        </h4>
-                    </div>
-                    <div class="box-body pt-0">
-                        <div>
-                            <div class="progress mb-5">
-                                <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="text-primary">#paneer</p>
-                                <p class="text-mute">420 times</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="progress mb-5">
-                                <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%">
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="text-primary">#breakfast</p>
-                                <p class="text-mute">150 times</p>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="progress mb-5">
-                                <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-between">
-                                <p class="text-primary">#tea</p>
-                                <p class="text-mute">120 times</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="box-body pt-0">
-                        <h4 class="box-title d-block">
-                            Others Tag
-                        </h4>
-                        <div class="d-inline-block">
-                            <a href="#" class="waves-effect waves-light btn btn-outline btn-rounded btn-primary mb-5">#panjabifood</a>
-                            <a href="#" class="waves-effect waves-light btn btn-outline btn-rounded btn-primary mb-5">#chainissfood</a>
-                            <a href="#" class="waves-effect waves-light btn btn-outline btn-rounded btn-primary mb-5">#pizza</a>
-                            <a href="#" class="waves-effect waves-light btn btn-outline btn-rounded btn-primary mb-5">#burgar</a>
-                            <a href="#" class="waves-effect waves-light btn btn-outline btn-rounded btn-primary mb-5">#coffee</a>
-                            <a href="#" class="waves-effect waves-light btn btn-outline btn-rounded btn-primary mb-5">20+</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
             <div class="col-xxxl-7 col-12">
                 <div class="box">
                     <div class="box-body">

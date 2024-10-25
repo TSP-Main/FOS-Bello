@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Company;
+use App\Models\CompanyTransaction;
+use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -173,6 +175,17 @@ class CompanyController extends Controller
                             'allow_redirects' => 'never',
                         ],
                     ]);
+
+                    // Add transation data
+                    CompanyTransaction::create([
+                        'company_id'    => $company->id,
+                        'package'       => $company->package,
+                        'plan'          => $company->plan,
+                        'amount'        => $amount,
+                        'status'        => 'New',
+                        'created_at'    => now(),
+                        'updated_at'    => now(),
+                    ]);
             
                     $company->status = config('constants.ACTIVE_RESTAURANT');
                     $company->accepted_date = Carbon::now();
@@ -231,5 +244,69 @@ class CompanyController extends Controller
         }
 
         return $basePrice;
+    }
+
+    public function revenue()
+    {
+        $data['revenue'] = CompanyTransaction::with('company')->where('is_enable', 1)->get();
+
+        return view('companies.revenue', $data);
+    }
+
+    public function renewal()
+    {
+        $data['userId'] = session('user_id');
+        $data['userName'] = session('user_name');
+        $data['companyId'] = session('company_id');
+        $data['companyName'] = session('company_name');
+        $data['package'] = session('package');
+        $data['plan'] = session('plan');
+
+        return view('companies.renewal', $data);
+    }
+
+    public function renewal_store(Request $request)
+    {
+        // Validate incoming request
+        $request->validate([
+            'user_id' => 'required|integer',
+            'company_id' => 'required|integer',
+            'package' => 'required|integer',
+            'plan' => 'required|integer',
+            'payment_method' => 'required|string', // Ensure payment method is required
+        ]);
+
+        // Set your Stripe secret key
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        // Calculate the amount for the renewal
+        $amount = $this->calculateAmount($request->package, $request->plan); // Adjust this method accordingly
+
+        try {
+            // Create the PaymentIntent
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $amount * 100, // Amount in cents
+                'currency' => 'gbp',
+                'payment_method' => $request->payment_method,
+                'confirm' => true,
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                    'allow_redirects' => 'never',
+                ],
+                'metadata' => [
+                    'user_id' => $request->user_id,
+                    'company_id' => $request->company_id,
+                ],
+            ]);
+
+            // Return the PaymentIntent client secret to the client-side
+            return response()->json([
+                'client_secret' => $paymentIntent->client_secret,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

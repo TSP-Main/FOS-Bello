@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
         Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
         Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
+        Route::get('companies/revenue', [CompanyController::class, 'revenue'])->name('companies.revenue');
     });
 
     // Restaurant Schedule
@@ -129,6 +130,9 @@ Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
 Route::get('/pusher', function () {
     return view('pusher');
 });
+
+Route::get('renewal', [CompanyController::class, 'renewal'])->name('renewal');
+Route::post('renewal/store', [CompanyController::class, 'renewal_store'])->name('renewal.store');
 
    
 

@@ -55,4 +55,15 @@ return [
     'IN_ACTIVE_RESTAURANT' => 2,
     'INCOMING_RESTAURANT' => 3,
     'REJECTED_RESTAURANT' => 4,
+
+    'PACKAGES' => [
+        1 => 'Basic',
+        2 => 'Delux',
+        3 => 'Premium',
+    ],
+
+    'PLAN' => [
+        1 => 'Monthly',
+        2 => 'Yearly',
+    ],
 ];
