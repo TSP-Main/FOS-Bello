@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApiTokenLog;
 use Carbon\Carbon;
 use App\Models\Company;
 use App\Models\CompanyTransaction;
@@ -76,7 +77,7 @@ class CompanyController extends Controller
             // $data['address'] = $request->address;
             $data['expiry_date'] = $request->expiry_date;
             $data['status'] = $request->status;
-            $data['is_enable'] = $request->status;
+            // $data['is_enable'] = $request->status;
             $data['updated_by'] = Auth::id();
 
             $company = Company::find(base64_decode($request->id));
@@ -92,26 +93,29 @@ class CompanyController extends Controller
     {
     }
 
-    public function refreshToken($id)
+    public function generate_new_token(Request $request)
     {
-        $companyId = base64_decode($id);
-        $company = Company::find($companyId);
-
-        if (!$company) {
-            return redirect()->route('companies.list')->with('error', 'Company not found!');
-        }
-
-        // Generate a new unique token
-        $newToken = Str::random(60);
+        $companyId = base64_decode($request->company_id);
+        $company = Company::findOrFail($companyId);
+    
+        // Generate new token and save to the company
+        $newToken = 'tspkeyusmkeyanikey_apikeypunkeychar' . Str::random(60) . $companyId;
         $company->token = $newToken;
         $company->save();
-
-        return response()->json(['success' => true, 'newToken' => $newToken]);
+    
+        // Log the token generation
+        ApiTokenLog::create([
+            'company_id' => $companyId,
+            'reason' => $request->reason,
+            'new_token' => $newToken,
+        ]);
+    
+        return response()->json(['success' => true, 'message' => 'Token generated successfully']);
     }
 
+    // Register restaurant by self on landing page
     public function register(Request $request)
     {
-        // Register restaurant by self on landing page
         $this->validate($request, [
             'owner_name' => 'required',
             'restaurant_name' => 'required',
@@ -176,27 +180,34 @@ class CompanyController extends Controller
                         ],
                     ]);
 
-                    // Add transation data
-                    CompanyTransaction::create([
-                        'company_id'    => $company->id,
-                        'package'       => $company->package,
-                        'plan'          => $company->plan,
-                        'amount'        => $amount,
-                        'status'        => 'New',
-                        'created_at'    => now(),
-                        'updated_at'    => now(),
-                    ]);
-            
-                    $company->status = config('constants.ACTIVE_RESTAURANT');
-                    $company->accepted_date = Carbon::now();
+                    if($paymentIntent->status == 'succeeded'){
+                        // Add Company transation data
+                        CompanyTransaction::create([
+                            'company_id'    => $company->id,
+                            'package'       => $company->package,
+                            'plan'          => $company->plan,
+                            'amount'        => $amount,
+                            'status'        => 'New',
+                            'stripe_payment_intent_id' => $paymentIntent->id,
+                        ]);
 
-                    $route      = 'companies.list';
-                    $msg        = 'New Restaurant Added.';
-                    $msgStatus  = 'success';
-            
+                        $token = 'tspkeyusmkeyanikey_apikeypunkeychar' . Str::random(60) . $company->id;
+                        $company->token = $token;
+                        $company->status = config('constants.ACTIVE_RESTAURANT');
+                        $company->accepted_date = Carbon::now();
+
+                        if ($company->plan == 1) {
+                            $company->expiry_date = $company->accepted_date->copy()->addMonth();
+                        } elseif ($company->plan == 2) {
+                            $company->expiry_date = $company->accepted_date->copy()->addYear();
+                        }
+
+                        $route      = 'companies.list';
+                        $msg        = 'New Restaurant Added.';
+                        $msgStatus  = 'success';
+                    }
                 } catch (\Exception $e) {
-                    // Handle payment failure
-                    return back()->withErrors('Payment failed: ' . $e->getMessage());
+                    return redirect()->route('companies.incoming.list')->with('error', $e->getMessage());
                 }
             } 
             elseif ($request['action'] == 'reject') {
@@ -222,7 +233,7 @@ class CompanyController extends Controller
         $today = Carbon::today();
         Company::where('expiry_date', '<=', $today->toDateString())
             ->where('status', config('constants.ACTIVE_RESTAURANT'))
-            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT'), 'is_enable' => 2]);
+            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT')]);
 
         return response()->json(['message' => 'Expired restaurants updated to inactive.']);
     }
@@ -248,8 +259,7 @@ class CompanyController extends Controller
 
     public function revenue()
     {
-        $data['revenue'] = CompanyTransaction::with('company')->where('is_enable', 1)->get();
-
+        $data['revenue'] = CompanyTransaction::with('company')->get();
         return view('companies.revenue', $data);
     }
 
@@ -267,20 +277,17 @@ class CompanyController extends Controller
 
     public function renewal_store(Request $request)
     {
-        // Validate incoming request
         $request->validate([
             'user_id' => 'required|integer',
             'company_id' => 'required|integer',
             'package' => 'required|integer',
             'plan' => 'required|integer',
-            'payment_method' => 'required|string', // Ensure payment method is required
+            'payment_method' => 'required|string',
         ]);
 
-        // Set your Stripe secret key
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        // Calculate the amount for the renewal
-        $amount = $this->calculateAmount($request->package, $request->plan); // Adjust this method accordingly
+        $amount = $this->calculateAmount($request->package, $request->plan);
 
         try {
             // Create the PaymentIntent
@@ -299,6 +306,28 @@ class CompanyController extends Controller
                 ],
             ]);
 
+            if($paymentIntent->status == 'succeeded'){
+                // Add Company transaction data
+                CompanyTransaction::create([
+                    'company_id' => $request->company_id,
+                    'package' => $request->package,
+                    'plan' => $request->plan,
+                    'amount' => $amount,
+                    'status' => 'Renew',
+                    'stripe_payment_intent_id' => $paymentIntent->id,
+                ]);
+
+                $company = Company::find($request->company_id);
+                $company->status = config('constants.ACTIVE_RESTAURANT');
+
+                if ($request->plan == 1) {
+                    $company->expiry_date = Carbon::now()->copy()->addMonth();
+                } elseif ($request->plan == 2) {
+                    $company->expiry_date = Carbon::now()->copy()->addYear();
+                }
+                $company->update();
+            }
+
             // Return the PaymentIntent client secret to the client-side
             return response()->json([
                 'client_secret' => $paymentIntent->client_secret,
@@ -308,5 +337,18 @@ class CompanyController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function api_logs()
+    {
+        $data['logs'] = ApiTokenLog::with('company')->get();
+        return view('companies.api_logs', $data);
+    }
+
+    public function view($id)
+    {
+        $data['company'] = Company::with(['transactions', 'apiTokenLogs'])->find(base64_decode($id));
+
+        return view('companies.view', $data);
     }
 }

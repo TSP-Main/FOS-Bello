@@ -166,7 +166,8 @@
 				if (result.error) {
 					document.getElementById('card-errors').textContent = result.error.message;
 				} else {
-					form.submit(); // On successful payment, submit form
+					// form.submit(); // On successful payment, submit form
+					window.location.href = "{{ route('login') }}";
 				}
 			} else {
 				document.getElementById('card-errors').textContent = "Failed to initiate payment.";

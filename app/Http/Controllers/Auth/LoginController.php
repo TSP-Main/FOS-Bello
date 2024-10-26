@@ -51,7 +51,7 @@ class LoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         // Check if the user's company is inactive
-        if ($user->role != 1 && $user->company->is_enable == 2) {;
+        if ($user->role != 1 && $user->company->status == 2) {;
             // Log out the user and redirect to the renewal page
             Auth::logout();
 

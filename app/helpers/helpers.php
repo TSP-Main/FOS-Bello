@@ -17,7 +17,6 @@ function view_permission($page_name = null)
                 case 'dashboard':
                 case 'users':
                 case 'company':
-                case 'revenue':
                     return true;
                 default:
                     return false;
@@ -71,7 +70,7 @@ function validate_token($token)
     $company = Company::where('token', $token)->first();
 
     if ($company) {
-        if($company->is_enable == 1){
+        if($company->status == 1){
             return response()->json(['status' => 'success', 'message' => 'success', 'company' => $company], 200);
         }
         else{

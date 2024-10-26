@@ -47,10 +47,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
         Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
         // Route::delete('companies/destroy/{id}'0, [CompanyController::class, 'destroy'])->name('companies.destroy');
-        Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
         Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
         Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
         Route::get('companies/revenue', [CompanyController::class, 'revenue'])->name('companies.revenue');
+        Route::post('companies/generate/token', [CompanyController::class, 'generate_new_token'])->name('companies.generate.token');
+        Route::get('companies/api/logs', [CompanyController::class, 'api_logs'])->name('companies.api.logs');
+        Route::get('companies/view/{id}', [CompanyController::class, 'view'])->name('companies.view');
     });
 
     // Restaurant Schedule

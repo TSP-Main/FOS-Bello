@@ -1,5 +1,5 @@
 @extends('layout.app')
-@section('title', 'Revenue | FO - Food Ordering System')
+@section('title', 'Api Logs | FO - Food Ordering System')
 
 @section('content')
 
@@ -7,13 +7,13 @@
 <div class="content-header" style="margin-right: 0;">
     <div class="d-flex align-items-center">
         <div class="me-auto">
-            <h4 class="page-title">Revenue</h4>
+            <h4 class="page-title">Api</h4>
             <div class="d-inline-block align-items-center">
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                        <li class="breadcrumb-item" aria-current="page">Revenue</li>
-                        <li class="breadcrumb-item active" aria-current="page">Revenue List</li>
+                        <li class="breadcrumb-item" aria-current="page">Api</li>
+                        <li class="breadcrumb-item active" aria-current="page">Api Logs List</li>
                     </ol>
                 </nav>
             </div>
@@ -33,20 +33,14 @@
                             <thead>
                                 <tr>
                                     <th>Restaurant Name</th>
-                                    <th>Package</th>
-                                    <th>Plan</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
+                                    <th>Reason</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($revenue as $record)
+                                @foreach ($logs as $log)
                                     <tr>
-                                        <td>{{ $record->company->name }} </td>
-                                        <td>{{ config('constants')['PACKAGES'][$record->package] }}</td>
-                                        <td>{{ config('constants')['PLAN'][$record->plan] }}</td>
-                                        <td>{{ $record->amount}}</td>
-                                        <td>{{ $record->status}}</td>
+                                        <td>{{ $log->company->name }} </td>
+                                        <td>{{ $log->reason}}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

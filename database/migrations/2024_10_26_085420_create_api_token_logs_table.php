@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('company_transactions', function (Blueprint $table) {
+        Schema::create('api_token_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('company_id');
-            $table->integer('package');
-            $table->integer('plan');
-            $table->decimal('amount', 8, 2);
-            $table->string('status');
-            $table->integer('is_enable')->default(1);
-            $table->text('stripe_payment_intent_id')->nullable();
+            $table->text('reason');
+            $table->text('new_token');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('company_transactions');
+        Schema::dropIfExists('api_token_logs');
     }
 };
