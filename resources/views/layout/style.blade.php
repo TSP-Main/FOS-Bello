@@ -1,4 +1,4 @@
-<link rel="icon" href="{{ asset('assets/theme/images/favicon.ico')}}">
+<link rel="icon" href="{{ asset('assets/theme/images/belloo-fav-01.png')}}">
     
 <!-- Vendors Style-->
 <link rel="stylesheet" href="{{ asset('assets/theme/css/vendors_css.css')}}">

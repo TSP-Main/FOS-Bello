@@ -265,12 +265,25 @@ class CompanyController extends Controller
 
     public function renewal()
     {
-        $data['userId'] = session('user_id');
-        $data['userName'] = session('user_name');
-        $data['companyId'] = session('company_id');
-        $data['companyName'] = session('company_name');
-        $data['package'] = session('package');
-        $data['plan'] = session('plan');
+        if(Auth::user() && !session('user_id') && !session('company_id')){
+            $user = Auth::user();
+            $company = Company::find($user->company_id);
+
+            $data['userId'] = $user->id;
+            $data['userName'] = $user->name;
+            $data['companyId'] = $company->id;
+            $data['companyName'] = $company->name;
+            $data['package'] = $company->package;
+            $data['plan'] = $company->plan;
+        }
+        else{
+            $data['userId'] = session('user_id');
+            $data['userName'] = session('user_name');
+            $data['companyId'] = session('company_id');
+            $data['companyName'] = session('company_name');
+            $data['package'] = session('package');
+            $data['plan'] = session('plan');
+        }
 
         return view('companies.renewal', $data);
     }
