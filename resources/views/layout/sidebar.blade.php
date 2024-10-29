@@ -57,6 +57,7 @@
 						</span>
 						</a>
 						<ul class="treeview-menu">
+						<li><a href="{{ route('orders.walkin') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Walk In Orders</a></li>
 						<li><a href="{{ route('orders.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
 						<li><a href="{{ route('orders') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Orders Report</a></li>
 						</ul>

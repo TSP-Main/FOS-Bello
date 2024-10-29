@@ -1,6 +1,14 @@
 @extends('layout.app')
 @section('title', 'Dashboard | FOS - Food Ordering System')
 
+<style>
+    .daterangepicker .ranges li:hover {
+        background-color: #08c !important;
+    }
+    .ranges {
+        margin: 5px !important;
+    }
+</style>
 @section('content')
 <!-- Main content -->
 <section class="content">
@@ -164,17 +172,10 @@
         </div>
     @else
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="col-sm-12">
                 <div class="form-group fill">
-                    {{-- <label for="dateRangeFilter">Date Range Filter:</label> --}}
-                    <input type="text" id="dateRangeFilter" class="form-control" />
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
-                <div class="form-group fill">
-                    <button id="todayFilter" class="btn btn-primary">Today</button>
-                    <button id="yesterdayFilter" class="btn btn-primary">Yesterday</button>
-                    <button id="thisMonthFilter" class="btn btn-primary">Last 30 Days</button>
+                    <label for="dateRangeFilter">Select Date Range</label>
+                    <input type="text" id="dateRangeFilter" class="form-control" placeholder="Choose Date Range" readonly />
                 </div>
             </div>
         </div>
@@ -410,12 +411,43 @@
                 });
             }
 
+            // Date range filter
             $('#dateRangeFilter').daterangepicker({
-                    opens: 'left'
+                    opens: 'right',
+                    autoUpdateInput: false,
+                    showDropdowns: true,
+                    autoApply: false,
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                    },
+                    locale: {
+                        cancelLabel: 'Clear'
+                    }
                 }, function(start, end, label) {
-                    const startDate = $('#dateRangeFilter').data('daterangepicker').startDate.format('YYYY-MM-DD');
-                    const endDate = $('#dateRangeFilter').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                    const startDate = start.format('YYYY-MM-DD');
+                    const endDate = end.format('YYYY-MM-DD');
+                    
+                    $('#dateRangeFilter').val(label === 'Custom Range' ? `${startDate} - ${endDate}` : label);
                     fetchFilteredData(startDate, endDate);
+            });
+
+            // Set input with selected dates on apply
+            $('#dateRangeFilter').on('apply.daterangepicker', function(ev, picker) {
+                const startDate = picker.startDate.format('YYYY-MM-DD');
+                const endDate = picker.endDate.format('YYYY-MM-DD');
+                $(this).val(startDate + ' - ' + endDate);
+                fetchFilteredData(startDate, endDate);
+            });
+
+            // Clear input on cancel
+            $('#dateRangeFilter').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                fetchFilteredData(null, null);
             });
 
             // "Today" button click event

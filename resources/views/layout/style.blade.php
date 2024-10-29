@@ -15,3 +15,5 @@
 <!-- Custom CSS -->
 <link rel="stylesheet" href="{{ asset('assets/custom.css')}}">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.1/daterangepicker.min.css" />
+

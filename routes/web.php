@@ -99,6 +99,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/print/{id}', [OrderController::class, 'print'])->name('orders.print');
     Route::get('orders', [OrderController::class, 'ordersList'])->name('orders');
     Route::get('orders/filter', [OrderController::class, 'ordersFilter'])->name('orders.filter');
+    Route::get('orders/walkin', [OrderController::class, 'walkinOrderForm'])->name('orders.walkin');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 

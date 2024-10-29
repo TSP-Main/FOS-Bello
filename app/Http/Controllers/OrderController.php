@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Company;
 use Stripe\SetupIntent;
+use App\Models\Category;
 use App\Models\Discount;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
@@ -15,6 +16,7 @@ use App\Models\OrderDetail;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Events\OrderReceived;
+use App\Models\Product;
 use App\Models\RestaurantEmail;
 use Barryvdh\DomPDF\Facade\PDF;
 use Illuminate\Support\Facades\DB;
@@ -573,5 +575,15 @@ class OrderController extends Controller
         $orders = $query->get();
         
         return response()->json($orders);
+    }
+
+    public function walkinOrderForm ()
+    {
+        $companyId = Auth::user()->company_id;
+        $data['companyDetail'] = Company::where('id', $companyId)->first();
+        $data['categories'] = Category::where('company_id', $companyId)->get();
+        $data['products'] = Product::where('company_id', $companyId)->get();
+        // return $data;
+        return view('orders.walkin_order_form', $data);
     }
 }
