@@ -181,8 +181,9 @@ class ProductController extends Controller
 
     public function productsByCategory(Request $request)
     {
+        $companyId = Auth::user()->company_id;
         $categoryId = $request->input('category_id');
-        $products = Product::where('category_id', $categoryId)->get();
+        $products = Product::where('category_id', $categoryId)->where('company_id', $companyId)->with('images', 'options.option.option_values')->get();
 
         return response()->json(['products' => $products]);
     }

@@ -577,13 +577,20 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
-    public function walkinOrderForm ()
+    public function walkin_order_form ()
     {
         $companyId = Auth::user()->company_id;
         $data['companyDetail'] = Company::where('id', $companyId)->first();
         $data['categories'] = Category::where('company_id', $companyId)->get();
         $data['products'] = Product::where('company_id', $companyId)->get();
+        $data['currencySymbol'] = $data['companyDetail']->currency_symbol;
+
         // return $data;
         return view('orders.walkin_order_form', $data);
+    }
+
+    public function store_walkin_order(Request $request)
+    {
+        return $request;
     }
 }
