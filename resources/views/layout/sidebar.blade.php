@@ -1,45 +1,39 @@
 <aside class="main-sidebar">
 	<style>
 		.main-sidebar {
-    display: flex;
-    flex-direction: column;
-    height: 75vh; 
-}
-
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.multinav {
-    flex-grow: 1; 
-}
-
-.sidebar-footer {
-    margin-top: auto; 
-    padding: 15px; 
-    background-color: #f8f9fa;
-    border-top: 1px solid #e9ecef; 
-}
-
-.treeview-menu {
-    display: none; 
-}
-
-.treeview.active .treeview-menu {
-    display: block; 
-}
-
-.sidebar-menu .active > a {
-    background-color: #f4f4f4; 
-}
-
-.treeview-menu {
-    transition: max-height 0.3s ease-out;
-}
+			display: flex;
+			flex-direction: column;
+			height: 75vh; 
+		}
+		.sidebar {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}
+		.multinav {
+			flex-grow: 1; 
+		}
+		.sidebar-footer {
+			margin-top: auto; 
+			padding: 15px; 
+			background-color: #f8f9fa;
+			border-top: 1px solid #e9ecef; 
+		}
+		.treeview-menu {
+			display: none; 
+		}
+		.treeview.active .treeview-menu {
+			display: block; 
+		}
+		.sidebar-menu .active > a {
+			background-color: #f4f4f4; 
+		}
+		.treeview-menu {
+			transition: max-height 0.3s ease-out;
+		}
 
 	</style>
+	
     <!-- sidebar-->
     <section class="sidebar position-relative">	
 	  	<div class="multinav">
@@ -47,7 +41,7 @@
 			<!-- sidebar menu-->
 			<ul class="sidebar-menu" data-widget="tree">
 				<li class="">
-					<a href="{{ route('dashboad')}}">
+					<a href="{{ route('dashboard')}}">
 						<i class="icon-Home"></i>
 						<span>Dashboard</span>
 					</a>
@@ -64,8 +58,7 @@
 						</a>
 						<ul class="treeview-menu">
 						<li><a href="{{ route('orders.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
-						<li><a href="{{ route('orders.noti') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Pending Orders</a></li>
-						{{-- <li><a href="order_details.html"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order Details</a></li> --}}
+						<li><a href="{{ route('orders') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Orders Report</a></li>
 						</ul>
 					</li>
 				@endif
@@ -74,7 +67,7 @@
 					<li class="treeview">
 						<a href="#">
 							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-						  <span>Companies</span>
+						  <span>Restaurants Connected</span>
 						  <span class="pull-right-container">
 							<i class="fa fa-angle-right pull-right"></i>
 						  </span>
@@ -82,6 +75,7 @@
 						<ul class="treeview-menu">
 						  <li><a href="{{ route('companies.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add New</a></li>
 						  <li><a href="{{ route('companies.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>List</a></li>
+						  <li><a href="{{ route('companies.incoming.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Incoming Request</a></li>
 						</ul>
 					</li>
 				@endif
@@ -90,7 +84,7 @@
 					<li class="treeview">
 						<a href="#">
 							<i class="icon-User"><span class="path1"></span><span class="path2"></span></i>
-							<span>Managers</span>
+							<span>Restaurants Admins</span>
 							<span class="pull-right-container">
 								<i class="fa fa-angle-right pull-right"></i>
 							</span>
@@ -160,20 +154,39 @@
 					</li>
 				@endif
 
-				@if (view_permission('schedules'))
-				<li class="treeview">
-					<a href="#">
-						<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-						<span>Restaurant Schedule</span>
-						<span class="pull-right-container">
-							<i class="fa fa-angle-right pull-right"></i>
-						</span>
-					</a>
-					<ul class="treeview-menu">
-					<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
-					</ul>
-				</li>
-			@endif
+				@if (view_permission('setup'))
+					<li class="treeview">
+						<a href="#">
+							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+							<span>Restaurant Setup</span>
+							<span class="pull-right-container">
+								<i class="fa fa-angle-right pull-right"></i>
+							</span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="{{ route('schedules.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Schedule</a></li>
+							<li><a href="{{ route('radius.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Add Radius</a></li>
+							<li><a href="{{ route('timezone.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Set Timezone</a></li>
+							<li><a href="{{ route('configurations.create') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Configurations</a></li>
+							<li><a href="{{ route('discount') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Discount</a></li>
+						</ul>
+					</li>
+				@endif
+
+				@if (view_permission('newsletter'))
+					<li class="treeview">
+						<a href="#">
+							<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
+							<span>Newsletter</span>
+							<span class="pull-right-container">
+								<i class="fa fa-angle-right pull-right"></i>
+							</span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="{{ route('subscriptions.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Subscriptions</a></li>
+						</ul>
+					</li>
+				@endif
 			</ul>
 
 			<div class="sidebar-widgets">

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
@@ -16,8 +17,10 @@ class CategoryController extends Controller
 
     public function index(Category $category)
     {
-        $categories = Category::all();
-        return view('categories.addcategory', compact('categories'));
+        $companyId = Auth::user()->company_id;
+        $data['categories'] = Category::with('products')->where('company_id', $companyId)->get();
+        
+        return view('categories.list', $data);
     }   
 
 
@@ -33,20 +36,14 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug',
             'desc' => 'nullable|string',
-            'type' => 'required|in:1,2',
-            'status' => 'required|in:1,2,3', 
-            'icon_file' => 'nullable|file|image|max:2048', 
-            'background_image' => 'nullable|file|image|max:2048', 
-            'parent_id' => 'nullable|exists:categories,id',
+            'status' => 'required|in:1,3', 
+            'icon_file' => 'nullable|max:2048', 
+            'background_image' => 'nullable|max:2048', 
+            'banner_image' => 'nullable|max:2048', 
         ]);
     
         $category = new Category();
         $category->fill($validatedData);
-
-        $type = $request->input('type');
-        if ($type == 2 && !$request->input('parent_id')) {
-            return redirect()->back()->withErrors(['parent_id' => 'Please select a parent category.'])->withInput();
-        }
     
         // Handle icon_file upload
         if ($request->hasFile('icon_file')) {
@@ -58,6 +55,12 @@ class CategoryController extends Controller
         if ($request->hasFile('background_image')) {
             $path = $request->file('background_image')->store('public/backgrounds');
             $category->background_image = str_replace('public/', '', $path);
+        }
+
+        // Handle banner_image upload
+        if ($request->hasFile('banner_image')) {
+            $path = $request->file('banner_image')->store('public/banners');
+            $category->banner_image = str_replace('public/', '', $path);
         }
     
         $category->created_by = Auth::id(); 
@@ -79,14 +82,10 @@ class CategoryController extends Controller
 
     public function edit($id)
     {
-        // Find the category by its ID
+        $id = base64_decode($id);
         $category = Category::findOrFail($id);
-    
-        //  list of all categories
-        $categories = Category::all();
-    
-        // Return the view
-        return view('categories.edit', compact('category', 'categories'));
+
+        return view('categories.edit', compact('category'));
     }
 
     public function update(Request $request, $id)
@@ -95,16 +94,26 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:categories,slug,' . $id,
             'desc' => 'nullable|string',
-            'type' => 'required|in:1,2',
-            'status' => 'required|in:1,2,3',
+            'status' => 'required|in:1,3',
             'icon_file' => 'nullable|file|image|max:2048',
             'background_image' => 'nullable|file|image|max:2048',
-            'parent_id' => 'nullable|exists:categories,id',
+            'banner_image' => 'nullable|file|image|max:2048',
         ]);
     
         $category = Category::findOrFail($id);
         $category->fill($validatedData);
     
+        // remove icon file
+        if($request->input('icon_file_remove')){
+            $category->icon_file = null;
+        }
+        if($request->input('background_image_remove')){
+            $category->background_image = null;
+        }
+        if($request->input('banner_image_remove')){
+            $category->banner_image = null;
+        }
+
         // Handle icon_file upload
         if ($request->hasFile('icon_file')) {
             $path = $request->file('icon_file')->store('public/icons');
@@ -116,14 +125,15 @@ class CategoryController extends Controller
             $path = $request->file('background_image')->store('public/backgrounds');
             $category->background_image = str_replace('public/', '', $path);
         }
+
+        // Handle banner_image upload
+        if ($request->hasFile('banner_image')) {
+            $path = $request->file('banner_image')->store('public/banners');
+            $category->banner_image = str_replace('public/', '', $path);
+        }
     
         $category->updated_by = Auth::id();
     
-        if (isset($validatedData['parent_id'])) {
-            $category->parent_id = $validatedData['parent_id'];
-        } else {
-            $category->parent_id = null; 
-        }
         try {
             $category->save();
             return redirect()->route('category.list')->with('success', 'Category updated successfully.');
@@ -137,9 +147,16 @@ class CategoryController extends Controller
     {
         try {
             $category = Category::findOrFail($id);
-            $category->delete();
-    
-            return redirect()->route('category.list')->with('success', 'Category deleted successfully.');
+            if($category){
+                $products = Product::where('category_id', $id)->get();
+                if(count($products)){
+                    return redirect()->route('category.list')->with('error', 'There are products related to this category. First delete or update their category');
+                }
+                else{
+                    $category->delete();
+                    return redirect()->route('category.list')->with('success', 'Category deleted successfully.');
+                }
+            }
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }

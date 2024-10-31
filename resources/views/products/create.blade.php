@@ -50,7 +50,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <h5>Category <span class="text-danger">*</span></h5>
                                             <div class="controls">
@@ -64,13 +64,26 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <h5>Select Sides</h5>
                                             <div class="controls">
                                                 <select name="options[]" id="options" class="selectpicker" multiple>
                                                     @foreach ($options as $option)
                                                         <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <h5>Ask for Special Instruction <span class="text-danger">*</span></h5>
+                                            <div class="controls">
+                                                <select name="ask_instruction" id="ask_instruction" class="form-select" required>
+                                                    @foreach ($yesNo as $key => $val)
+                                                        <option value="{{ $key }}" {{ $key == 2 ? 'selected' : '' }} >{{ $val }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -88,7 +101,7 @@
 
                                     <div class="form-group">
                                         <label for="images" class="form-label">Selecr Product Images</label>
-                                        <input class="form-control" name="images[]" type="file" id="images" multiple accept="image/*">
+                                        <input class="form-control" name="images[]" type="file" id="images" accept="image/*">
                                     </div>
                             
                                 <div class="text-xs-right">

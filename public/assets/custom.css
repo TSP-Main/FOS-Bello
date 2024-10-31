@@ -1,4 +1,23 @@
 .right-bar {
     display: none;
 } 
+.sidebar-menu > li > a > i { 
+    margin-right: 0px !important;
+}
 
+.status-pill {
+    padding: 5px 10px;
+    border-radius: 12px;
+    color: #fff; /* White text color for better contrast */
+    font-weight: bold;
+    white-space: nowrap;
+    /* text-transform: uppercase; */
+}
+
+.status-pill.active {
+    background-color: #28a745; /* Green color for active */
+}
+
+.status-pill.inactive {
+    background-color: #dc3545; /* Red color for inactive */
+}

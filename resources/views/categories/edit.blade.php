@@ -51,42 +51,12 @@
                                 <!--/span-->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Type</label>
-                                        <select class="form-select" id="type" name="type" data-placeholder="Choose a Category">
-                                            <option value="1" {{ old('type', $category->type) == 1 ? 'selected' : '' }}>Category</option>
-                                            <option value="2" {{ old('type', $category->type) == 2 ? 'selected' : '' }}>Sub Category</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <span>
-                                            <label class="fw-700 fs-16 form-label">Parent Category</label>
-                                            <select class="form-select" name="parent_id" id="parent_id" data-placeholder="Choose a Parent Category">
-                                                <option value="" disabled selected>Select Options</option>
-                                                @foreach($categories as $cat)
-                                                    @if($cat->type == 1)
-                                                        <option value="{{ $cat->id }}" {{ old('parent_id', $category->parent_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
                                         <label class="fw-700 fs-16 form-label">Status</label>
                                         <div class="radio-list">
                                             <label class="radio-inline p-0 me-10">
                                                 <div class="radio radio-info">
                                                     <input type="radio" name="status" id="radio1" value="1" {{ old('status', $category->status) == 1 ? 'checked' : '' }}>
                                                     <label for="radio1">Active</label>
-                                                </div>
-                                            </label>
-                                            <label class="radio-inline">
-                                                <div class="radio radio-info">
-                                                    <input type="radio" name="status" id="radio2" value="2" {{ old('status', $category->status) == 2 ? 'checked' : '' }}>
-                                                    <label for="radio2">Inactive</label>
                                                 </div>
                                             </label>
                                             <label class="radio-inline">
@@ -115,6 +85,7 @@
                                         <p>Upload Icon</p>
                                         <div class="btn btn-info mb-20">
                                             <input type="file" class="upload" id="icon_file" name="icon_file">
+                                            <input type="hidden" id="icon_file_remove" value="" name="icon_file_remove">
                                         </div>
                                         <button class="btn btn-danger delete-file mb-20">Delete</button>
                                     </div>
@@ -131,6 +102,23 @@
                                         <p>Upload Image</p>
                                         <div class="btn btn-info mb-20">
                                             <input type="file" class="upload" id="background_image" name="background_image">
+                                            <input type="hidden" id="background_image_remove" value="" name="background_image_remove">
+                                        </div>
+                                        <button class="btn btn-danger delete-file mb-20">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="box-title mt-20">Uploaded Banner</h4>
+                                    <div class="product-img text-start">
+                                        @if ($category->banner_image)
+                                            <img id="preview-banner" src="{{ asset('storage/' . $category->banner_image) }}" alt="" class="mb-15 preview-image">
+                                        @else
+                                            <img id="preview-banner" src="{{ asset('images/product-placeholder.png') }}" alt="" class="mb-15 preview-image">
+                                        @endif
+                                        <p>Upload Icon</p>
+                                        <div class="btn btn-info mb-20">
+                                            <input type="file" class="upload" id="banner_image" name="banner_image">
+                                            <input type="hidden" id="banner_image_remove" value="" name="banner_image_remove">
                                         </div>
                                         <button class="btn btn-danger delete-file mb-20">Delete</button>
                                     </div>
@@ -153,23 +141,11 @@
                             $('#background_image').on('change', function() {
                                 previewImage(this, '#preview-image');
                             });
-                        
-                            var typeSelect = document.getElementById('type');
-                            var parentSelect = document.getElementById('parent_id');
-    
-                            // Initially disable the parent select if type is Category
-                            if (typeSelect.value === '1') {
-                                parentSelect.disabled = true;
-                            }
-                            // Add change event listener to the type select
-                            typeSelect.addEventListener('change', function() {
-                                if (this.value === '1') {
-                                    parentSelect.disabled = true;
-                                    parentSelect.value = ''; 
-                                } else {
-                                    parentSelect.disabled = false;
-                                }
-                            }); 
+
+                            // Handle banner_image input change
+                            $('#banner_image').on('change', function() {
+                                previewImage(this, '#preview-banner');
+                            });
     
                             // Function to preview selected image
                             function previewImage(input, previewId) {
@@ -186,6 +162,7 @@
                                 
                                 var inputId = $(this).siblings('.btn-info').children('input').attr('id');
                                 $('#' + inputId).val(''); 
+                                $('#' + inputId + '_remove').val(1); 
                                 $(this).siblings('.preview-image').attr('src', '{{ asset('images/product-placeholder.png') }}'); // Reset preview image
                             });
                

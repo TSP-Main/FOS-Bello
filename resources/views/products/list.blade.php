@@ -29,7 +29,7 @@
                 <div class="box">
                     <div class="box-body">
                         <div class="table-responsive rounded card-table">
-                            <table class="table border-no" id="example1">
+                            <table class="table border-no" id="products_table">
                                 <thead>
                                     <tr>
                                         <th>Title</th>
@@ -43,7 +43,12 @@
                                             <td>{{ $product->title }}</td>
                                             <td>{{ $product->price }}</td>
                                             <td>
-                                                <a class="btn btn-primary" href="{{ route('products.edit', $product->id) }}">Edit</a>
+                                                <a class="btn btn-primary" href="{{ route('products.edit', base64_encode($product->id)) }}">Edit</a>
+                                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger " onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -57,4 +62,10 @@
     </section>
     <!-- /.content -->
 
+@endsection
+
+@section('script')
+    <script>
+        $('#products_table').dataTable();
+    </script>
 @endsection
