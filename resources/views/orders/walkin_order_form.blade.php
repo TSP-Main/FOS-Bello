@@ -90,6 +90,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="productOptionsModal" tabindex="-1" aria-labelledby="productOptionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="productOptionsModalLabel">Product title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{-- <div class="form-group">
+                            <input type="hidden" id="productId" />
+                            <input type="hidden" id="productDetail" data-product-detail="" />
+                            <div class="options"></div>
+                            <div class="instruction"></div>
+                        </div> --}}
+
+                        <div id="productOptionsContent">
+                            <!-- Options will be dynamically loaded here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="addToCartWithOptions">Add to cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 @endsection
 
@@ -104,7 +132,6 @@
 
             $('#category').change(function() {
                 var categoryId = $(this).val();
-                
                 $('.product-container').empty();
 
                 if (categoryId) {
@@ -116,6 +143,7 @@
                             $.each(response.products, function(index, product) {
                                 var imageUrl = product.images.length > 0 ? '{{ asset('storage/product_images') }}/' + product.images[0].path : '{{ asset('assets/theme/images/default_product_image.jpg') }}';
 
+                                // console.log(product.options.length)
                                 $('.product-container').append(`
                                     <div class="col-xxxl-3 col-xl-4 col-lg-4 col-12">
                                         <div class="box overflow-h">
@@ -129,7 +157,7 @@
                                                     <h4 class="mb-10 mt-0">${product.title}</h4>
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <h4 class="mb-0 text-primary">${@json($currencySymbol)}${product.price}</h4>
-                                                        <button class="btn btn-primary add-to-cart" data-product-id="${product.id}" data-product-name="${product.title}" data-product-price="${product.price}">Add</button>
+                                                        <button class="btn btn-primary add-to-cart" data-product-id="${product.id}" data-product-name="${product.title}" data-product-price="${product.price}" data-has-options="${product.options.length}">Add</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -143,23 +171,96 @@
                                 var productId = $(this).data('product-id');
                                 var productName = $(this).data('product-name');
                                 var productPrice = parseFloat($(this).data('product-price'));
+                                var hasOptions = $(this).data('has-options');
 
-                                addToCart(productId, productName, productPrice);
+                                if (hasOptions) {
+                                    // $('#productOptionsModal').modal('show');
+                                    loadProductOptions(productId, productName, productPrice);
+                                } else {
+                                    addToCart(productId, productName, productPrice, {});
+                                }
                             });
                         }
                     });
                 }
             });
 
+            // Load options and show modal for products with options
+            function loadProductOptions(productId, productName, productPrice) {
+                $.ajax({
+                    url: "{{ route('product.options') }}", // Replace with your actual route
+                    type: 'GET',
+                    data: { product_id: productId },
+                    success: function(response) {
+                        let optionsHtml = '';
+
+                        // Loop through each option category
+                        $.each(response.options, function(categoryName, category) {
+                            optionsHtml += `<div class="option-category"><h5>${categoryName}</h5>`;
+
+                            // Loop through each option value in the category
+                            $.each(category.option_values, function(index, optionValue) {
+                                
+
+                                if (optionValue.is_enable) { // Only show enabled options
+                                    let optionPrice = parseFloat(optionValue.price) || 0;
+                                    optionsHtml += `
+                                        <div class="form-check">
+                                            <input type="radio" class="form-check-input option-input" name="option_${category.id}" value="${optionValue.id}" id="option_${optionValue.id}" data-options-value-name="${optionValue.name}" data-options-price="${optionPrice}">
+                                            <label class="form-check-label" for="option_${optionValue.id}">${optionValue.name} (+${optionPrice.toFixed(2)})</label>
+                                        </div>`;
+                                }
+                            });
+
+                            optionsHtml += '</div><hr>'; // Close category div
+                        });
+
+                        $('#productOptionsContent').html(optionsHtml);
+                        $('#productOptionsModal').modal('show');
+
+                        // Set add-to-cart button in modal to pass selected options
+                        $('#addToCartWithOptions').off().on('click', function() {
+                            let selectedOptions = {};
+                            let totalOptionPrice = 0;
+                            $('.option-input:checked').each(function() {
+                                let categoryId = $(this).attr('name').split('_')[1];
+                                let optionId = $(this).val();
+                                let optionValueName = $(this).data('options-value-name'); // Get the option name from data attribute
+                                let optionPrice = parseFloat($(this).data('options-price'));
+                                selectedOptions[categoryId] = {
+                                    id: optionId,
+                                    name: optionValueName // Store the option name as well
+                                };
+                                totalOptionPrice += optionPrice;
+                            });
+                            // Calculate the final price considering options
+                            let finalPrice = productPrice + totalOptionPrice;
+                            
+                            addToCart(productId, productName, finalPrice, selectedOptions);
+                            $('#productOptionsModal').modal('hide');
+                        });
+                    }
+                });
+            }
+
             // Function to add products to the cart
-            function addToCart(productId, productName, productPrice) {
+            function addToCart(productId, productName, productPrice, selectedOptions) {
+                // Generate a string to display selected options
+                let optionsString = Object.values(selectedOptions)
+                    .map(option => option.name) // Access the name property from each option
+                    .join(', '); // Correctly join option names into a single string
+
+                // Include options in the product name for display
+                let fullProductName = optionsString ? `${productName} (${optionsString})` : productName;
+
                 // Check if the product is already in the cart
-                var existingProduct = cart.find(item => item.id === productId);
+                var existingProduct = cart.find(item => item.id === productId && item.options === optionsString);
 
                 if (existingProduct) {
-                    existingProduct.quantity += 1;
+                    existingProduct.quantity += 1; // Increment quantity if product already exists
                 } else {
-                    cart.push({ id: productId, name: productName, price: productPrice, quantity: 1 });
+                    // Push new product with correctly formatted name and options
+                    cart.push({ id: productId, name: fullProductName, price: productPrice, quantity: 1, options: optionsString });
                 }
 
                 updateCartDisplay();
@@ -176,38 +277,40 @@
                     $('.cart-items').append(`
                         <tr class="cart-item">
                             <td>${item.name}</td>
-                            <td>$${item.price.toFixed(2)}</td>
+                            <td>${@json($currencySymbol)}${item.price.toFixed(2)}</td>
                             <td>
-                                <button class="btn btn-sm btn-secondary update-quantity" data-product-id="${item.id}" data-action="decrease">-</button>
+                                <button class="btn btn-sm btn-secondary update-quantity" data-product-id="${item.id}" data-options='${JSON.stringify(item.options)}' data-action="decrease">-</button>
                                 ${item.quantity}
-                                <button class="btn btn-sm btn-secondary update-quantity" data-product-id="${item.id}" data-action="increase">+</button>
+                                <button class="btn btn-sm btn-secondary update-quantity" data-product-id="${item.id}" data-options='${JSON.stringify(item.options)}' data-action="increase">+</button>
                             </td>
-                            <td>$${itemTotal.toFixed(2)}</td>
+                            <td>${@json($currencySymbol)}${itemTotal.toFixed(2)}</td>
                             <td>
-                                <button class="btn btn-sm btn-danger remove-item" data-product-id="${item.id}">Remove</button>
+                                <button class="btn btn-sm btn-danger remove-item" data-product-id="${item.id}" data-options='${JSON.stringify(item.options)}'>Remove</button>
                             </td>
                         </tr>
                     `);
                 });
 
-                $('.total-price').text(`$${totalAmount.toFixed(2)}`); // Update total amount display
+                $('.total-price').text(`${@json($currencySymbol)}${totalAmount.toFixed(2)}`); // Update total amount display
 
                 // Attach event listeners to cart item buttons
                 $('.update-quantity').on('click', function() {
                     var productId = $(this).data('product-id');
+                    var options = JSON.parse($(this).data('options'));
                     var action = $(this).data('action');
-                    updateQuantity(productId, action);
+                    updateQuantity(productId, options, action);
                 });
 
                 $('.remove-item').on('click', function() {
                     var productId = $(this).data('product-id');
-                    removeFromCart(productId);
+                    var options = JSON.parse($(this).data('options'));
+                    removeFromCart(productId, options);
                 });
             }
 
             // Function to update quantity of a cart item
-            function updateQuantity(productId, action) {
-                var product = cart.find(item => item.id === productId);
+            function updateQuantity(productId, options, action) {
+                var product = cart.find(item => item.id === productId && JSON.stringify(item.options) === JSON.stringify(options));
 
                 if (product) {
                     if (action === 'increase') {
@@ -220,8 +323,8 @@
             }
 
             // Function to remove a product from the cart
-            function removeFromCart(productId) {
-                cart = cart.filter(item => item.id !== productId);
+            function removeFromCart(productId, options) {
+                cart = cart.filter(item => !(item.id === productId && JSON.stringify(item.options) === JSON.stringify(options)));
                 updateCartDisplay();
             }
 
@@ -237,14 +340,14 @@
                     type: 'POST',
                     data: JSON.stringify({
                         "_token": "{{ csrf_token() }}",
-                        "data": orderData // Assuming orderData is already an object
+                        "data": orderData
                     }),
                     contentType: 'application/json',
                     success: function(response) {
                         console.log(response);
-                        // alert("Order placed successfully!");
-                        // cart = []; // Clear the cart after order is placed
-                        // updateCartDisplay(); // Update cart display
+                        // Clear the cart after order is placed
+                        cart = [];
+                        updateCartDisplay();
                     },
                     error: function(xhr, status, error) {
                         console.error("Error placing order:", error);

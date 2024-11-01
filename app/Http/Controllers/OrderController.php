@@ -591,6 +591,39 @@ class OrderController extends Controller
 
     public function store_walkin_order(Request $request)
     {
-        return $request;
+        return $request->data;
+        $companyId = Auth::user()->company_id;
+        $order = new Order();
+        $order->company_id      = $companyId;
+        $order->name            = 'Walk In Customer';
+        $order->total           = $request->data->total;
+        $order->order_type      = 'Walk In';
+        $order->payment_option  = 'QR Code';
+        // $order->order_note      = $postData->orderNote;
+        $order->original_bill   = $request->data->total;
+
+        $order->save();
+        $orderId = $order->id;
+
+        if($orderId){
+            $orderItems = $postData->cartItems;
+
+            foreach($orderItems as $orderItem){
+                $orderDetail = new OrderDetail();
+
+                $orderDetail->order_id      = $orderId;
+                $orderDetail->product_id    = $orderItem['productId'];
+                $orderDetail->product_title = $orderItem['productTitle'];
+                $orderDetail->product_price = $orderItem['productPrice'];
+                $orderDetail->quantity      = $orderItem['quantity'];
+                $orderDetail->sub_total     = $orderItem['rowTotal'];
+                $orderDetail->options       = $orderItem['optionNames'] ? implode(',', $orderItem['optionNames']) : NULL;
+                $orderDetail->item_instruction = $orderItem['productInstruction'];
+
+                $orderDetail->save();
+            }
+
+            return $orderId;
+        }
     }
 }

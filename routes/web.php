@@ -127,6 +127,9 @@ Route::group(['middleware' => ['auth']], function(){
     
     // Newsletter
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');
+
+    Route::get('product/options', [ProductController::class, 'getOptions'])->name('product.options');
+
 });
 
 Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
