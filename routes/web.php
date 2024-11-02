@@ -6,9 +6,11 @@ use App\Models\NewsletterSubscription;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckPermission;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\OptionController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -18,7 +20,6 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\NewsletterSubscriptionController;
-use App\Http\Middleware\CheckPermission;
 
 Auth::routes();
 
@@ -129,6 +130,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');
 
     Route::get('product/options', [ProductController::class, 'getOptions'])->name('product.options');
+
+    Route::post('stripe/webhook', [StripeController::class, 'handleWebhook']);
 
 });
 

@@ -2,22 +2,22 @@
 @section('title', 'WalkIn Order | FO - Food Ordering System')
 <style>
     .table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
 
-.table th,
-.table td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
+    .table th,
+    .table td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
 
-.total-amount {
-    margin-top: 15px;
-    font-weight: bold;
-}
+    .total-amount {
+        margin-top: 15px;
+        font-weight: bold;
+    }
 </style>
 @section('content')
 
@@ -260,7 +260,7 @@
                     existingProduct.quantity += 1; // Increment quantity if product already exists
                 } else {
                     // Push new product with correctly formatted name and options
-                    cart.push({ id: productId, name: fullProductName, price: productPrice, quantity: 1, options: optionsString });
+                    cart.push({ id: productId, name: fullProductName, title: productName,  price: productPrice, quantity: 1, options: optionsString });
                 }
 
                 updateCartDisplay();
@@ -330,6 +330,8 @@
 
             // confirm Order Button
             $('#confirmOrder').on('click', function() {
+                $(this).text("Processing...").prop('disabled', true);
+
                 const orderData = {
                     items: cart,
                     total: calculateTotal()
@@ -344,7 +346,11 @@
                     }),
                     contentType: 'application/json',
                     success: function(response) {
-                        console.log(response);
+                        if (response.print_url) {
+                            window.location.href = response.print_url;
+                        } else {
+                            console.error("Print URL not received.");
+                        }
                         // Clear the cart after order is placed
                         cart = [];
                         updateCartDisplay();
