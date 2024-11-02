@@ -284,6 +284,8 @@ class OrderController extends Controller
         $order->email           = $postData->email;
         $order->phone           = $postData->phone;
         $order->address         = $postData->address;
+        $order->city            = $postData->city;
+        $order->postcode        = $postData->postcode;
         $order->total           = $orderTotal;
         $order->order_type      = $postData->orderType;
         $order->payment_option  = $postData->paymentOption;
@@ -370,6 +372,9 @@ class OrderController extends Controller
                         'status' => $paymentIntent->status,
                         'order_id' => $order->id,
                     ]);
+
+                    $order->payment_method_id = null;
+                    $order->customer_stripe_id = null;
                 } catch (\Exception $e) {
                     return $e->getMessage();
                     // Handle failed payment
@@ -380,6 +385,9 @@ class OrderController extends Controller
         elseif ($request->has('reject')) {
             // Reject order
             $order->order_status = config('constants.REJECTED');
+            $order->payment_method_id = null;
+            $order->customer_stripe_id = null;
+            $order->reject_reason = $request->reject_reason;
         }
         elseif ($request->has('deliver')) {
             // Delivered

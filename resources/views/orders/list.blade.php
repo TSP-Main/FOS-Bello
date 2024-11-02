@@ -54,8 +54,42 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <div class="progress d-none" id="loadingProgressApprove" style="width: 100%;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                        </div>
+
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Approve Order</button>
+                        <button type="submit" class="btn btn-success" id="approveOrderButton" onclick="showLoadingApprove()">Approve Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Reject Modal -->
+    <div class="modal fade" id="orderRejectedModal" tabindex="-1" aria-labelledby="orderRejectedModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderRejectedModalLabel">Enter Rject Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="rejectedOrderForm" method="POST">
+                    @csrf
+                    <input type="hidden" name="reject" value="1">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="delivery_time">Reject Reason</label>
+                            <input type="text" name="reject_reason" id="reject_reason" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="progress d-none" id="loadingProgressReject" style="width: 100%;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="rejectedOrderButton" onclick="showLoadingReject()">Reject Order</button>
                     </div>
                 </form>
             </div>
@@ -120,11 +154,7 @@
                                                 <td>{{ $incomingOrder->payment_option }}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($incomingOrder->id) }}"><i class="fa fa-check"></i></a>
-                                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder({{ $incomingOrder->id }});"><i class="fa fa-ban"></i></a>
-                                                    <form id="reject-order-form-{{ $incomingOrder->id }}" action="{{ route('orders.update', base64_encode($incomingOrder->id)) }}" method="POST" style="display: none;">
-                                                        @csrf
-                                                        <input type="hidden" name="reject" value="1">
-                                                    </form>
+                                                    <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#orderRejectedModal" data-order-id="{{ base64_encode($incomingOrder->id) }}"><i class="fa fa-ban"></i></a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -144,9 +174,15 @@
                                             <th>Order ID</th>
                                             <th>Accepted Date Time</th>
                                             <th>Customer Name</th>
+                                            <th>Phone</th>
                                             <th>Address</th>
-                                            <th>Amount</th>
-                                            <th>Action</th>
+                                            <th>Total</th>
+                                            <th>Original Bill</th>
+                                            <th>Discount Code</th>
+                                            <th>Discount Amount</th>
+                                            <th>Order Type</th>
+                                            <th>Payment Option</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -155,8 +191,14 @@
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($acceptedOrder->id) ]) }}"> #{{ $acceptedOrder->id }} </a></td>
                                                 <td>{{ $acceptedOrder->formatted_updated_at }}</td>
                                                 <td>{{ $acceptedOrder->name }}</td>
-                                                <td>{{ $acceptedOrder->address ?? NULL}}</td>
-                                                <td>{{ $currencySymbol . $acceptedOrder->total}}</td>
+                                                <td>{{ $acceptedOrder->phone }}</td>
+                                                <td>{{ $acceptedOrder ->address}}</td>
+                                                <td>{{ $currencySymbol . $acceptedOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $acceptedOrder->original_bill }}</td>
+                                                <td>{{ $acceptedOrder->discount_code }}</td>
+                                                <td>{{ $currencySymbol . $acceptedOrder->discount_amount }}</td>
+                                                <td>{{ $acceptedOrder->order_type }}</td>
+                                                <td>{{ $acceptedOrder->payment_option }}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-success btn-sm" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();"><i class="fa fa-check"></i></a>
                                                     <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
@@ -190,8 +232,14 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
+                                            <th>Phone</th>
                                             <th>Address</th>
-                                            <th>Amount</th>
+                                            <th>Total</th>
+                                            <th>Original Bill</th>
+                                            <th>Discount Code</th>
+                                            <th>Discount Amount</th>
+                                            <th>Order Type</th>
+                                            <th>Payment Option</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -200,8 +248,14 @@
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($deliveredOrder->id) ]) }}" target="_blank"> #{{ $deliveredOrder->id }} </a></td>
                                                 <td>{{ $deliveredOrder->formatted_updated_at }}</td>
                                                 <td>{{ $deliveredOrder->name }}</td>
-                                                <td>{{ $deliveredOrder->address ?? NULL}}</td>
-                                                <td>{{ $currencySymbol . $deliveredOrder->total}}</td>
+                                                <td>{{ $deliveredOrder->phone }}</td>
+                                                <td>{{ $deliveredOrder ->address}}</td>
+                                                <td>{{ $currencySymbol . $deliveredOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $deliveredOrder->original_bill }}</td>
+                                                <td>{{ $deliveredOrder->discount_code }}</td>
+                                                <td>{{ $currencySymbol . ($deliveredOrder->discount_amount ?? '0.00') }}</td>
+                                                <td>{{ $deliveredOrder->order_type }}</td>
+                                                <td>{{ $deliveredOrder->payment_option }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -218,22 +272,34 @@
                                     <thead>
                                         <tr>
                                             <th>Order ID</th>
+                                            <th>Rejected Reason</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
+                                            <th>Phone</th>
                                             <th>Address</th>
-                                            <th>Amount</th>
-                                            {{-- <th>Status Order</th> --}}
-                                            {{-- <th></th> --}}
+                                            <th>Total</th>
+                                            <th>Original Bill</th>
+                                            <th>Discount Code</th>
+                                            <th>Discount Amount</th>
+                                            <th>Order Type</th>
+                                            <th>Payment Option</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($rejectedOrders as $rejectedOrder)
                                             <tr class="hover-primary">
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($rejectedOrder->id) ]) }}" target="_blank"> #{{ $rejectedOrder->id }} </a></td>
+                                                <td>{{ $rejectedOrder->reject_reason }}</td>
                                                 <td>{{ $rejectedOrder->formatted_updated_at }}</td>
                                                 <td>{{ $rejectedOrder->name }}</td>
-                                                <td>{{ $rejectedOrder->address ?? NULL}}</td>
-                                                <td>{{ $currencySymbol . $rejectedOrder->total}}</td>
+                                                <td>{{ $rejectedOrder->phone }}</td>
+                                                <td>{{ $rejectedOrder ->address}}</td>
+                                                <td>{{ $currencySymbol . $rejectedOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $rejectedOrder->original_bill }}</td>
+                                                <td>{{ $rejectedOrder->discount_code }}</td>
+                                                <td>{{ $currencySymbol . ($rejectedOrder->discount_amount ?? '0.00') }}</td>
+                                                <td>{{ $rejectedOrder->order_type }}</td>
+                                                <td>{{ $rejectedOrder->payment_option }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -252,8 +318,14 @@
                                             <th>Order ID</th>
                                             <th>Date</th>
                                             <th>Customer Name</th>
+                                            <th>Phone</th>
                                             <th>Address</th>
-                                            <th>Amount</th>
+                                            <th>Total</th>
+                                            <th>Original Bill</th>
+                                            <th>Discount Code</th>
+                                            <th>Discount Amount</th>
+                                            <th>Order Type</th>
+                                            <th>Payment Option</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -262,8 +334,14 @@
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($canceledOrder->id) ]) }}" target="_blank"> #{{ $canceledOrder->id }} </a></td>
                                                 <td>{{ $canceledOrder->formatted_updated_at }}</td>
                                                 <td>{{ $canceledOrder->name }}</td>
-                                                <td>{{ $canceledOrder->address ?? NULL}}</td>
-                                                <td>{{ $currencySymbol . $canceledOrder->total}}</td>
+                                                <td>{{ $canceledOrder->phone }}</td>
+                                                <td>{{ $canceledOrder ->address}}</td>
+                                                <td>{{ $currencySymbol . $canceledOrder->total }}</td>
+                                                <td>{{ $currencySymbol . $canceledOrder->original_bill }}</td>
+                                                <td>{{ $canceledOrder->discount_code }}</td>
+                                                <td>{{ $currencySymbol . ($canceledOrder->discount_amount ?? '0.00') }}</td>
+                                                <td>{{ $canceledOrder->order_type }}</td>
+                                                <td>{{ $canceledOrder->payment_option }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -294,6 +372,39 @@
                 form.action = '/orders/update/' + orderId;
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var orderRejectedModal = document.getElementById('orderRejectedModal');
+            orderRejectedModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var orderId = button.getAttribute('data-order-id');
+        
+                var form = document.getElementById('rejectedOrderForm');
+                form.action = '/orders/update/' + orderId;
+            });
+        });
+
+        function showLoadingApprove() {
+            var approveOrderButton = document.getElementById('approveOrderButton');
+            var loadingProgress = document.getElementById('loadingProgressApprove');
+
+            // Disable the submit button and show the loading indicator
+            approveOrderButton.disabled = true;
+            loadingProgress.classList.remove('d-none');
+
+            document.getElementById('approveOrderForm').submit();
+        }
+
+        function showLoadingReject() {
+            var rejectOrderButton = document.getElementById('rejectedOrderButton');
+            var loadingProgress = document.getElementById('loadingProgressReject');
+
+            // Disable the submit button and show the loading indicator
+            rejectOrderButton.disabled = true;
+            loadingProgress.classList.remove('d-none');
+
+            document.getElementById('rejectedOrderForm').submit();
+        }
         
         function checkIncomingOrders() {
             var currencySymbol = @json($currencySymbol);
@@ -318,12 +429,7 @@
                                 <td>${order.payment_option}</td>
                                 <td>
                                     <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${btoa(order.id)}"><i class="fa fa-check"></i></a>
-                                    <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder(${order.id});"><i class="fa fa-ban"></i></a>
-                                    <form id="reject-order-form-${order.id}" action="/orders/update/${btoa(order.id)}" method="POST" style="display: none;">
-                                        @csrf
-                                        <input type="hidden" name="reject" value="1">
-                                    </form>
-                                    
+                                    <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#orderRejectedModal" data-order-id="${btoa(order.id)}"><i class="fa fa-ban"></i></a>
                                 </td>
                             </tr>
                         `);
