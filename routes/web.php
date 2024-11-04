@@ -131,8 +131,6 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::get('product/options', [ProductController::class, 'getOptions'])->name('product.options');
 
-    Route::post('stripe/webhook', [StripeController::class, 'handleWebhook']);
-
 });
 
 Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
@@ -143,10 +141,4 @@ Route::get('/pusher', function () {
 
 Route::get('renewal', [CompanyController::class, 'renewal'])->name('renewal');
 Route::post('renewal/store', [CompanyController::class, 'renewal_store'])->name('renewal.store');
-
-   
-
-
-
-   
 

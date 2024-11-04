@@ -12,38 +12,36 @@ class StripeController extends Controller
 {
     public function handleWebhook(Request $request)
     {
-        Log::info('Stripe webhook received:', ['payload' => $request->all()]);
-        
-        // Verify the webhook signature
         $payload = $request->getContent();
-        $sig_header = $request->header('Stripe-Signature');
-        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET'); // Get this from your Stripe dashboard
-
+        $sigHeader = $request->header('Stripe-Signature');
+        $webhookSecret = env('STRIPE_WEBHOOK_SECRET');
+        
         try {
-            $event = Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
+            $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
         } catch (\UnexpectedValueException $e) {
             // Invalid payload
             return response()->json(['error' => 'Invalid payload'], 400);
+            
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
             // Invalid signature
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        // Handle the event
+        // Handle the checkout.session.completed event
         if ($event->type === 'checkout.session.completed') {
-            $session = $event->data->object; // Contains the payment information
-            $orderId = $session->metadata->order_id; // Get order ID from metadata
+            $session = $event->data->object;
+            // Retrieve metadata to find order ID
+            $orderId = $session->metadata->order_id;
 
-            // Update the order status in your database
+            // Find the order and update the status to 'Paid'
             $order = Order::find($orderId);
             if ($order) {
-                $order->payment_status = 1; // Assuming '3' is for 'Paid' status
+                $order->payment_status = 1;
+                // $order->stripe_payment_intent_id = $paymentIntentId;
                 $order->save();
-            } else {
-                Log::warning('Order not found for ID: ' . $orderId);
             }
         }
 
-        return response()->json(['status' => 'success'], 200);
+        return response()->json(['status' => 'success']);
     }
 }

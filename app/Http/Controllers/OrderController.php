@@ -337,6 +337,8 @@ class OrderController extends Controller
             $order->deliver_time = $request->input('delivery_time');
 
             if ($order->payment_method_id) {
+                $order->payment_status = 1; 
+                
                 // Handle Stripe Payment on Order Acceptance
                 $stripeConfig = RestaurantStripeConfig::where('company_id', $order->company_id)->first();
                 Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));

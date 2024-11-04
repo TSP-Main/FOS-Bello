@@ -101,6 +101,7 @@
                                             <th>Discount Amount</th>
                                             <th>Order Type</th>
                                             <th>Payment Option</th>
+                                            <th>Payment Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -110,14 +111,15 @@
                                                 <td><a href="{{ route('orders.detail', ["id" => base64_encode($incomingOrder->id) ]) }}"> #{{ $incomingOrder->id }} </a></td>
                                                 <td>{{ $incomingOrder->formatted_created_at }}</td>
                                                 <td>{{ $incomingOrder->name }}</td>
-                                                <td>{{ $incomingOrder->phone }}</td>
+                                                <td>{{ $incomingOrder->phone ?? '' }}</td>
                                                 <td>{{ $incomingOrder ->address}}</td>
                                                 <td>{{ $currencySymbol . $incomingOrder->total }}</td>
                                                 <td>{{ $currencySymbol . $incomingOrder->original_bill }}</td>
                                                 <td>{{ $incomingOrder->discount_code }}</td>
-                                                <td>{{ $currencySymbol . $incomingOrder->discount_amount }}</td>
+                                                <td>{{ $currencySymbol . ($incomingOrder->discount_amount ? $incomingOrder->discount_amount : '0.00')  }}</td>
                                                 <td>{{ $incomingOrder->order_type }}</td>
                                                 <td>{{ $incomingOrder->payment_option }}</td>
+                                                <td>{{ $incomingOrder->payment_status === 0 ? 'Unpaid' : 'Paid' }}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($incomingOrder->id) }}"><i class="fa fa-check"></i></a>
                                                     <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder({{ $incomingOrder->id }});"><i class="fa fa-ban"></i></a>
@@ -146,6 +148,7 @@
                                             <th>Customer Name</th>
                                             <th>Address</th>
                                             <th>Amount</th>
+                                            <th>Payment Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -157,6 +160,7 @@
                                                 <td>{{ $acceptedOrder->name }}</td>
                                                 <td>{{ $acceptedOrder->address ?? NULL}}</td>
                                                 <td>{{ $currencySymbol . $acceptedOrder->total}}</td>
+                                                <td>{{ $acceptedOrder->payment_status === 0 ? 'Unpaid' : 'Paid' }}</td>
                                                 <td>
                                                     <a href="#" class="btn btn-success btn-sm" onclick="event.preventDefault(); document.getElementById('deliver-order-form-{{ $acceptedOrder->id }}').submit();"><i class="fa fa-check"></i></a>
                                                     <form id="deliver-order-form-{{ $acceptedOrder->id }}" action="{{ route('orders.update', base64_encode($acceptedOrder->id)) }}" method="POST" style="display: none;">
@@ -316,6 +320,7 @@
                                 <td>${currencySymbol}${order.discount_amount}</td>
                                 <td>${order.order_type}</td>
                                 <td>${order.payment_option}</td>
+                                <td>${order.payment_status === 0 ? 'Unpaid' : 'Paid'}</td>
                                 <td>
                                     <a href="#" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="${btoa(order.id)}"><i class="fa fa-check"></i></a>
                                     <a href="#" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirmRejectOrder(${order.id});"><i class="fa fa-ban"></i></a>
