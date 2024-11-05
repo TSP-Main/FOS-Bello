@@ -109,4 +109,38 @@ class UserController extends Controller
 
         return redirect()->route('users.list')->with('success', 'User updated successfully');
     }
+
+    public function user_profile()
+    {
+        $userId = Auth::user()->id;
+        $data['user'] = User::find($userId);
+        
+        return view('users.profile', $data);
+    }
+
+    public function profile_update(Request $request)
+    {
+        $userId = Auth::user()->id;
+
+        $this->validate($request, [
+            'name' => 'required'
+        ]);
+
+        $post_data['name']        = $request->name;
+        $post_data['updated_by']  = Auth::id();
+
+        if (!empty($request->password)) {
+            $post_data['password'] = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('profile_pic')) {
+            $path = $request->file('profile_pic')->store('public/users');
+            $post_data['profile_pic'] = str_replace('public/', '', $path);
+        }
+
+        $user = User::find($userId);
+        $response = $user->update($post_data);
+
+        return redirect()->route('users.profile')->with('success', 'Profile updated successfully');
+    }
 }

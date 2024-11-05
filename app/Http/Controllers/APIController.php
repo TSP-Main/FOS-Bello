@@ -65,6 +65,7 @@ class APIController extends Controller
             // Retrieve categories belonging to the authenticated company
             $categories = Category::where('status', '1')
                                   ->where('company_id', $company->id)
+                                  ->orderByRaw("ISNULL(sort_order), sort_order ASC")
                                   ->get();
 
             // Check if categories found
@@ -84,6 +85,7 @@ class APIController extends Controller
                         'background_image' => $category->background_image,
                         'slug' => $category->slug,
                         'status' => $category->status,
+                        'sort_order' => $category->sort_order,
                         'created_at' => $category->created_at,
                         'updated_at' => $category->updated_at,
                         'parent_id' => $category->parent_id,
@@ -200,7 +202,7 @@ class APIController extends Controller
 
         if($responseData->status == 'success'){
             $companyId = $responseData->company->id;
-            $categories = Category::where('company_id', $companyId)->where('status', 1)->get();
+            $categories = Category::where('company_id', $companyId)->where('status', 1)->orderByRaw("ISNULL(sort_order), sort_order ASC")->get();
 
             return response()->json(['status' => 'success', 'message' => 'Categories List', 'data' => $categories], 200);
         }

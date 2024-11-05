@@ -23,6 +23,7 @@ class User extends Authenticatable
         'company_id',
         'password',
         'created_by',
+        'profile_pic'
     ];
 
     public function createdByUser()

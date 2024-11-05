@@ -18,6 +18,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 
@@ -39,6 +40,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::post('users/update', [UserController::class, 'update'])->name('users.update');
     // Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('users/profile', [UserController::class, 'user_profile'])->name('users.profile');
+    Route::post('users/profile/upate', [UserController::class, 'profile_update'])->name('users.profile.update');
 
     // Company Routes
     Route::group(['middleware' => [CheckPermission::class . ':company']], function () {
@@ -130,6 +133,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');
 
     Route::get('product/options', [ProductController::class, 'getOptions'])->name('product.options');
+
+    Route::get('repeated/customers', [CustomerController::class, 'repeated_customers_list'])->name('repeated.customers.list');
 
 });
 

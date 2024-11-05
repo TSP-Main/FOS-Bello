@@ -190,10 +190,10 @@
                                 <i class="fa fa-ellipsis-v" style="font-size: 24px; cursor: pointer;"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" data-filter="today" data-target="totalOrders">Today</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="yesterday" data-target="totalOrders">Yesterday</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last7days" data-target="totalOrders">Last 7 Days</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last30days" data-target="totalOrders">Last 30 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="today" data-target="totalOrders">Today</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="yesterday" data-target="totalOrders">Yesterday</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last7days" data-target="totalOrders">Last 7 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last30days" data-target="totalOrders">Last 30 Days</a></li>
                             </ul>
                         </div>
                         <div class="d-flex align-items-start">
@@ -220,10 +220,10 @@
                                 <i class="fa fa-ellipsis-v" style="font-size: 24px; cursor: pointer;"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" data-filter="today" data-target="totalDelivered">Today</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="yesterday" data-target="totalDelivered">Yesterday</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last7days" data-target="totalDelivered">Last 7 Days</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last30days" data-target="totalDelivered">Last 30 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="today" data-target="totalDelivered">Today</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="yesterday" data-target="totalDelivered">Yesterday</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last7days" data-target="totalDelivered">Last 7 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last30days" data-target="totalDelivered">Last 30 Days</a></li>
                             </ul>
                         </div>
                         <div class="d-flex align-items-start">
@@ -250,10 +250,10 @@
                                 <i class="fa fa-ellipsis-v" style="font-size: 24px; cursor: pointer;"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" data-filter="today" data-target="totalCancelled">Today</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="yesterday" data-target="totalCancelled">Yesterday</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last7days" data-target="totalCancelled">Last 7 Days</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last30days" data-target="totalCancelled">Last 30 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="today" data-target="totalCancelled">Today</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="yesterday" data-target="totalCancelled">Yesterday</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last7days" data-target="totalCancelled">Last 7 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last30days" data-target="totalCancelled">Last 30 Days</a></li>
                             </ul>
                         </div>
                         <div class="d-flex align-items-start">
@@ -280,10 +280,10 @@
                                 <i class="fa fa-ellipsis-v" style="font-size: 24px; cursor: pointer;"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" data-filter="today" data-target="totalRevenue">Today</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="yesterday" data-target="totalRevenue">Yesterday</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last7days" data-target="totalRevenue">Last 7 Days</a></li>
-                                <li><a class="dropdown-item" href="#" data-filter="last30days" data-target="totalRevenue">Last 30 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="today" data-target="totalRevenue">Today</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="yesterday" data-target="totalRevenue">Yesterday</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last7days" data-target="totalRevenue">Last 7 Days</a></li>
+                                <li><a class="dropdown-item filter-dropdown-item" href="#" data-filter="last30days" data-target="totalRevenue">Last 30 Days</a></li>
                             </ul>
                         </div>
                         <div class="d-flex align-items-start">
@@ -337,7 +337,7 @@
                             </div>
                             <div>
                                 <h3 class="mb-0 fw-700">{{ $customerData['todayRepeatedCustomer'] }}</h3>
-                                <p class="mb-0 text-danger"><small>Repeated Customer</small></p>
+                                <a href="{{ route('repeated.customers.list') }}" target="_blank"><p class="mb-0 text-danger"><small>Repeated Customer</small></p></a>
                             </div>
                         </div>
                         <div id="chartCustomerData"></div>
@@ -354,7 +354,7 @@
     <script>
         $(document).ready(function() {
             // Handle individual card filter clicks
-            $('.dropdown-item').on('click', function(e) {
+            $('.filter-dropdown-item').on('click', function(e) {
                 e.preventDefault();
 
                 const filterType = $(this).data('filter');
