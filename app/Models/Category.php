@@ -11,7 +11,7 @@ class Category extends Model
 
 
     protected $fillable = [
-        'name', 'desc', 'type', 'slug', 'status', 'icon_file', 'background_image', 'parent_id', 'created_by', 'updated_by',
+        'name', 'desc', 'type', 'slug', 'status', 'icon_file', 'background_image', 'parent_id', 'created_by', 'updated_by', 'sort_order',
     ];
     
     // Relationships

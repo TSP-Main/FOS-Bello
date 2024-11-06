@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Stripe\Price;
 use Carbon\Carbon;
 use Stripe\Stripe;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Company;
+use App\Models\Product;
+use Stripe\PaymentLink;
 use Stripe\SetupIntent;
+use App\Models\Category;
 use App\Models\Discount;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
@@ -335,6 +339,8 @@ class OrderController extends Controller
             $order->deliver_time = $request->input('delivery_time');
 
             if ($order->payment_method_id) {
+                $order->payment_status = 1; 
+                
                 // Handle Stripe Payment on Order Acceptance
                 $stripeConfig = RestaurantStripeConfig::where('company_id', $order->company_id)->first();
                 Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
@@ -581,5 +587,83 @@ class OrderController extends Controller
         $orders = $query->get();
         
         return response()->json($orders);
+    }
+
+    public function walkin_order_form ()
+    {
+        $companyId = Auth::user()->company_id;
+        $data['companyDetail'] = Company::where('id', $companyId)->first();
+        $data['categories'] = Category::where('company_id', $companyId)->get();
+        $data['products'] = Product::where('company_id', $companyId)->get();
+        $data['currencySymbol'] = $data['companyDetail']->currency_symbol;
+
+        // return $data;
+        return view('orders.walkin_order_form', $data);
+    }
+
+    public function store_walkin_order(Request $request)
+    {
+        $companyId = Auth::user()->company_id;
+        $company = Company::find(Auth::user()->company_id);
+
+        $order = new Order();
+
+        $order->company_id      = $companyId;
+        $order->name            = 'Walk In Customer';
+        $order->total           = $request->data['total'];
+        $order->original_bill   = $request->data['total'];
+        $order->discount_amount = '0.00';
+        $order->order_type      = 'Walk In';
+        $order->payment_option  = 'QR Code';
+        $order->order_status  = 1;
+        
+        $order->save();
+        $orderId = $order->id;
+
+        if($orderId){
+            $orderItems = $request->data['items'];
+
+            foreach($orderItems as $orderItem){
+                $orderDetail = new OrderDetail();
+
+                $orderDetail->order_id      = $orderId;
+                $orderDetail->product_id    = $orderItem['id'];
+                $orderDetail->product_title = $orderItem['title'];
+                $orderDetail->product_price = $orderItem['price'];
+                $orderDetail->quantity      = $orderItem['quantity'];
+                $orderDetail->sub_total     = $orderItem['price'] * $orderItem['quantity'];
+                $orderDetail->options       = $orderItem['options'];
+
+                $orderDetail->save();
+            }
+
+            // Create Stripe Payment Link
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            // Create a Price object dynamically based on the order total
+            $price = Price::create([
+                'unit_amount' => $request->data['total'] * 100,
+                'currency' => $company->currency,
+                'product_data' => [
+                    'name' => 'Walk-In Order',
+                ],
+            ]);
+
+            $paymentLink = PaymentLink::create([
+                'line_items' => [[
+                    'price' => $price->id,
+                    'quantity' => 1,
+                ]],
+                'metadata' => [
+                    'order_id' => $orderId,
+                ],
+            ]);
+
+            $order->stripe_payment_link  = $paymentLink->url;
+            $order->save();
+
+            $printUrl = route('orders.print', ['id' => base64_encode($orderId)]);
+            return response()->json(['print_url' => $printUrl]);
+        }
     }
 }

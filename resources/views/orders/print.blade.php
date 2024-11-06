@@ -122,10 +122,14 @@
             <br>
 
             <div>
-                <span>{{ $order->payment_option == 'cash' ? 'Pay by:' : 'Paid by:'}}</span>
+                <span>{{ $order->payment_option == 'cash' || $order->payment_option == 'QR Code' ? 'Pay by:' : 'Paid by:'}}</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-                <span>{{ $order->payment_option == 'cash' ? 'Cash' : 'Card'}}</span>
+                @if ($order->payment_option == 'QR Code')
+                    <span>QR Code</span>
+                @else
+                    <span>{{ $order->payment_option == 'cash' ? 'Cash' : 'Card'}}</span>
+                @endif
                 <span>{{ number_format($order->total, 2) }}</span> 
             </div>
             <hr style="border: 1px dotted black;">
@@ -137,7 +141,11 @@
             <hr style="border: 1px dotted black;">
 
             <div style="text-align: center">
-                <span style="font-size: 25px; font-weight: bold">{{ $order->payment_option == 'cash' ? 'ORDER HAS NOT BEEN PAID' : 'ORDER HAS BEEN PAID'}}</span>
+                @if ($order->payment_option == 'cash' || $order->payment_option == 'online')
+                    <span style="font-size: 25px; font-weight: bold">{{ $order->payment_option == 'cash' ? 'ORDER HAS NOT BEEN PAID' : 'ORDER HAS BEEN PAID'}}</span>
+                @else
+                    <span style="font-size: 25px; font-weight: bold">ORDER HAS NOT BEEN PAID</span>
+                @endif
             </div>
             <hr style="border: 1px dotted black;">
 
@@ -163,6 +171,13 @@
                 <span>Order accepted at</span>
                 <span>{{ $order->updated_at->format('H:i d-M') }}</span> 
             </div>
+
+            @if ($order->order_type == 'Walk In')
+                <div style="text-align: center">
+                    <p>Scan to Pay:</p>
+                    {!! QrCode::size(200)->generate($order->stripe_payment_link) !!}
+                </div>
+            @endif
         </div>
     </div>
 

@@ -50,6 +50,12 @@
                                 </div>
                                 <!--/span-->
                                 <div class="col-md-6">
+									<div class="form-group">
+										<label class="fw-700 fs-16 form-label">Sort Order</label>
+										<input type="text" class="form-control" name="sort_order" value="{{ old('sort_order', $category->sort_order) }}" placeholder="Sort Order">
+									</div>
+								</div>
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="fw-700 fs-16 form-label">Status</label>
                                         <div class="radio-list">

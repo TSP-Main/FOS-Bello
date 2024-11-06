@@ -115,11 +115,16 @@
 	      <!-- User Account-->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle p-0 text-dark hover-primary ms-md-30 ms-10" data-bs-toggle="dropdown" title="User">
-				<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('assets/theme/images/avatar/avatar-11.png')}}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+				@if (Auth::user()->profile_pic)
+					<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('storage/' . Auth::user()->profile_pic) }}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+				@else
+					<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('assets/theme/images/avatar/avatar-11.png')}}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+				@endif
+				
             </a>
             <ul class="dropdown-menu animated flipInX">
               <li class="user-body">
-				 <a class="dropdown-item" href="#"><i class="ti-user text-muted me-2"></i> Profile</a>
+				 <a class="dropdown-item" href="{{ route('users.profile') }}"><i class="ti-user text-muted me-2"></i> Profile</a>
 				 <a class="dropdown-item" href="#"><i class="ti-wallet text-muted me-2"></i> My Wallet</a>
 				 <a class="dropdown-item" href="#"><i class="ti-settings text-muted me-2"></i> Settings</a>
 				 <div class="dropdown-divider"></div>

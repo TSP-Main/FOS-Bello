@@ -30,7 +30,6 @@ class Company extends Model
         'plan',
         'customer_stripe_id',
         'payment_method_id',
-        'is_enable'
     ];
 
     public function getFormattedExpiryDateAttribute()
@@ -41,5 +40,15 @@ class Company extends Model
     public function getFormattedAcceptedDateAttribute()
     {
         return \Carbon\Carbon::parse($this->attributes['accepted_date'])->format('d-m-Y');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(CompanyTransaction::class);
+    }
+
+    public function apiTokenLogs()
+    {
+        return $this->hasMany(ApiTokenLog::class);
     }
 }

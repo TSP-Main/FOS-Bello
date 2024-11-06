@@ -36,6 +36,31 @@
         </div>
     @endif
 
+    <!-- Reason Modal -->
+    <div class="modal fade" id="reasonModal" tabindex="-1" role="dialog" aria-labelledby="reasonModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reasonModalLabel">Enter Reason for Token Generation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="reasonForm">
+                        @csrf
+                        <input type="hidden" id="companyId" name="company_id">
+                        <div class="form-group">
+                            <label for="reason">Reason</label>
+                            <textarea id="reason" name="reason" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" id="submitReason">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="box">
@@ -71,15 +96,14 @@
                                         <td>{{ $company->formatted_accepted_date}}</td>
                                         <td>
                                             <span class="tokenDisplay">{{ $company->token }}</span>
-                                            <form class="refreshTokenForm" action="{{ route('companies.refreshToken', ['id' => base64_encode($company->id)]) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-primary" id="refreshTokenButton">
-                                                    <span class="glyphicon glyphicon-refresh"></span>
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-sm btn-primary generate-token-btn" data-company-id="{{ base64_encode($company->id) }}">
+                                                Generate New Token
+                                            </button>
                                             <div id="message" style="display:none; color: green;">Token refreshed</div>
                                         </td>
-                                        <td> <a class="btn btn-primary" href="{{ route('companies.edit', base64_encode($company->id)) }}">Edit</a>
+                                        <td> 
+                                            <a href="{{ route('companies.edit', base64_encode($company->id)) }}"><i class="fa fa-edit" style="font-size: x-large;"></i></a>
+                                            <a target="_blank" href="{{ route('companies.view', base64_encode($company->id)) }}"><i class="fa fa-eye" style="font-size: x-large;"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -101,42 +125,33 @@
         $('#activeRestaurantTable').dataTable();
 
         $(document).ready(function() {
-            $('form.refreshTokenForm').on('submit', function(event) {
-                event.preventDefault();
-
-                var $form = $(this);
-                var $tokenDisplay = $form.siblings('.tokenDisplay');
-                var $message = $form.siblings('.message');
-
-                $.ajax({
-                    url: $form.attr('action'),
-                    type: 'POST',
-                    data: $form.serialize(),
-                    success: function(response) {
-
-                        $tokenDisplay.text(response.newToken);
-                        $message.fadeIn().delay(2000).fadeOut();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error refreshing token:', error);
-
-                    }
-                });
+            $('.generate-token-btn').click(function() {
+                var companyId = $(this).data('company-id');
+                $('#companyId').val(companyId);
+                $('#reasonModal').modal('show');
             });
+            $('#submitReason').click(function() {
+                var companyId = $('#companyId').val();
+                var reason = $('#reason').val();
 
-            $('#refreshTokenForm').on('submit', function(event) {
-                event.preventDefault();
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: '{{ route("companies.generate.token") }}',
                     type: 'POST',
-                    data: $(this).serialize(),
+                    data: {
+                        _token: $('input[name="_token"]').val(),
+                        company_id: companyId,
+                        reason: reason
+                    },
                     success: function(response) {
-                        $('#tokenDisplay').text(response.newToken);
-                        $('#message').fadeIn().delay(2000).fadeOut();
+                        if (response.success) {
+                            alert('Token generated successfully');
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error refreshing token:', error);
-
+                        alert('An error occurred: ' + xhr.responseText);
                     }
                 });
             });

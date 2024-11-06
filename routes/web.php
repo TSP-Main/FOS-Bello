@@ -6,9 +6,11 @@ use App\Models\NewsletterSubscription;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckPermission;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\OptionController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -16,9 +18,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\RestaurantScheduleController;
 use App\Http\Controllers\NewsletterSubscriptionController;
-use App\Http\Middleware\CheckPermission;
 
 Auth::routes();
 
@@ -38,6 +40,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::post('users/update', [UserController::class, 'update'])->name('users.update');
     // Route::delete('users/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('users/profile', [UserController::class, 'user_profile'])->name('users.profile');
+    Route::post('users/profile/upate', [UserController::class, 'profile_update'])->name('users.profile.update');
 
     // Company Routes
     Route::group(['middleware' => [CheckPermission::class . ':company']], function () {
@@ -47,9 +51,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('companies/edit/{id}', [CompanyController::class, 'edit'])->name('companies.edit');
         Route::post('companies/update', [CompanyController::class, 'update'])->name('companies.update');
         // Route::delete('companies/destroy/{id}'0, [CompanyController::class, 'destroy'])->name('companies.destroy');
-        Route::post('companies/{id}/refresh-token', [CompanyController::class, 'refreshToken'])->name('companies.refreshToken');
         Route::get('companies/incoming/list', [CompanyController::class, 'incoming_request'])->name('companies.incoming.list');
         Route::post('companies/incoming/action/{id}', [CompanyController::class, 'incoming_request_action'])->name('companies.incoming.action');
+        Route::get('companies/revenue', [CompanyController::class, 'revenue'])->name('companies.revenue');
+        Route::post('companies/generate/token', [CompanyController::class, 'generate_new_token'])->name('companies.generate.token');
+        Route::get('companies/api/logs', [CompanyController::class, 'api_logs'])->name('companies.api.logs');
+        Route::get('companies/view/{id}', [CompanyController::class, 'view'])->name('companies.view');
     });
 
     // Restaurant Schedule
@@ -96,6 +103,8 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('orders/print/{id}', [OrderController::class, 'print'])->name('orders.print');
     Route::get('orders', [OrderController::class, 'ordersList'])->name('orders');
     Route::get('orders/filter', [OrderController::class, 'ordersFilter'])->name('orders.filter');
+    Route::get('orders/walkin', [OrderController::class, 'walkin_order_form'])->name('orders.walkin');
+    Route::post('orders/walkin/store', [OrderController::class, 'store_walkin_order'])->name('orders.walkin.store');
 
     Route::get('/productsByCategory', [ProductController::class, 'productsByCategory'])->name('products.by.category');
 
@@ -122,6 +131,11 @@ Route::group(['middleware' => ['auth']], function(){
     
     // Newsletter
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');
+
+    Route::get('product/options', [ProductController::class, 'getOptions'])->name('product.options');
+
+    Route::get('repeated/customers', [CustomerController::class, 'repeated_customers_list'])->name('repeated.customers.list');
+
 });
 
 Route::get('check_expiry', [CompanyController::class, 'check_expiry']);
@@ -130,9 +144,6 @@ Route::get('/pusher', function () {
     return view('pusher');
 });
 
-   
-
-
-
-   
+Route::get('renewal', [CompanyController::class, 'renewal'])->name('renewal');
+Route::post('renewal/store', [CompanyController::class, 'renewal_store'])->name('renewal.store');
 
