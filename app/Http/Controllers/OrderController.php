@@ -640,7 +640,7 @@ class OrderController extends Controller
             }
 
             // Create Stripe Payment Link
-            Stripe::setApiKey($stripeConfig->stripe_secret);
+            Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
 
             // Create a Price object dynamically based on the order total
             $price = Price::create([
@@ -658,6 +658,7 @@ class OrderController extends Controller
                 ]],
                 'metadata' => [
                     'order_id' => $orderId,
+                    'company_id' => $companyId
                 ],
             ]);
 

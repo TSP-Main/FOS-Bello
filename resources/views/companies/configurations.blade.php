@@ -126,6 +126,16 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>Stripe Webhook <span class="text-danger"></span></h5>
+                                        <div class="controls position-relative">
+                                            <input type="text" name="stripe_webhook_secret" id="stripe_webhook_secret" value="{{ $stripe->stripe_webhook_secret ?? NULL }}" class="form-control pr-5" data-validation-required-message="This field is required" style="padding-right:40px;">
+                                            {{-- <i class="fa fa-eye toggle-password" id="toggleStripeSecret" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;" aria-hidden="true"></i> --}}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="text-xs-right">
                                 <button type="submit" class="btn btn-info">Save</button>
