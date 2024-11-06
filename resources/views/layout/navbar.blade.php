@@ -115,8 +115,8 @@
 	      <!-- User Account-->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle p-0 text-dark hover-primary ms-md-30 ms-10" data-bs-toggle="dropdown" title="User">
-				@if ($user->profile_pic)
-					<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('storage/' . $user->profile_pic) }}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+				@if (Auth::user()->profile_pic)
+					<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('storage/' . Auth::user()->profile_pic) }}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
 				@else
 					<span class="ps-30 d-md-inline-block d-none"></span> <strong class="d-md-inline-block d-none">{{ Auth::user()->name }}</strong><img src="{{ asset('assets/theme/images/avatar/avatar-11.png')}}" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
 				@endif

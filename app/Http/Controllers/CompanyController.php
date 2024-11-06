@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ApiTokenLog;
 use Carbon\Carbon;
+use Stripe\Stripe;
 use App\Models\Company;
-use App\Models\CompanyTransaction;
+use Stripe\PaymentIntent;
+use App\Models\ApiTokenLog;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CompanyTransaction;
 use Illuminate\Support\Facades\DB;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CompanyController extends Controller
 {
@@ -136,6 +137,19 @@ class CompanyController extends Controller
         $company->payment_method_id = $request->payment_method;
         $company->status = config('constants.INCOMING_RESTAURANT');
         $response = $company->save();
+
+        // send email when new user register
+        if($response){
+            $toEmail = 'admin@bellofos.com';
+
+            $subject = 'Bello FOS';
+            $message = 'New user want to buy subscription in Bello. Kindly login in Bello to view.';
+
+            Mail::raw($message, function ($mail) use ($toEmail, $subject) {
+                $mail->to($toEmail)
+                    ->subject($subject);
+            });
+        }
 
         return redirect()->route('register')->with('success', 'Signup successfully! We will contact you soon');
     }
