@@ -44,8 +44,42 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <div class="progress d-none" id="loadingProgressApprove" style="width: 100%;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                        </div>
+
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Approve Order</button>
+                        <button type="submit" class="btn btn-success" id="approveOrderButton" onclick="showLoadingApprove()">Approve Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Reject Modal -->
+    <div class="modal fade" id="orderRejectedModal" tabindex="-1" aria-labelledby="orderRejectedModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderRejectedModalLabel">Enter Rject Reason</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="rejectedOrderForm" method="POST">
+                    @csrf
+                    <input type="hidden" name="reject" value="1">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="delivery_time">Reject Reason</label>
+                            <input type="text" name="reject_reason" id="reject_reason" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="progress d-none" id="loadingProgressReject" style="width: 100%;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" id="rejectedOrderButton" onclick="showLoadingReject()">Reject Order</button>
                     </div>
                 </form>
             </div>
@@ -69,14 +103,7 @@
                             @if ($orderDetails->order_status == 0)
                                 <div>
                                     <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#orderApprovalModal" data-order-id="{{ base64_encode($orderDetails->id) }}"><i class="fa fa-check"></i></a>
-
-                                    <a href="#" class="btn btn-danger" onclick="event.preventDefault(); confirmRejectOrder({{ $orderDetails->id }});">
-                                        <i class="fa fa-ban"></i>
-                                    </a>
-                                    <form id="reject-order-form-{{ $orderDetails->id }}" action="{{ route('orders.update', base64_encode($orderDetails->id)) }}" method="POST" style="display: none;">
-                                        @csrf
-                                        <input type="hidden" name="reject" value="1">
-                                    </form>
+                                    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#orderRejectedModal" data-order-id="{{ base64_encode($orderDetails->id) }}"><i class="fa fa-ban"></i></a>
                                 </div>
                             @elseif ($orderDetails->order_status == 1)
                                 <div>
@@ -117,7 +144,7 @@
                     <div class="box-body border-bottom">
                         <div class="d-flex align-items-center">
                             <i class="fa fa-map-marker me-10 fs-24"></i>
-                            <h4 class="mb-0 text-black">{{ $orderDetails->address }}</h4>
+                            <h4 class="mb-0 text-black">{{ $orderDetails->address . ($orderDetails->postcode ? ', '.$orderDetails->postcode : '') }}</h4>
                         </div>
                     </div>
                     <div class="box-body">
@@ -181,6 +208,39 @@
                 form.action = '/orders/update/' + orderId;
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var orderRejectedModal = document.getElementById('orderRejectedModal');
+            orderRejectedModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var orderId = button.getAttribute('data-order-id');
+        
+                var form = document.getElementById('rejectedOrderForm');
+                form.action = '/orders/update/' + orderId;
+            });
+        });
+
+        function showLoadingApprove() {
+            var approveOrderButton = document.getElementById('approveOrderButton');
+            var loadingProgress = document.getElementById('loadingProgressApprove');
+
+            // Disable the submit button and show the loading indicator
+            approveOrderButton.disabled = true;
+            loadingProgress.classList.remove('d-none');
+
+            document.getElementById('approveOrderForm').submit();
+        }
+
+        function showLoadingReject() {
+            var rejectOrderButton = document.getElementById('rejectedOrderButton');
+            var loadingProgress = document.getElementById('loadingProgressReject');
+
+            // Disable the submit button and show the loading indicator
+            rejectOrderButton.disabled = true;
+            loadingProgress.classList.remove('d-none');
+
+            document.getElementById('rejectedOrderForm').submit();
+        }
 
         function confirmRejectOrder(orderId) {
             if (confirm('Are you sure you want to reject this order?')) {
