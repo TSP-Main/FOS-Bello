@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Stripe\Stripe;
 use Stripe\Webhook;
 use App\Models\Order;
+use App\Models\RestaurantStripeConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -14,8 +15,18 @@ class StripeController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $webhookSecret = env('STRIPE_WEBHOOK_SECRET');
+
+        $companyId = $request->input('data.object.metadata.company_id');
+        // Log::info('$companyId', ['$companyId' => $companyId]);
+        $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
         
+        if (!$stripeConfig) {
+            return response()->json(['error' => 'Client not found'], 400);
+        }
+
+        // Use client-specific webhook secret
+        $webhookSecret = $stripeConfig->stripe_webhook_secret;
+
         try {
             $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
         } catch (\UnexpectedValueException $e) {

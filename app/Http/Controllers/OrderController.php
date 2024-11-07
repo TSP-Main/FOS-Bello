@@ -604,7 +604,9 @@ class OrderController extends Controller
     public function store_walkin_order(Request $request)
     {
         $companyId = Auth::user()->company_id;
-        $company = Company::find(Auth::user()->company_id);
+        $company = Company::find($companyId);
+
+        $stripeConfig = RestaurantStripeConfig::where('company_id', $companyId)->first();
 
         $order = new Order();
 
@@ -638,7 +640,7 @@ class OrderController extends Controller
             }
 
             // Create Stripe Payment Link
-            Stripe::setApiKey(env('STRIPE_SECRET'));
+            Stripe::setApiKey(Crypt::decrypt($stripeConfig->stripe_secret));
 
             // Create a Price object dynamically based on the order total
             $price = Price::create([
@@ -656,6 +658,7 @@ class OrderController extends Controller
                 ]],
                 'metadata' => [
                     'order_id' => $orderId,
+                    'company_id' => $companyId
                 ],
             ]);
 
