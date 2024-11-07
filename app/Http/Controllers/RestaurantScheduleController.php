@@ -187,6 +187,7 @@ class RestaurantScheduleController extends Controller
         $data['company_id'] = $companyId;
         $data['stripe_key'] = Crypt::encrypt(trim($request->stripe_key));
         $data['stripe_secret'] = Crypt::encrypt(trim($request->stripe_secret));
+        $data['stripe_webhook_secret'] = trim($request->stripe_webhook_secret);
         $data['created_by'] = Auth::id();
         $data['updated_by'] = Auth::id();
 

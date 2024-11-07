@@ -77,6 +77,7 @@
                                         <th>Name</th>
                                         <th>Status</th>
                                         <th>Products Count</th>
+                                        <th>Sort Order</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -100,6 +101,7 @@
                                             <td>
                                                 {{ count($category->products) }}
                                             </td>
+                                            <td>{{ $category->sort_order }}</td>
                                             <td>
                                                 <a class="btn btn-primary" href="{{ route('category.edit', base64_encode($category->id)) }}">Edit</a>
                                                 <form action="{{ route('category.destroy', $category->id) }}" method="POST" style="display:inline;">

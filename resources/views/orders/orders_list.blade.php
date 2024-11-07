@@ -67,7 +67,7 @@
                                         <td>{{ $order->order_status ? config('constants')['ORDER_STATUS'][$order->order_status] : 'New' }}</td>
                                         <td>{{ $order->name }}</td>
                                         <td>{{ $order->phone }}</td>
-                                        <td>{{ $order ->address}}</td>
+                                        <td>{{ $order->address . ($order->postcode ? ', '.$order->postcode : '') }}</td>
                                         <td>{{ $currencySymbol . $order->total }}</td>
                                         <td>{{ $currencySymbol . $order->original_bill }}</td>
                                         <td>{{ $order->discount_code }}</td>

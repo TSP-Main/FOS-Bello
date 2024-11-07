@@ -181,8 +181,9 @@ class ProductController extends Controller
 
     public function productsByCategory(Request $request)
     {
+        $companyId = Auth::user()->company_id;
         $categoryId = $request->input('category_id');
-        $products = Product::where('category_id', $categoryId)->get();
+        $products = Product::where('category_id', $categoryId)->where('company_id', $companyId)->with('images', 'options.option.option_values')->get();
 
         return response()->json(['products' => $products]);
     }
@@ -193,5 +194,32 @@ class ProductController extends Controller
         $product->delete(); // Soft delete
 
         return redirect()->route('products.list')->with('success', 'Record deleted successfully.');
+    }
+
+    public function getOptions(Request $request)
+    {
+        $productId = $request->input('product_id');
+        $product = Product::with('options.option.option_values')->find($productId);
+
+        $response = [
+            'id' => $product->id,
+            'options' => $product->options->mapWithKeys(function ($option) {
+                return [
+                    $option->option->name => [
+                        'id' => $option->option->id,
+                        'option_values' => $option->option->option_values->map(function ($value) {
+                            return [
+                                'id' => $value->id,
+                                'name' => $value->name,
+                                'price' => $value->price,
+                                'is_enable' => $value->is_enable,
+                            ];
+                        })->toArray(),
+                    ],
+                ];
+            })->toArray(),
+        ];
+        
+        return response()->json($response);
     }
 }

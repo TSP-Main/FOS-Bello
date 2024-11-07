@@ -52,13 +52,13 @@
                                     <div class="form-group">
                                         <h5>Email <span class="text-danger">*</span></h5>
                                         <div class="controls">
-                                            <input type="email" name="email" value="{{ $user->email }}" class="form-control" required data-validation-required-message="This field is required"> 
+                                            <input type="email" name="email" value="{{ $user->email }}" class="form-control" required data-validation-required-message="This field is required" autocomplete="off"> 
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <h5>Password</h5>
                                         <div class="controls">
-                                            <input type="password" name="password" class="form-control"> 
+                                            <input type="password" name="password" class="form-control" autocomplete="off"> 
                                         </div>
                                     </div>
                                     <div class="form-group">

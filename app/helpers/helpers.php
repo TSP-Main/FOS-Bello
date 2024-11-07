@@ -70,7 +70,7 @@ function validate_token($token)
     $company = Company::where('token', $token)->first();
 
     if ($company) {
-        if($company->is_enable == 1){
+        if($company->status == 1){
             return response()->json(['status' => 'success', 'message' => 'success', 'company' => $company], 200);
         }
         else{

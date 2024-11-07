@@ -23,6 +23,7 @@ class User extends Authenticatable
         'company_id',
         'password',
         'created_by',
+        'profile_pic'
     ];
 
     public function createdByUser()
@@ -42,7 +43,7 @@ class User extends Authenticatable
 
     public function company()
     {
-        return $this->belongsTo(User::class, 'company_id');
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
 

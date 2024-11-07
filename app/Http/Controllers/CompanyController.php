@@ -3,13 +3,17 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use Stripe\Stripe;
 use App\Models\Company;
+use Stripe\PaymentIntent;
+use App\Models\ApiTokenLog;
+use App\Models\Transaction;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\CompanyTransaction;
 use Illuminate\Support\Facades\DB;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CompanyController extends Controller
 {
@@ -74,7 +78,7 @@ class CompanyController extends Controller
             // $data['address'] = $request->address;
             $data['expiry_date'] = $request->expiry_date;
             $data['status'] = $request->status;
-            $data['is_enable'] = $request->status;
+            // $data['is_enable'] = $request->status;
             $data['updated_by'] = Auth::id();
 
             $company = Company::find(base64_decode($request->id));
@@ -90,26 +94,29 @@ class CompanyController extends Controller
     {
     }
 
-    public function refreshToken($id)
+    public function generate_new_token(Request $request)
     {
-        $companyId = base64_decode($id);
-        $company = Company::find($companyId);
-
-        if (!$company) {
-            return redirect()->route('companies.list')->with('error', 'Company not found!');
-        }
-
-        // Generate a new unique token
-        $newToken = Str::random(60);
+        $companyId = base64_decode($request->company_id);
+        $company = Company::findOrFail($companyId);
+    
+        // Generate new token and save to the company
+        $newToken = 'tspkeyusmkeyanikey_apikeypunkeychar' . Str::random(60) . $companyId;
         $company->token = $newToken;
         $company->save();
-
-        return response()->json(['success' => true, 'newToken' => $newToken]);
+    
+        // Log the token generation
+        ApiTokenLog::create([
+            'company_id' => $companyId,
+            'reason' => $request->reason,
+            'new_token' => $newToken,
+        ]);
+    
+        return response()->json(['success' => true, 'message' => 'Token generated successfully']);
     }
 
+    // Register restaurant by self on landing page
     public function register(Request $request)
     {
-        // Register restaurant by self on landing page
         $this->validate($request, [
             'owner_name' => 'required',
             'restaurant_name' => 'required',
@@ -130,6 +137,19 @@ class CompanyController extends Controller
         $company->payment_method_id = $request->payment_method;
         $company->status = config('constants.INCOMING_RESTAURANT');
         $response = $company->save();
+
+        // send email when new user register
+        if($response){
+            $toEmail = 'admin@bellofos.com';
+
+            $subject = 'Bello FOS';
+            $message = 'New user want to buy subscription in Bello. Kindly login in Bello to view.';
+
+            Mail::raw($message, function ($mail) use ($toEmail, $subject) {
+                $mail->to($toEmail)
+                    ->subject($subject);
+            });
+        }
 
         return redirect()->route('register')->with('success', 'Signup successfully! We will contact you soon');
     }
@@ -173,17 +193,35 @@ class CompanyController extends Controller
                             'allow_redirects' => 'never',
                         ],
                     ]);
-            
-                    $company->status = config('constants.ACTIVE_RESTAURANT');
-                    $company->accepted_date = Carbon::now();
 
-                    $route      = 'companies.list';
-                    $msg        = 'New Restaurant Added.';
-                    $msgStatus  = 'success';
-            
+                    if($paymentIntent->status == 'succeeded'){
+                        // Add Company transation data
+                        CompanyTransaction::create([
+                            'company_id'    => $company->id,
+                            'package'       => $company->package,
+                            'plan'          => $company->plan,
+                            'amount'        => $amount,
+                            'status'        => 'New',
+                            'stripe_payment_intent_id' => $paymentIntent->id,
+                        ]);
+
+                        $token = 'tspkeyusmkeyanikey_apikeypunkeychar' . Str::random(60) . $company->id;
+                        $company->token = $token;
+                        $company->status = config('constants.ACTIVE_RESTAURANT');
+                        $company->accepted_date = Carbon::now();
+
+                        if ($company->plan == 1) {
+                            $company->expiry_date = $company->accepted_date->copy()->addMonth();
+                        } elseif ($company->plan == 2) {
+                            $company->expiry_date = $company->accepted_date->copy()->addYear();
+                        }
+
+                        $route      = 'companies.list';
+                        $msg        = 'New Restaurant Added.';
+                        $msgStatus  = 'success';
+                    }
                 } catch (\Exception $e) {
-                    // Handle payment failure
-                    return back()->withErrors('Payment failed: ' . $e->getMessage());
+                    return redirect()->route('companies.incoming.list')->with('error', $e->getMessage());
                 }
             } 
             elseif ($request['action'] == 'reject') {
@@ -209,7 +247,7 @@ class CompanyController extends Controller
         $today = Carbon::today();
         Company::where('expiry_date', '<=', $today->toDateString())
             ->where('status', config('constants.ACTIVE_RESTAURANT'))
-            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT'), 'is_enable' => 2]);
+            ->update(['status' => config('constants.IN_ACTIVE_RESTAURANT')]);
 
         return response()->json(['message' => 'Expired restaurants updated to inactive.']);
     }
@@ -231,5 +269,113 @@ class CompanyController extends Controller
         }
 
         return $basePrice;
+    }
+
+    public function revenue()
+    {
+        $data['revenue'] = CompanyTransaction::with('company')->get();
+        return view('companies.revenue', $data);
+    }
+
+    public function renewal()
+    {
+        if(Auth::user() && !session('user_id') && !session('company_id')){
+            $user = Auth::user();
+            $company = Company::find($user->company_id);
+
+            $data['userId'] = $user->id;
+            $data['userName'] = $user->name;
+            $data['companyId'] = $company->id;
+            $data['companyName'] = $company->name;
+            $data['package'] = $company->package;
+            $data['plan'] = $company->plan;
+        }
+        else{
+            $data['userId'] = session('user_id');
+            $data['userName'] = session('user_name');
+            $data['companyId'] = session('company_id');
+            $data['companyName'] = session('company_name');
+            $data['package'] = session('package');
+            $data['plan'] = session('plan');
+        }
+
+        return view('companies.renewal', $data);
+    }
+
+    public function renewal_store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'company_id' => 'required|integer',
+            'package' => 'required|integer',
+            'plan' => 'required|integer',
+            'payment_method' => 'required|string',
+        ]);
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $amount = $this->calculateAmount($request->package, $request->plan);
+
+        try {
+            // Create the PaymentIntent
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $amount * 100, // Amount in cents
+                'currency' => 'gbp',
+                'payment_method' => $request->payment_method,
+                'confirm' => true,
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                    'allow_redirects' => 'never',
+                ],
+                'metadata' => [
+                    'user_id' => $request->user_id,
+                    'company_id' => $request->company_id,
+                ],
+            ]);
+
+            if($paymentIntent->status == 'succeeded'){
+                // Add Company transaction data
+                CompanyTransaction::create([
+                    'company_id' => $request->company_id,
+                    'package' => $request->package,
+                    'plan' => $request->plan,
+                    'amount' => $amount,
+                    'status' => 'Renew',
+                    'stripe_payment_intent_id' => $paymentIntent->id,
+                ]);
+
+                $company = Company::find($request->company_id);
+                $company->status = config('constants.ACTIVE_RESTAURANT');
+
+                if ($request->plan == 1) {
+                    $company->expiry_date = Carbon::now()->copy()->addMonth();
+                } elseif ($request->plan == 2) {
+                    $company->expiry_date = Carbon::now()->copy()->addYear();
+                }
+                $company->update();
+            }
+
+            // Return the PaymentIntent client secret to the client-side
+            return response()->json([
+                'client_secret' => $paymentIntent->client_secret,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function api_logs()
+    {
+        $data['logs'] = ApiTokenLog::with('company')->get();
+        return view('companies.api_logs', $data);
+    }
+
+    public function view($id)
+    {
+        $data['company'] = Company::with(['transactions', 'apiTokenLogs'])->find(base64_decode($id));
+
+        return view('companies.view', $data);
     }
 }

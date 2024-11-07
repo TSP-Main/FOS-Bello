@@ -14,6 +14,7 @@ class RestaurantStripeConfig extends Model
         'company_id',
         'stripe_key',
         'stripe_secret',
+        'stripe_webhook_secret',
         'created_by',
         'updated_by'
     ];

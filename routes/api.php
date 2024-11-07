@@ -3,10 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\TemporaryOrderController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\StripeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TemporaryOrderController;
 
 
 // Route::get('/user', function (Request $request) {
@@ -39,4 +40,6 @@ Route::post('discount/check', [APIController::class, 'discount_check']);
 Route::get('searching', [APIController::class, 'products_search']);
 
 Route::get('customers', [APIController::class, 'customers']);
+
+Route::post('stripe/webhook', [StripeController::class, 'handleWebhook']);
 
