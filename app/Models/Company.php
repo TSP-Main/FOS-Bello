@@ -30,6 +30,8 @@ class Company extends Model
         'plan',
         'customer_stripe_id',
         'payment_method_id',
+        'pickup_minimum_amount',
+        'delivery_minimum_amount'
     ];
 
     public function getFormattedExpiryDateAttribute()

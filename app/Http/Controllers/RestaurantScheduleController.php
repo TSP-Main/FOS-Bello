@@ -138,6 +138,8 @@ class RestaurantScheduleController extends Controller
         $restaurantDetail = Company::find($companyId);
         $data['amount'] = $restaurantDetail->free_shipping_amount;
         $data['currency'] = $restaurantDetail->currency;
+        $data['pickup_minimum_amount'] = $restaurantDetail->pickup_minimum_amount;
+        $data['delivery_minimum_amount'] = $restaurantDetail->delivery_minimum_amount;
 
         return view('companies.configurations', $data);
     }
@@ -263,5 +265,25 @@ class RestaurantScheduleController extends Controller
         $response = $discount->save();
 
         return redirect()->route('discount')->with('success', 'Saved Successfully!');
+    }
+
+    public function minimum_order_store(Request $request)
+    {
+        // minimum amount of 1 order
+        $request->validate([
+            'pickup_minimum_amount' => 'required',
+            'delivery_minimum_amount' => 'required',
+        ]);
+
+        $companyId = Auth::user()->company_id;
+
+        $data['pickup_minimum_amount'] = $request->pickup_minimum_amount ?? '0';
+        $data['delivery_minimum_amount'] = $request->delivery_minimum_amount ?? '0';
+        $data['updated_by'] = Auth::id();
+
+        $company = Company::find($companyId);
+        $response = $company->update($data);
+
+        return redirect()->route('configurations.create')->with('success', 'Saved Successfully!');
     }
 }

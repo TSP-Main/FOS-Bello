@@ -128,6 +128,7 @@ Route::group(['middleware' => ['auth']], function(){
     Route::post('currency/store', [RestaurantScheduleController::class, 'currency_store'])->name('currency.store');
     Route::get('discount', [RestaurantScheduleController::class, 'discount'])->name('discount');
     Route::post('discount/store', [RestaurantScheduleController::class, 'discount_store'])->name('discount.store');
+    Route::post('mo/store', [RestaurantScheduleController::class, 'minimum_order_store'])->name('minimum.order.store');
     
     // Newsletter
     Route::get('subscription/list', [NewsletterSubscriptionController::class, 'index'])->name('subscriptions.list');

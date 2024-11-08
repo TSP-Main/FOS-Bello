@@ -33,6 +33,7 @@ function view_permission($page_name = null)
                 case 'menu':
                 case 'orders':
                 case 'newsletter':
+                case 'walkin':
                     return true;
                 default:
                     return false;

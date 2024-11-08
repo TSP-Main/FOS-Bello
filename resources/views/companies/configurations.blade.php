@@ -23,6 +23,18 @@
 
     <!-- Main content -->
     <section class="content">
+        @if (session()->has('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>Success!</strong> {{ session()->get('success')}}
+            </div>
+        @elseif (session()->has('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>Error!</strong> {{ session()->get('error')}}
+            </div>
+        @endif
+
         <!-- Email Configuration -->
         <div class="box">
             <div class="box-header">
@@ -133,6 +145,44 @@
                                         <div class="controls position-relative">
                                             <input type="text" name="stripe_webhook_secret" id="stripe_webhook_secret" value="{{ $stripe->stripe_webhook_secret ?? NULL }}" class="form-control pr-5" data-validation-required-message="This field is required" style="padding-right:40px;">
                                             {{-- <i class="fa fa-eye toggle-password" id="toggleStripeSecret" style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer;" aria-hidden="true"></i> --}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xs-right">
+                                <button type="submit" class="btn btn-info">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minimum Order Amount Configuration -->
+        <div class="box">
+            <div class="box-header">
+                <h4 class="box-title">Minimum Order Amount Setup</h4>  
+            </div>
+            <div class="box-body">
+                <div class="row">
+                    <div class="col">
+                        <form action="{{ route('minimum.order.store') }}" method="post" class="form-horizontal needs-validation" role="form" novalidate>
+                            @csrf
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>For Pickup <span class="text-danger">*</span></h5>
+                                        <div class="controls position-relative">
+                                            <input type="text" name="pickup_minimum_amount" value="{{ $pickup_minimum_amount ?? NULL }}" class="form-control pr-5" required data-validation-required-message="This field is required" style="padding-right:40px;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-lg-6">						
+                                    <div class="form-group">
+                                        <h5>For Delivery <span class="text-danger">*</span></h5>
+                                        <div class="controls position-relative">
+                                            <input type="text" name="delivery_minimum_amount" value="{{ $delivery_minimum_amount ?? NULL }}" class="form-control pr-5" required data-validation-required-message="This field is required" style="padding-right:40px;">
                                         </div>
                                     </div>
                                 </div>

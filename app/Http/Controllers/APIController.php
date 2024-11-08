@@ -38,6 +38,8 @@ class APIController extends Controller
             'amount' => $responseData->company->free_shipping_amount,
             'currency' => $responseData->company->currency,
             'currency_symbol' => $responseData->company->currency_symbol,
+            'pickup_minimum_amount' => $responseData->company->pickup_minimum_amount,
+            'delivery_minimum_amount' => $responseData->company->delivery_minimum_amount,
         ];
 
         if($responseData->status == 'success'){

@@ -47,6 +47,15 @@
 					</a>
 				</li>
 
+				@if(view_permission('walkin'))
+					<li>
+						<a href="{{ route('orders.walkin') }}">
+						<i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span></i>
+						<span>Walk In Orders</span>
+						</a>
+					</li>
+				@endif
+
 				@if(view_permission('orders'))
 					<li class="treeview">
 						<a href="#">
@@ -57,7 +66,6 @@
 						</span>
 						</a>
 						<ul class="treeview-menu">
-						<li><a href="{{ route('orders.walkin') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Walk In Orders</a></li>
 						<li><a href="{{ route('orders.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Order List</a></li>
 						<li><a href="{{ route('orders') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Orders Report</a></li>
 						<li><a href="{{ route('repeated.customers.list') }}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Repeated Customers</a></li>
